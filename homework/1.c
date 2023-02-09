@@ -2,12 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NEW(var, size) \
-    NULL; \
-    var = malloc(size); \
-    if (size && var == NULL) { \
+static int alloc_flag = 0;
+
+int allocation_succeeded(void) { return alloc_flag; }
+
+void *allocate(size_t size) {
+    alloc_flag = 0;
+    void *var = calloc(size, 1);
+    if (size && var == NULL) {
+        alloc_flag = -1;
+    }
+    return var;
+}
+
+#define NEW(size)                            \
+    allocate(size);                          \
+    if (allocation_succeeded()) {            \
         fprintf(stderr, "Bad allocation\n"); \
-        return -1; \
+        return -1;                           \
     }
 
 typedef struct {
