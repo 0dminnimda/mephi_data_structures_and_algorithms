@@ -111,12 +111,10 @@ void output(const char *msg, Matrix mat) {
 }
 
 double line_min(Line line) {
-    double result = 0;
-    for (size_t i = 0; i < line.count; i++) {
-        if (line.items[i] < result) {
-            result = line.items[i];
-        }
-    }
+    if (!line.count) return 0;
+    double result = line.items[0];
+    for (size_t i = 1; i < line.count; i++)
+        if (line.items[i] < result) result = line.items[i];
     return result;
 }
 
