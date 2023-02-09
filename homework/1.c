@@ -123,8 +123,10 @@ typedef struct {
     size_t index;
 } Pair;
 
-int pair_cmp(Pair *a, Pair *b) {
-    return (a->value > b->value) - (a->value < b->value);
+int pair_cmp(const void *a, const void *b) {
+    double lhs = ((Pair *)a)->value;
+    double rhs = ((Pair *)b)->value;
+    return (lhs > rhs) - (lhs < rhs);
 }
 
 int sort_by_min(Matrix mat) {
