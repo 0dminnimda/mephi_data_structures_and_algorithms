@@ -2,22 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int alloc_flag = 0;
-
-int allocation_succeeded(void) { return alloc_flag; }
-
-void *allocate(size_t size) {
-    alloc_flag = 0;
-    void *var = calloc(size, 1);
-    if (size && var == NULL) {
-        alloc_flag = -1;
-    }
-    return var;
-}
-
-#define NEW(size)                            \
-    allocate(size);                          \
-    if (allocation_succeeded()) {            \
+#define NEW(var, size)                       \
+    NULL;                                    \
+    var = calloc(size, 1);                   \
+    if (size && var == NULL) {               \
         fprintf(stderr, "Bad allocation\n"); \
         return -1;                           \
     }
@@ -68,7 +56,7 @@ int input_matrix(Matrix *mat) {
     }
     mat->count = len;
 
-    mat->lines = NEW(len * sizeof(Line));
+    mat->lines = NEW(mat->lines, len * sizeof(Line));
     for (int i = 0; i < len; i++) {
         int len;
         while (1) {
@@ -81,7 +69,7 @@ int input_matrix(Matrix *mat) {
             printf("Incorrect input, try again!\n");
         }
         mat->lines[i].count = len;
-        double *items = NEW(sizeof(double) * len);
+        double *items = NEW(items, sizeof(double) * len);
         mat->lines[i].items = items;
         printf("Input items: ");
         for (int j = 0; j < len; j++)
