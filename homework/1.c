@@ -35,10 +35,8 @@ typedef struct {
 int get_int(int *a) {
     while (1) {
         int result = scanf("%d", a);
-        if (result == 1)
-            return 1;
-        if (result < 0)
-            return 0;
+        if (result == 1) return 0;
+        if (result != 0) return -1;
         printf("%s\n", "Invalid input, try again!");
         scanf("%*c");
     }
@@ -47,65 +45,59 @@ int get_int(int *a) {
 int get_double(double *a) {
     while (1) {
         int result = scanf("%lf", a);
-        if (result == 1)
-            return 1;
-        if (result < 0)
-            return 0;
+        if (result == 1) return 0;
+        if (result != 0) return -1;
         printf("%s\n", "Invalid input, try again!");
         scanf("%*c");
     }
 }
 
 void free_matrix(Matrix mat) {
-    for (int i = 0; i < mat.count; ++i)
-        free(mat.lines[i].items);
+    for (int i = 0; i < mat.count; i++)
+        if (mat.lines[i].items) free(mat.lines[i].items);
     free(mat.lines);
 }
 
-int input_matrix(Matrix *rm) {
-    const char *pr = "";
-    int m;
-    do {
-        printf("%s\n", pr);
-        printf("Enter number of count: --> ");
-        pr = "You are wrong; repeat, please!";
-        if (get_int(&m) == 0)
-            return 0;
-    } while (m < 1);
-    rm->count = m;
-    rm->lines = (Line *)calloc(m, sizeof(Line));
-    for (int i = 0; i < rm->count; ++i) {
-        pr = "";
-        do {
-            printf("%s\n", pr);
-            printf("Enter number of items in line %d: --> ", i + 1);
-            pr = "You are wrong; repeat, please!";
-            if (get_int(&m) == 0) {
-                rm->count = i;
-                free_matrix(*rm);
-                return 0;
+int input_matrix(Matrix *mat) {
+    int len;
+    while (1) {
+        printf("Input number of lines: ");
+        if (get_int(&len)) return -1;
+        if (len >= 0) break;
+        printf("Incorrect input, try again!\n");
+    }
+    mat->count = len;
+
+    mat->lines = NEW(len * sizeof(Line));
+    for (int i = 0; i < len; i++) {
+        int len;
+        while (1) {
+            printf("Input line length: ");
+            if (get_int(&len)) {
+                free_matrix(*mat);
+                return -1;
             }
-        } while (m < 1);
-        rm->lines[i].count = m;
-        double *p = (double *)malloc(sizeof(double) * m);
-        rm->lines[i].items = p;
-        printf("Enter items for Matrix️ line #%d:\n", i + 1);
-        for (int j = 0; j < m; ++j, ++p)
-            if (get_double(p) == 0) {
-                rm->count = i + 1;
-                free_matrix(*rm);
-                return 0;
+            if (len >= 0) break;
+            printf("Incorrect input, try again!\n");
+        }
+        mat->lines[i].count = len;
+        double *items = NEW(sizeof(double) * len);
+        mat->lines[i].items = items;
+        printf("Input items: ");
+        for (int j = 0; j < len; j++)
+            if (get_double(items++)) {
+                free_matrix(*mat);
+                return -1;
             }
     }
-    return 1;
+    return 0;
 }
 
 void output(const char *msg, Matrix mat) {
     printf("%s:\n", msg);
-    for (int i = 0; i < mat.count; ++i) {
-        double *p = mat.lines[i].items;
-        for (int j = 0; j < mat.lines[i].count; ++j, ++p)
-            printf("%10lf ", *p);
+    for (int i = 0; i < mat.count; i++) {
+        for (int j = 0; j < mat.lines[i].count; j++)
+            printf("%10lf ", mat.lines[i].items[j]);
         printf("\n");
     }
 }
@@ -131,17 +123,14 @@ int pair_cmp(const void *a, const void *b) {
 
 int sort_by_min(Matrix mat) {
     Pair *pairs = malloc(sizeof(Pair) * mat.count);
-    for (size_t i = 0; i < mat.count; i++) {
-        pairs[i] = (Pair){line_min(mat.lines[i]), i};
-    }
+    for (size_t i = 0; i < mat.count; i++)
+        pairs[i] = (Pair){.value = line_min(mat.lines[i]), .index = i};
     qsort(pairs, mat.count, sizeof(Pair), pair_cmp);
 
-    // Line *old_lines = malloc(sizeof(Line) * mat.count);
-    Line *old_lines = NEW(old_lines, sizeof(Line) * mat.count);
+    Line *old_lines = NEW(sizeof(Line) * mat.count);
     memcpy(old_lines, mat.lines, sizeof(Line) * mat.count);
 
     for (size_t i = 0; i < mat.count; i++) {
-        printf("%d\n", pairs[i].index);
         mat.lines[i] = old_lines[pairs[i].index];
     }
     free(old_lines);
@@ -149,15 +138,15 @@ int sort_by_min(Matrix mat) {
 }
 
 int main() {
-    Matrix matr = {0, NULL};
+    Matrix mat = {0, NULL};
     double res;
-    if (input_matrix(&matr) == 0) {
-        printf("%s\n", "End of file occured");
-        return 1;
+    if (input_matrix(&mat)) {
+        printf("%s\n", "End of file occurred");
+        return -1;
     }
-    output("Source matrix", matr);
-    if (sort_by_min(matr)) return -1;
-    output("Result matrix", matr);
-    free_matrix(matr);
+    output("Source matrix", mat);
+    if (sort_by_min(mat)) return -1;
+    output("Result matrix", mat);
+    free_matrix(mat);
     return 0;
 }
