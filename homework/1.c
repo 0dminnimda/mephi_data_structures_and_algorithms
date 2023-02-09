@@ -102,38 +102,35 @@ void output(const char *msg, Matrix mat) {
     }
 }
 
-double line_min(Line line) {
-    if (!line.count) return 0;
-    double result = line.items[0];
-    for (size_t i = 1; i < line.count; i++)
-        if (line.items[i] < result) result = line.items[i];
+double line_sum(Line line) {
+    double result = 0;
+    for (size_t i = 0; i < line.count; i++)
+        result += line.items[i];
     return result;
 }
 
-typedef struct {
-    double value;
-    size_t index;
-} Pair;
-
-int pair_cmp(const void *a, const void *b) {
-    double lhs = ((Pair *)a)->value;
-    double rhs = ((Pair *)b)->value;
-    return (lhs > rhs) - (lhs < rhs);
+int double_cmp(const void *a, const void *b) {
+    double x = *(double *)a;
+    double y = *(double *)b;
+    if (x < y) return -1;
+    if (x > y) return 1;
+    return 0;
 }
 
-int sort_by_min(Matrix mat) {
-    Pair *pairs = malloc(sizeof(Pair) * mat.count);
-    for (size_t i = 0; i < mat.count; i++)
-        pairs[i] = (Pair){.value = line_min(mat.lines[i]), .index = i};
-    qsort(pairs, mat.count, sizeof(Pair), pair_cmp);
-
-    Line *old_lines = NEW(sizeof(Line) * mat.count);
-    memcpy(old_lines, mat.lines, sizeof(Line) * mat.count);
-
+int sort_max_line(Matrix mat) {
+    int max_index = 0;
+    double max_value = 0;
     for (size_t i = 0; i < mat.count; i++) {
-        mat.lines[i] = old_lines[pairs[i].index];
+        double sum = line_sum(mat.lines[i]);
+        if (max_value < sum) {
+            max_value = sum;
+            max_index = i;
+        }
     }
-    free(old_lines);
+
+    Line max_line = mat.lines[max_index];
+    qsort(max_line.items, max_line.count, sizeof(double), double_cmp);
+
     return 0;
 }
 
@@ -145,7 +142,7 @@ int main() {
         return -1;
     }
     output("Source matrix", mat);
-    if (sort_by_min(mat)) return -1;
+    if (sort_max_line(mat)) return -1;
     output("Result matrix", mat);
     free_matrix(mat);
     return 0;
