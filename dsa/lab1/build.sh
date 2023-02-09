@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MY_CC="cc"
-ARGS="1.c -o main.out -O3 -g"
+ARGS="main.c -o main.out -O3 -g"
 
 which cc &> /dev/null
 
