@@ -110,34 +110,6 @@ void output(const char *msg, Matrix mat) {
     }
 }
 
-// double minmax(Matrix pm) {
-//     double *s = (double *)malloc(sizeof(double) * pm.lines);
-//     double res;
-//     double *p = s;
-//     int i;
-//     for (i = 0; i < pm.lines; ++i)
-//         *p++ = max(pm.lines[i].a, pm.lines[i].n);        pm.lines[i].n,        1);
-//     res = min(s, pm.lines);
-//     free(s);
-//     return res;
-// }
-
-// double max(double a[], int m) {
-//     double res = *a;
-//     for (; m-- > 0; ++a)
-//         if (*a > res)
-//             res = *a;
-//     return res;
-// }
-
-// double min(double a[], int m) {
-//     double res = *a;
-//     for (; m-- > 0; ++a)
-//         if (*a < res)
-//             res = *a;
-//     return res;
-// }
-
 double line_min(Line line) {
     double result = 0;
     for (size_t i = 0; i < line.count; i++) {
