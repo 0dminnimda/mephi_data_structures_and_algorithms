@@ -20,32 +20,38 @@ typedef struct {
     Line *lines;
 } Matrix;
 
-int get_int(int *a) {
+void clear_buffer() {
+    char c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int get_int(const char *msg, int *a) {
     while (1) {
+        printf("%s", msg);
         int result = scanf("%d", a);
         if (result == 1) return 0;
         if (result != 0) return -1;
-        printf("%s\n", "Invalid input, try again!");
-        scanf("%*c");
+        printf("Invalid input, try again!\n");
+        clear_buffer();
     }
 }
 
-int get_double(double *a) {
+int get_non_negative_int(const char *msg, int *a) {
     while (1) {
+        if (get_int(msg, a)) return -1;
+        if (*a >= 0) return 0;
+        printf("Number should be non negative, try again!\n");
+    }
+}
+
+int get_double(const char *msg, double *a) {
+    while (1) {
+        printf("%s", msg);
         int result = scanf("%lf", a);
         if (result == 1) return 0;
         if (result != 0) return -1;
-        printf("%s\n", "Invalid input, try again!");
-        scanf("%*c");
-    }
-}
-
-int retrying_int_input(const char *msg, int *a) {
-    while (1) {
-        printf("%s", msg);
-        if (get_int(a)) return -1;
-        if (*a >= 0) return 0;
-        printf("Incorrect input, try again!\n");
+        printf("Invalid input, try again!\n");
+        clear_buffer();
     }
 }
 
@@ -57,14 +63,14 @@ void free_matrix(Matrix mat) {
 }
 
 int input_matrix(Matrix *mat) {
-    if (retrying_int_input("Input number of lines: ", &(mat->count)))
+    if (get_non_negative_int("Input number of lines: ", &(mat->count)))
         return -1;
 
     mat->lines = NEW(mat->lines, mat->count * sizeof(Line));
     Line *lines = mat->lines;
     for (int i = 0; i < mat->count; i++, lines++) {
         int len;
-        if (retrying_int_input("Input line length: ", &len)) {
+        if (get_non_negative_int("Input line length: ", &len)) {
             free_matrix(*mat);
             return -1;
         }
@@ -75,7 +81,7 @@ int input_matrix(Matrix *mat) {
 
         printf("Input items: ");
         for (int j = 0; j < len; j++)
-            if (get_double(items++)) {
+            if (get_double("", items++)) {
                 free_matrix(*mat);
                 return -1;
             }
