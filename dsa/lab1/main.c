@@ -113,18 +113,46 @@ int double_cmp(const void *a, const void *b) {
     return 0;
 }
 
-int sort_max_line(Matrix mat) {
-    int max_index = 0;
-    double max_value = 0;
+size_t max_sum_line_index(Matrix mat) {
+    size_t index = 0;
+    double value = 0;
     for (size_t i = 0; i < mat.count; i++) {
         double sum = line_sum(mat.lines[i]);
-        if (max_value < sum) {
-            max_value = sum;
-            max_index = i;
+        if (value < sum) {
+            value = sum;
+            index = i;
         }
     }
+    return index;
+}
 
-    Line max_line = mat.lines[max_index];
+double line_max(Line *line) {
+    if (line->count <= 0) return 0;
+    double result = line->items[0];
+    for (size_t i = 1; i < line->count; i++) {
+        if (result < line->items[i]) {
+            result = line->items[i];
+        }
+    }
+    return result;
+}
+
+size_t max_item_line_index(Matrix mat) {
+    if (mat.count <= 0) return 0;
+    size_t index = 0;
+    double value = line_max(mat.lines + 0);
+    for (size_t i = 1; i < mat.count; i++) {
+        double max_item = line_max(mat.lines + i);
+        if (value < max_item) {
+            value = max_item;
+            index = i;
+        }
+    }
+    return index;
+}
+
+int sort_max_line(Matrix mat) {
+    Line max_line = mat.lines[max_item_line_index(mat)];
     qsort(max_line.items, max_line.count, sizeof(double), double_cmp);
 
     return 0;
