@@ -50,8 +50,9 @@ int retrying_int_input(const char *msg, int *a) {
 }
 
 void free_matrix(Matrix mat) {
+    Line *lines = mat.lines;
     for (int i = 0; i < mat.count; i++)
-        if (mat.lines[i].items) free(mat.lines[i].items);
+        if ((lines++)->items) free((lines++)->items);
     free(mat.lines);
 }
 
@@ -60,17 +61,17 @@ int input_matrix(Matrix *mat) {
         return -1;
 
     mat->lines = NEW(mat->lines, mat->count * sizeof(Line));
-    for (int i = 0; i < mat->count; i++) {
-
+    Line *lines = mat->lines;
+    for (int i = 0; i < mat->count; i++, lines++) {
         int len;
         if (retrying_int_input("Input line length: ", &len)) {
             free_matrix(*mat);
             return -1;
         }
-        mat->lines[i].count = len;
+        lines->count = len;
 
         double *items = NEW(items, len * sizeof(double));
-        mat->lines[i].items = items;
+        lines->items = items;
 
         printf("Input items: ");
         for (int j = 0; j < len; j++)
@@ -125,7 +126,6 @@ int sort_max_line(Matrix mat) {
 
 int main() {
     Matrix mat = {0, NULL};
-    double res;
     if (input_matrix(&mat)) {
         printf("End of file occurred\n");
         return -1;
