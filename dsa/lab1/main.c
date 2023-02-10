@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,11 +40,11 @@ int get_double(double *a) {
     }
 }
 
-int retrying_int_input(const char *msg, int *a, bool positive) {
+int retrying_int_input(const char *msg, int *a) {
     while (1) {
         printf("%s", msg);
         if (get_int(a)) return -1;
-        if (positive && *a >= 0) return 0;
+        if (*a >= 0) return 0;
         printf("Incorrect input, try again!\n");
     }
 }
@@ -57,14 +56,14 @@ void free_matrix(Matrix mat) {
 }
 
 int input_matrix(Matrix *mat) {
-    if (retrying_int_input("Input number of lines: ", &(mat->count), true))
+    if (retrying_int_input("Input number of lines: ", &(mat->count)))
         return -1;
 
     mat->lines = NEW(mat->lines, mat->count * sizeof(Line));
     for (int i = 0; i < mat->count; i++) {
 
         int len;
-        if (retrying_int_input("Input line length: ", &len, true)) {
+        if (retrying_int_input("Input line length: ", &len)) {
             free_matrix(*mat);
             return -1;
         };
@@ -128,7 +127,7 @@ int main() {
     Matrix mat = {0, NULL};
     double res;
     if (input_matrix(&mat)) {
-        printf("%s\n", "End of file occurred");
+        printf("End of file occurred\n");
         return -1;
     }
     output("Source matrix", mat);
