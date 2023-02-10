@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +41,15 @@ int get_double(double *a) {
     }
 }
 
+int retrying_int_input(const char *msg, int *a, bool positive) {
+    while (1) {
+        printf("%s", msg);
+        if (get_int(a)) return -1;
+        if (positive && *a >= 0) return 0;
+        printf("Incorrect input, try again!\n");
+    }
+}
+
 void free_matrix(Matrix mat) {
     for (int i = 0; i < mat.count; i++)
         if (mat.lines[i].items) free(mat.lines[i].items);
@@ -47,30 +57,22 @@ void free_matrix(Matrix mat) {
 }
 
 int input_matrix(Matrix *mat) {
-    int len;
-    while (1) {
-        printf("Input number of lines: ");
-        if (get_int(&len)) return -1;
-        if (len >= 0) break;
-        printf("Incorrect input, try again!\n");
-    }
-    mat->count = len;
+    if (retrying_int_input("Input number of lines: ", &(mat->count), true))
+        return -1;
 
-    mat->lines = NEW(mat->lines, len * sizeof(Line));
-    for (int i = 0; i < len; i++) {
+    mat->lines = NEW(mat->lines, mat->count * sizeof(Line));
+    for (int i = 0; i < mat->count; i++) {
+
         int len;
-        while (1) {
-            printf("Input line length: ");
-            if (get_int(&len)) {
-                free_matrix(*mat);
-                return -1;
-            }
-            if (len >= 0) break;
-            printf("Incorrect input, try again!\n");
-        }
+        if (retrying_int_input("Input line length: ", &len, true)) {
+            free_matrix(*mat);
+            return -1;
+        };
         mat->lines[i].count = len;
-        double *items = NEW(items, sizeof(double) * len);
+
+        double *items = NEW(items, len * sizeof(double));
         mat->lines[i].items = items;
+
         printf("Input items: ");
         for (int j = 0; j < len; j++)
             if (get_double(items++)) {
@@ -78,6 +80,7 @@ int input_matrix(Matrix *mat) {
                 return -1;
             }
     }
+
     return 0;
 }
 
@@ -92,8 +95,7 @@ void output(const char *msg, Matrix mat) {
 
 double line_sum(Line line) {
     double result = 0;
-    for (size_t i = 0; i < line.count; i++)
-        result += line.items[i];
+    for (size_t i = 0; i < line.count; i++) result += line.items[i];
     return result;
 }
 
