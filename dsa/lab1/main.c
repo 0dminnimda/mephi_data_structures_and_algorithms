@@ -66,7 +66,7 @@ int input_matrix(Matrix *mat) {
         if (retrying_int_input("Input line length: ", &len)) {
             free_matrix(*mat);
             return -1;
-        };
+        }
         mat->lines[i].count = len;
 
         double *items = NEW(items, len * sizeof(double));
@@ -83,7 +83,7 @@ int input_matrix(Matrix *mat) {
     return 0;
 }
 
-void output(const char *msg, Matrix mat) {
+void print_matrix(const char *msg, Matrix mat) {
     printf("%s:\n", msg);
     for (int i = 0; i < mat.count; i++) {
         for (int j = 0; j < mat.lines[i].count; j++)
@@ -130,9 +130,9 @@ int main() {
         printf("End of file occurred\n");
         return -1;
     }
-    output("Source matrix", mat);
+    print_matrix("Source matrix", mat);
     if (sort_max_line(mat)) return -1;
-    output("Result matrix", mat);
+    print_matrix("Result matrix", mat);
     free_matrix(mat);
     return 0;
 }
