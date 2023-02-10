@@ -51,8 +51,8 @@ int retrying_int_input(const char *msg, int *a) {
 
 void free_matrix(Matrix mat) {
     Line *lines = mat.lines;
-    for (int i = 0; i < mat.count; i++)
-        if ((lines++)->items) free((lines++)->items);
+    for (int i = 0; i < mat.count; i++, lines++)
+        if (lines->items) free(lines->items);
     free(mat.lines);
 }
 
