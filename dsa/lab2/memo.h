@@ -4,6 +4,10 @@
     NULL;                                    \
     var = calloc(size, sizeof(char));                   \
     if (size && var == NULL) { on_error; }
+#define POSSIBLY_UNUSED(var)                                   \
+    _Pragma("clang diagnostic push")                           \
+        _Pragma("clang diagnostic ignored \"-Wunused-value\"") \
+            var _Pragma("clang diagnostic pop")
 
 
 #define NEW(var, size) NEW_WITH_ERROR(var, size, { \
