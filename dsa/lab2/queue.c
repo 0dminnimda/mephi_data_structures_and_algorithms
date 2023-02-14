@@ -1,5 +1,5 @@
-#if QUEUE_IMP == "list"
-#   include "queue_list_impl.h"
+#if QUEUE_IMP == 'L'
+#   include "queue_list_impl.c"
 #else
-#   include "queue_vector_impl.h"
+#   include "queue_vector_impl.c"
 #endif
