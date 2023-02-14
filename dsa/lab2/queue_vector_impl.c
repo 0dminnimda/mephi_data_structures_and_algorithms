@@ -1,14 +1,18 @@
-#include "queue_decls.h"
+#include <string.h>
 
-static struct Queue {
+#include "queue.h"
+#include "memo.h"
+
+
+struct Queue {
     QUEUE_ITEM *data;
     size_t capacity;
     size_t size;
     size_t head;
-}
+};
 
 error_t construct_queue(Queue *queue) {
-    NEW(queue, sizeof(QueueImpl));
+    NEW(queue, sizeof(Queue));
     queue->data = NULL;
     queue->capacity = 0;
     queue->size = 0;
@@ -30,27 +34,27 @@ void destroy_queue(Queue *queue) {
     if (queue && queue->data) queue_clear(queue);
 }
 
-static void reshift(Queue queue) {
+static void reshift(Queue *queue) {
     memmove(queue->data, queue->data + queue->head, queue->size * sizeof(QUEUE_ITEM));
     queue->head = 0;
 }
 
-static error_t resize(Queue queue, size_t capacity) {
+static error_t resize(Queue *queue, size_t capacity) {
     if (capacity == queue->capacity) return 0;
 
     clear_from(queue, capacity);
-    RENEW(queue->data, capacity * sizeof(QUEUE_ITEM));
+    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM), capacity * sizeof(QUEUE_ITEM));
     queue->capacity = capacity;
 
     return 0;
 }
 
-static error_t reserve(Queue queue, size_t capacity) {
+static error_t reserve(Queue *queue, size_t capacity) {
     if (capacity <= queue->capacity) return 0;
     return resize(queue, capacity);
 }
 
-error_t queue_push(Queue queue, QUEUE_ITEM value) {
+error_t queue_push(Queue *queue, QUEUE_ITEM value) {
     if (queue->capacity <= queue->head + queue->size) {
         if (queue->head)
             reshift(queue);
@@ -64,18 +68,20 @@ error_t queue_push(Queue queue, QUEUE_ITEM value) {
     return 0;
 }
 
-void queue_pop(Queue queue) {
+void queue_pop(Queue *queue) {
     QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
     queue->head++;
     queue->size--;
 }
 
-QUEUE_ITEM queue_front(Queue queue) {
+QUEUE_ITEM queue_front(Queue *queue) {
     return queue->data[queue->head];
 }
 
-QUEUE_ITEM queue_back(Queue queue) {
+QUEUE_ITEM queue_back(Queue *queue) {
     return queue->data[queue->head + queue->size];
 }
 
-size_t queue_size(Queue queue) { return queue->size; }
+size_t queue_size(Queue *queue) {
+    return queue->size;
+}
