@@ -3,9 +3,7 @@
 MY_CC="cc"
 ARGS="queue.c memo.c main.c -o main.out -O3 -g"
 
-which cc &> /dev/null
-
-if [[ $? != "0" ]]; then
+if [[ $(which cc &> /dev/null; echo $?) != "0" ]]; then
     echo "I did not find 'cc', so using 'clang' instead"
     MY_CC="clang"
     ARGS="$ARGS -Wno-deprecated-declarations"
