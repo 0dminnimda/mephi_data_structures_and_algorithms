@@ -27,6 +27,8 @@ int main() {
         queue_push(q, x);
     }
 
+    printf("%d %d\n", queue_front(q), queue_back(q));
+
     queue_clear(q);
 
     while (queue_size(q)) {
