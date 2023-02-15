@@ -11,12 +11,12 @@ struct Queue {
     size_t head;
 };
 
-error_t construct_queue(Queue *queue) {
-    NEW(queue, sizeof(Queue));
-    queue->data = NULL;
-    queue->capacity = 0;
-    queue->size = 0;
-    queue->head = 0;
+error_t default_queue(Queue **queue) {
+    NEW(*queue, sizeof(Queue));
+    (*queue)->data = NULL;
+    (*queue)->capacity = 0;
+    (*queue)->size = 0;
+    (*queue)->head = 0;
     return 0;
 }
 

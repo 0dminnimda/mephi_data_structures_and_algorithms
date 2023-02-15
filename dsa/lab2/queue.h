@@ -12,7 +12,7 @@
 
 typedef struct Queue Queue;
 
-error_t construct_queue(Queue *);
+error_t default_queue(Queue **);
 void destroy_queue(Queue *);
 
 void queue_clear(Queue *);
