@@ -11,8 +11,12 @@ if [[ $? != "0" ]]; then
     ARGS="$ARGS -Wno-deprecated-declarations"
 fi
 
+if [[ $1 == "vector" ]]; then
+    ARGS="$ARGS -D QUEUE_IMPL='V'"
+fi
+
 COMMAND="$MY_CC $ARGS"
 
-printf "Running '$COMMAND'\n\n"
+printf "Running \"$COMMAND\"\n\n"
 
 $COMMAND
