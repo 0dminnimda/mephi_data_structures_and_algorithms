@@ -1,13 +1,14 @@
 #include <stdlib.h>
+
 #include "error.h"
 
 #ifndef QUEUE_ITEM
-#   define QUEUE_ITEM int
+#define QUEUE_ITEM int
 // #   error You should define 'QUEUE_ITEM' for Queue to work
 #endif
 
 #ifndef QUEUE_ITEM_DESTRUCTOR
-#   define QUEUE_ITEM_DESTRUCTOR(item)
+#define QUEUE_ITEM_DESTRUCTOR(item)
 #endif
 
 typedef struct Queue Queue;
