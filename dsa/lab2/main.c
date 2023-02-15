@@ -7,6 +7,14 @@ int main() {
     Queue q;
     default_queue(&q);
 
+#if FAILURE_TEST == 1
+    queue_pop(q);
+#elif FAILURE_TEST == 2
+    queue_front(q);
+#elif FAILURE_TEST == 3
+    queue_back(q);
+#endif
+
     while (1) {
         int x;
         scanf("%d", &x);
@@ -27,7 +35,10 @@ int main() {
         queue_push(q, x);
     }
 
-    printf("%d %d\n", queue_front(q), queue_back(q));
+    if (queue_size(q))
+        printf("%d %d\n", queue_front(q), queue_back(q));
+    else
+        printf("empty\n");
 
     queue_clear(q);
 
