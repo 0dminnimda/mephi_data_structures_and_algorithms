@@ -4,7 +4,7 @@
 #include "queue.h"
 
 int main() {
-    Queue *q = NULL;
+    Queue q;
     default_queue(&q);
 
     while (1) {

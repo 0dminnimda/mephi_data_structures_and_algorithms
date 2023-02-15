@@ -11,17 +11,17 @@
 #define QUEUE_ITEM_DESTRUCTOR(item)
 #endif
 
-typedef struct QueueImpl Queue;
+typedef struct QueueImpl *Queue;
 
-error_t default_queue(Queue **);
-void destroy_queue(Queue *);
+error_t default_queue(Queue *);
+void destroy_queue(Queue);
 
-void queue_clear(Queue *);
+void queue_clear(Queue);
 
-error_t queue_push(Queue *, QUEUE_ITEM);
-void queue_pop(Queue *);
+error_t queue_push(Queue, QUEUE_ITEM);
+void queue_pop(Queue);
 
-QUEUE_ITEM queue_front(Queue *);
-QUEUE_ITEM queue_back(Queue *);
+QUEUE_ITEM queue_front(Queue);
+QUEUE_ITEM queue_back(Queue);
 
-size_t queue_size(Queue *);
+size_t queue_size(Queue);
