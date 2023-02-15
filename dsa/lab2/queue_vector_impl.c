@@ -21,7 +21,7 @@ error_t default_queue(Queue *queue) {
 
 static void free_from(Queue queue, size_t index) {
     for (size_t i = index; i < queue->size; i++)
-        QUEUE_ITEM_DESTRUCTOR(queue->data[head + i]);
+        QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head + i]);
     if (queue->size > index) queue->size = index;
 }
 
