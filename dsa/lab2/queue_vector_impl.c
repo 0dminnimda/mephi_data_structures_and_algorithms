@@ -3,7 +3,7 @@
 #include "memo.h"
 #include "queue_decl.h"
 
-struct Queue {
+struct QueueImpl {
     QUEUE_ITEM *data;
     size_t capacity;
     size_t size;
@@ -11,7 +11,7 @@ struct Queue {
 };
 
 error_t default_queue(Queue **queue) {
-    NEW(*queue, sizeof(Queue));
+    NEW(*queue, sizeof(struct QueueImpl));
     (*queue)->data = NULL;
     (*queue)->capacity = 0;
     (*queue)->size = 0;

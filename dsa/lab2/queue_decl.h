@@ -11,7 +11,7 @@
 #define QUEUE_ITEM_DESTRUCTOR(item)
 #endif
 
-typedef struct Queue Queue;
+typedef struct QueueImpl Queue;
 
 error_t default_queue(Queue **);
 void destroy_queue(Queue *);
