@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <string.h>
 
 #include "memo.h"
@@ -72,14 +73,19 @@ error_t queue_push(Queue queue, QUEUE_ITEM value) {
 }
 
 void queue_pop(Queue queue) {
+    assert(queue->size > 0);
     QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
     queue->head++;
     queue->size--;
 }
 
-QUEUE_ITEM queue_front(Queue queue) { return queue->data[queue->head]; }
+QUEUE_ITEM queue_front(Queue queue) {
+    assert(queue->size > 0);
+    return queue->data[queue->head];
+}
 
 QUEUE_ITEM queue_back(Queue queue) {
+    assert(queue->size > 0);
     return queue->data[queue->head + queue->size - 1];
 }
 
