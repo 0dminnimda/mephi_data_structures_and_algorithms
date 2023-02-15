@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "memo.h"
-#include "queue.h"
+#include "queue_decl.h"
 
 struct Queue {
     QUEUE_ITEM *data;
