@@ -22,15 +22,15 @@
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
-#define RENEW_WITH_ERROR(var, prev_size, size, on_error) \
-    POSSIBLY_UNUSED(var);                                \
-    var = nulled_realloc(var, size, prev_size);          \
-    if (size && var == NULL) {                           \
-        on_error;                                        \
+#define RENEW_WITH_ERROR(var, old_size, size, on_error) \
+    POSSIBLY_UNUSED(var);                               \
+    var = nulled_realloc(var, old_size, size);          \
+    if (size && var == NULL) {                          \
+        on_error;                                       \
     }
 
-#define RENEW(var, prev_size, size)            \
-    RENEW_WITH_ERROR(var, prev_size, size, {   \
+#define RENEW(var, old_size, size)             \
+    RENEW_WITH_ERROR(var, old_size, size, {    \
         fprintf(stderr, "Bad reallocation\n"); \
         return (error_t)(-1);                  \
     })
