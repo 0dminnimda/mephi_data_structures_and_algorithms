@@ -11,9 +11,10 @@ fi
 
 if [[ $1 == "vector" ]]; then
     ARGS="$ARGS -D QUEUE_IMPL='V'"
+    shift
 fi
 
-COMMAND="$MY_CC $ARGS"
+COMMAND="$MY_CC $ARGS $@"
 
 printf "Running \"$COMMAND\"\n\n"
 
