@@ -2,26 +2,29 @@
 
 INPUT="10 20 -2345 234 0"
 
-COMMAND="bash build.sh $1 -D TEST -Wno-unused-result"
+BAD_COMP="echo Bad compilation; exit -1"
+BAD_RET="echo Bad return code; exit 1"
+BUILD="bash build.sh $1 -D TEST -Wno-unused-result"
+RUN="./main.out"
 
-$COMMAND &> /dev/null || exit 1
-./main.out <<< "$INPUT $INPUT"
+$BUILD &> /dev/null || $BAD_COMP
+$RUN <<< "$INPUT $INPUT" || $BAD_RET
 echo "------------------------------------------------------------"
 
-$COMMAND &> /dev/null || exit 1
-./main.out <<< $INPUT
+$BUILD &> /dev/null || $BAD_COMP
+$RUN <<< $INPUT || $BAD_RET
 echo "------------------------------------------------------------"
 
-$COMMAND -D FAILURE_TEST=1 &> /dev/null || exit 1
-./main.out
+$BUILD -D FAILURE_TEST=1 &> /dev/null || $BAD_COMP
+$RUN
 echo "------------------------------------------------------------"
 
-$COMMAND -D FAILURE_TEST=1 &> /dev/null || exit 1
-./main.out
+$BUILD -D FAILURE_TEST=2 &> /dev/null || $BAD_COMP
+$RUN
 echo "------------------------------------------------------------"
 
-$COMMAND -D FAILURE_TEST=1 &> /dev/null || exit 1
-./main.out
+$BUILD -D FAILURE_TEST=3 &> /dev/null || $BAD_COMP
+$RUN
 echo "------------------------------------------------------------"
 
 if [[ $1 != "vector" ]]; then
