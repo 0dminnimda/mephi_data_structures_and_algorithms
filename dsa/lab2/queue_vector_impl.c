@@ -1,8 +1,7 @@
 #include <string.h>
 
-#include "queue.h"
 #include "memo.h"
-
+#include "queue.h"
 
 struct Queue {
     QUEUE_ITEM *data;
@@ -26,9 +25,7 @@ static void clear_from(Queue *queue, size_t index) {
     if (queue->size > index) queue->size = index;
 }
 
-void queue_clear(Queue *queue) {
-    clear_from(queue, 0);
-}
+void queue_clear(Queue *queue) { clear_from(queue, 0); }
 
 void destroy_queue(Queue *queue) {
     if (queue && queue->data) queue_clear(queue);
@@ -37,7 +34,8 @@ void destroy_queue(Queue *queue) {
 }
 
 static void reshift(Queue *queue) {
-    memmove(queue->data, queue->data + queue->head, queue->size * sizeof(QUEUE_ITEM));
+    memmove(queue->data, queue->data + queue->head,
+            queue->size * sizeof(QUEUE_ITEM));
     queue->head = 0;
 }
 
@@ -45,7 +43,8 @@ static error_t resize(Queue *queue, size_t capacity) {
     if (capacity == queue->capacity) return 0;
 
     clear_from(queue, capacity);
-    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM), capacity * sizeof(QUEUE_ITEM));
+    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM),
+          capacity * sizeof(QUEUE_ITEM));
     queue->capacity = capacity;
 
     return 0;
@@ -57,12 +56,11 @@ static error_t reserve(Queue *queue, size_t capacity) {
 }
 
 error_t queue_push(Queue *queue, QUEUE_ITEM value) {
-    if (queue->capacity <= queue->head + queue->size) {
+    if (queue->capacity <= queue->head + queue->size)
         if (queue->head)
             reshift(queue);
         else
-            WITH_ERROR(reserve(queue, queue->size * 2 + 1));
-    }
+            WITH_ERROR(resize(queue, queue->size * 2 + 1));
 
     queue->data[queue->head + queue->size] = value;
     queue->size++;
@@ -76,14 +74,10 @@ void queue_pop(Queue *queue) {
     queue->size--;
 }
 
-QUEUE_ITEM queue_front(Queue *queue) {
-    return queue->data[queue->head];
-}
+QUEUE_ITEM queue_front(Queue *queue) { return queue->data[queue->head]; }
 
 QUEUE_ITEM queue_back(Queue *queue) {
-    return queue->data[queue->head + queue->size];
+    return queue->data[queue->head + queue->size - 1];
 }
 
-size_t queue_size(Queue *queue) {
-    return queue->size;
-}
+size_t queue_size(Queue *queue) { return queue->size; }
