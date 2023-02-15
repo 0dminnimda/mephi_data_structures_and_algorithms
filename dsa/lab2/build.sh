@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MY_CC="cc"
-ARGS="main.c -o main.out -O3 -g"
+ARGS="queue.c memo.c main.c -o main.out -O3 -g"
 
 which cc &> /dev/null
 
