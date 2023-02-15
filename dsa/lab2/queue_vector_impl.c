@@ -32,6 +32,8 @@ void queue_clear(Queue *queue) {
 
 void destroy_queue(Queue *queue) {
     if (queue && queue->data) queue_clear(queue);
+    if (queue) free(queue->data);
+    free(queue);
 }
 
 static void reshift(Queue *queue) {
