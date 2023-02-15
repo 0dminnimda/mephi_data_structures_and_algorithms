@@ -19,13 +19,13 @@ error_t default_queue(Queue *queue) {
     return 0;
 }
 
-static void clear_from(Queue queue, size_t index) {
+static void free_from(Queue queue, size_t index) {
     for (size_t i = index; i < queue->size; i++)
         QUEUE_ITEM_DESTRUCTOR(queue->data[head + i]);
     if (queue->size > index) queue->size = index;
 }
 
-void queue_clear(Queue queue) { clear_from(queue, 0); }
+void queue_clear(Queue queue) { free_from(queue, 0); }
 
 void destroy_queue(Queue queue) {
     if (queue && queue->data) queue_clear(queue);
@@ -42,7 +42,7 @@ static void reshift(Queue queue) {
 static error_t resize(Queue queue, size_t capacity) {
     if (capacity == queue->capacity) return 0;
 
-    clear_from(queue, capacity);
+    free_from(queue, capacity);
     RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM),
           capacity * sizeof(QUEUE_ITEM));
     queue->capacity = capacity;
