@@ -1,3 +1,5 @@
+#ifndef TEST
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,3 +13,7 @@ int main() {
 
     destroy_queue(q);
 }
+
+#else  // TEST
+#include "test.c"
+#endif  // TEST
