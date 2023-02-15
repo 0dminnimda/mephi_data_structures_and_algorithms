@@ -13,15 +13,15 @@
 
 typedef struct QueueImpl *Queue;
 
-error_t default_queue(Queue *);
-void destroy_queue(Queue);
+error_t default_queue(Queue *queue);
+void destroy_queue(Queue queue);
 
-void queue_clear(Queue);
+void queue_clear(Queue queue);
 
-error_t queue_push(Queue, QUEUE_ITEM);
-void queue_pop(Queue);
+error_t queue_push(Queue queue, QUEUE_ITEM value);
+void queue_pop(Queue queue);
 
-QUEUE_ITEM queue_front(Queue);
-QUEUE_ITEM queue_back(Queue);
+QUEUE_ITEM queue_front(Queue queue);
+QUEUE_ITEM queue_back(Queue queue);
 
-size_t queue_size(Queue);
+size_t queue_size(Queue queue);
