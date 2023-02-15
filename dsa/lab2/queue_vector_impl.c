@@ -25,7 +25,10 @@ static void free_from(Queue queue, size_t index) {
     if (queue->size > index) queue->size = index;
 }
 
-void queue_clear(Queue queue) { free_from(queue, 0); }
+void queue_clear(Queue queue) {
+    free_from(queue, 0);
+    queue->head = 0;
+}
 
 void destroy_queue(Queue queue) {
     if (queue && queue->data) queue_clear(queue);
