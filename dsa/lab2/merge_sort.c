@@ -8,17 +8,17 @@
 
 typedef int (*comparator)(const void *, const void *);
 
-static void sort(void *ptr, void *buff, size_t len, size_t size,
+static void sort(void *ptr, void *buffer, size_t length, size_t size,
                  comparator comp) {
-    if (len <= 1) return;
+    if (length <= 1) return;
 
-    size_t mid = len / 2;
-    sort(ptr, buff, mid, size, comp);
-    sort(add(ptr, mid), add(buff, mid), len - mid, size, comp);
+    size_t middle = length / 2;
+    sort(ptr, buffer, middle, size, comp);
+    sort(add(ptr, middle), add(buffer, middle), length - middle, size, comp);
 
-    void *lhs = ptr, *lhs_end = add(ptr, mid);
-    void *rhs = lhs_end, *rhs_end = add(ptr, len);
-    void *last = buff;
+    void *lhs = ptr, *lhs_end = add(ptr, middle);
+    void *rhs = lhs_end, *rhs_end = add(ptr, length);
+    void *last = buffer;
 
     while (lhs < lhs_end && rhs < rhs_end) {
         if (comp(lhs, rhs) <= 0) {
@@ -31,9 +31,9 @@ static void sort(void *ptr, void *buff, size_t len, size_t size,
         inc(&last);
     }
 
-    size_t sorted = distance(buff, last);
+    size_t sorted = distance(buffer, last);
     memcpy(add(ptr, sorted), lhs, distance(lhs, lhs_end) * size);
-    memcpy(ptr, buff, sorted * size);
+    memcpy(ptr, buffer, sorted * size);
     // what's left in rhs (if any) is already in ptr, no need to copy it around
 }
 
