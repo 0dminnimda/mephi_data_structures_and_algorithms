@@ -8,38 +8,43 @@
 
 typedef int (*comparator)(const void *, const void *);
 
-static void sort(void *ptr, void *buffer, size_t length, size_t size,
+static void sort(void *data, void *result, size_t length, size_t size,
                  comparator comp) {
     if (length <= 1) return;
 
     size_t middle = length / 2;
-    sort(ptr, buffer, middle, size, comp);
-    sort(add(ptr, middle), add(buffer, middle), length - middle, size, comp);
+    sort(result, data, middle, size, comp);
+    sort(add(result, middle), add(data, middle), length - middle, size, comp);
+    // ⬆ sorts data section given that result contains the copy of the data
 
-    void *lhs = ptr, *lhs_end = add(ptr, middle);
-    void *rhs = lhs_end, *rhs_end = add(ptr, length);
-    void *last = buffer;
+    void *lhs = data, *lhs_end = add(data, middle);
+    void *rhs = lhs_end, *rhs_end = add(data, length);
 
     while (lhs < lhs_end && rhs < rhs_end) {
         if (comp(lhs, rhs) <= 0) {
-            copy(last, lhs);
+            copy(result, lhs);
             inc(&lhs);
         } else {
-            copy(last, rhs);
+            copy(result, rhs);
             inc(&rhs);
         }
-        inc(&last);
+        inc(&result);
     }
 
-    size_t sorted = distance(buffer, last);
-    memcpy(add(ptr, sorted), lhs, distance(lhs, lhs_end) * size);
-    memcpy(ptr, buffer, sorted * size);
-    // what's left in rhs (if any) is already in ptr, no need to copy it around
+    // don't perform a syscall when possible
+    if (lhs != lhs_end)
+        memcpy(result, lhs, distance(lhs, lhs_end) * size);
+    else if (rhs != rhs_end)
+        memcpy(result, rhs, distance(rhs, rhs_end) * size);
+    // sorted elemets are already in result, no need to copy into data
 }
 
 error_t merge_sort(void *ptr, size_t length, size_t size, comparator compare) {
-    void *buffer = NEW(buffer, length * size);
-    sort(ptr, buffer, length, size, compare);
-    free(buffer);
+    void *copy = NEW(copy, length * size);
+    memcpy(copy, ptr, length * size);
+
+    sort(copy, ptr, length, size, compare);
+
+    free(copy);
     return 0;
 }
