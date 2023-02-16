@@ -1,12 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "merge_sort.h"
+
 #include <string.h>
 
-#include "error.h"
 #define SIZE_VAR size
 #include "void_operations.h"
-
-typedef int (*comparator)(const void *, const void *);
 
 static void sort(void *data, void *result, size_t length, size_t size,
                  comparator comp) {
