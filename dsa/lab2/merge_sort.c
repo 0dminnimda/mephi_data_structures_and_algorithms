@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "memo.h"
 #define SIZE_VAR size
 #include "void_operations.h"
 

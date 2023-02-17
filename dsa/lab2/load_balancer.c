@@ -2,6 +2,7 @@
 
 #include <assert.h>
 
+#include "memo.h"
 #include "merge_sort.h"
 
 error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
