@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MY_CC="cc"
-ARGS="queue.c memo.c main.c -o main.out -O3 -g"
+ARGS="input.c merge_sort.c passenger.c load_balancer.c queue.c memo.c main.c -o main.out -O3 -g"
 
 if [[ $(which cc &> /dev/null; echo $?) != "0" ]]; then
     echo "I did not find 'cc', so using 'clang' instead"
