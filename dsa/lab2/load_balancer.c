@@ -1,19 +1,8 @@
+#include "load_balancer.h"
+
 #include <assert.h>
 
 #include "merge_sort.h"
-#include "passenger.h"
-#include "queue.h"
-
-typedef struct {
-    Queue queue;
-    size_t served;
-    size_t uptime;
-} PassengerQueue;
-
-typedef struct {
-    PassengerQueue *queues;
-    size_t queue_count;
-} LoadBalancer;
 
 error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
     lb->queue_count = queue_count;
@@ -33,9 +22,6 @@ void destroy_load_balancer(LoadBalancer *lb) {
     free(lb->queues);
 }
 
-typedef int (*queue_comparator)(const PassengerQueue *a,
-                                const PassengerQueue *b);
-
 size_t choose_queue(LoadBalancer *lb, queue_comparator queue_cmp) {
     assert(lb->queue_count > 0);
     size_t index = 0;
@@ -46,7 +32,8 @@ size_t choose_queue(LoadBalancer *lb, queue_comparator queue_cmp) {
 }
 
 // compare two queues on the strategy "Least Time"
-int least_time_queue_cmp(const PassengerQueue *l, const PassengerQueue *r) {
+static int least_time_queue_cmp(const PassengerQueue *l,
+                                const PassengerQueue *r) {
     // first, choose the queue with the least amount of passengers
     if (queue_size(l->queue) < queue_size(r->queue)) return -1;
     if (queue_size(l->queue) > queue_size(r->queue)) return 1;
