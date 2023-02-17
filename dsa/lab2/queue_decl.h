@@ -1,9 +1,10 @@
 #include <stdlib.h>
 
 #include "error.h"
+#include "passenger.h"
 
 #ifndef QUEUE_ITEM
-#define QUEUE_ITEM int
+#define QUEUE_ITEM Passenger
 // #   error You should define 'QUEUE_ITEM' for Queue to work
 #endif
 
