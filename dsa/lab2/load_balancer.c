@@ -21,12 +21,16 @@ error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
     for (size_t i = 0; i < queue_count; i++) {
         default_queue(lb->queues[i].queue);
         lb->queues[i].served = 0;
+        lb->queues[i].uptime = 0;
     }
     return 0;
 }
 
-error_t default_load_balancer(LoadBalancer *lb, size_t queue_count) {
-    return construct_load_balancer(lb, 0);
+void destroy_load_balancer(LoadBalancer *lb) {
+    if (lb == NULL) return;
+    for (size_t i = 0; i < lb->queue_count; i++)
+        destroy_queue(lb->queues[i].queue);
+    free(lb->queues);
 }
 
 typedef int (*queue_comparator)(const PassengerQueue *a,
