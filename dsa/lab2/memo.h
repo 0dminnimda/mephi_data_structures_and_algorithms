@@ -10,7 +10,7 @@
 #define NEW_WITH_ERROR(var, size, on_error) \
     NULL;                                   \
     var = calloc(size, sizeof(char));       \
-    if (size && var == NULL) {              \
+    if ((size) && var == NULL) {              \
         on_error;                           \
     }
 
@@ -25,7 +25,7 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 #define RENEW_WITH_ERROR(var, old_size, size, on_error) \
     POSSIBLY_UNUSED(var);                               \
     var = nulled_realloc(var, old_size, size);          \
-    if (size && var == NULL) {                          \
+    if ((size) && var == NULL) {                          \
         on_error;                                       \
     }
 
