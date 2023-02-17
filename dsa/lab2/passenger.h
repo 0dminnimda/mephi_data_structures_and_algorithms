@@ -3,12 +3,14 @@
 
 #include <stdlib.h>
 
+#include "error.h"
+
 typedef struct {
     char *name;
     size_t arrival_time;
     size_t service_time;
 } Passenger;
 
-Passenger parse_passenger(const char *string);
+Passenger parse_passenger(char *string);
 
 #endif  // PASSENGER_H_
