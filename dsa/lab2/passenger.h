@@ -1,3 +1,6 @@
+#ifndef PASSENGER_H_
+#define PASSENGER_H_
+
 #include <stdlib.h>
 
 typedef struct {
@@ -7,3 +10,5 @@ typedef struct {
 } Passenger;
 
 Passenger parse_passenger(const char *string);
+
+#endif  // PASSENGER_H_

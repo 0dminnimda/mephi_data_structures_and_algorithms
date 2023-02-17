@@ -1,3 +1,6 @@
+#ifndef LOAD_BALANCER_H_
+#define LOAD_BALANCER_H_
+
 #include <stdlib.h>
 
 #include "passenger.h"
@@ -22,3 +25,5 @@ typedef int (*queue_comparator)(const PassengerQueue *a,
 
 size_t choose_queue(LoadBalancer *lb, queue_comparator queue_cmp);
 size_t choose_least_time_queue(LoadBalancer *lb);
+
+#endif  // LOAD_BALANCER_H_
