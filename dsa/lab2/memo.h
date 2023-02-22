@@ -13,7 +13,7 @@
 #define NEW(var, size) \
     NEW_ON_ERROR(var, size) return MEMORY_ERROR("Bad allocation");
 
-#if PLATFORM == Windows || PLATFORM == Apple || PLATFORM == Unix
+#if IS_PLATFORM(WINDOWS) || IS_PLATFORM(APPLE) || IS_PLATFORM(UNIX)
 size_t memory_size(const void *m);
 #else
 #error Unsupported platform

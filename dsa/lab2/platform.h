@@ -1,47 +1,49 @@
 #include <stdio.h>
 
-typedef enum {
-    Windows,
-    Apple,
-    Unix,
-    Unsupported
-} Platform;
+#define IS_PLATFORM(x) (defined(PLATFORM_ ## x) && (PLATFORM & PLATFORM_ ## x))
+
+#define PLATFORM_UNSUPPORTED 0
+#define PLATFORM_WINDOWS     1 << 0
+#define PLATFORM_APPLE       1 << 1
+#define PLATFORM_UNIX        1 << 2
+#define PLATFORM_HPUX        1 << 3
+#define PLATFORM_AIX         1 << 4
+#define PLATFORM_SOLARIS     1 << 5
 
 #if defined(_WIN32)
-    #define PLATFORM Windows // Windows
+    #define PLATFORM PLATFORM_WINDOWS // Windows
 #elif defined(_WIN64)
-    #define PLATFORM Windows // Windows
+    #define PLATFORM PLATFORM_WINDOWS // Windows
 #elif defined(__CYGWIN__)
-    #define PLATFORM Windows // Windows (Cygwin POSIX under Microsoft Window)
+    #define PLATFORM PLATFORM_WINDOWS // Windows (Cygwin POSIX under Microsoft Window)
 #elif defined(__APPLE__) && defined(__MACH__)
-    // Apple OSX and iOS (Darwin)
-    #include <TargetConditionals.h>
-    #if TARGET_IPHONE_SIMULATOR == 1
-        #define PLATFORM Apple // Apple iOS
-    #elif TARGET_OS_IPHONE == 1
-        #define PLATFORM Apple // Apple iOS
-    #elif TARGET_OS_MAC == 1
-        #define PLATFORM Apple // Apple OSX
-    #else
-        #define PLATFORM Unsupported
-    #endif
+    #define PLATFORM PLATFORM_APPLE  // Apple OSX and iOS (Darwin)
 #elif defined(__ANDROID__)
-    #define PLATFORM Unix // Android (implies Linux, so it must come first)
+    #define PLATFORM PLATFORM_UNIX // Android (implies Linux, so it must come first)
 #elif defined(__linux__)
-    #define PLATFORM Unix // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
+    #define PLATFORM PLATFORM_UNIX // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
 #elif defined(__unix__) || defined(__MACH__)
     #include <sys/param.h>
     #if defined(BSD)
-        #define PLATFORM Unix // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
+        #define PLATFORM PLATFORM_UNIX // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
     #else
-        #define PLATFORM Unsupported
+        #define PLATFORM PLATFORM_UNSUPPORTED
     #endif
 #elif defined(__hpux)
-    #define PLATFORM Unsupported // HP-UX
+    #define PLATFORM PLATFORM_HPUX // HP-UX
 #elif defined(_AIX)
-    #define PLATFORM Unsupported // IBM AIX
+    #define PLATFORM PLATFORM_AIX // IBM AIX
 #elif defined(__sun) && defined(__SVR4)
-    #define PLATFORM Unsupported // Oracle Solaris, Open Indiana
+    #define PLATFORM PLATFORM_SOLARIS // Oracle Solaris, Open Indiana
 #else
-    #define PLATFORM Unsupported
+    #define PLATFORM PLATFORM_UNSUPPORTED
 #endif
+
+/*
+For more platforms look into
+https://web.archive.org/web/20230222233718/https://opensource.apple.com/source/tidy/tidy-5/tidy/include/platform.h.auto.html
+or
+https://web.archive.org/web/20230222233629/https://sourceforge.net/p/predef/wiki/OperatingSystems/
+or
+https://web.archive.org/web/20140625123925/http://nadeausoftware.com/articles/2012/01/c_c_tip_how_use_compiler_predefined_macros_detect_operating_system
+*/

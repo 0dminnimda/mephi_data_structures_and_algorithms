@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if PLATFORM == Windows
+#if IS_PLATFORM(WINDOWS)
 #include <malloc.h>
 size_t memory_size(const void *m) { return _msize((void *)m); }
-#elif PLATFORM == Apple
+#elif IS_PLATFORM(APPLE)
 #include <malloc/malloc.h>
 size_t memory_size(const void *m) { return malloc_size(m); }
-#elif PLATFORM == Unix
+#elif IS_PLATFORM(UNIX)
 #include <malloc.h>
 size_t memory_size(const void *m) { return malloc_usable_size((void *)m); }
 #endif
