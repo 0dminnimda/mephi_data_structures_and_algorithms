@@ -3,7 +3,7 @@
 #include "error.h"
 #include "platform.h"
 
-#define MEMORY_ERROR_TYPE "MemoryError"
+#define MEMORY_ERROR_TYPE MAKE_ERROR_TYPE("MemoryError")
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
 
 #define NEW_ON_ERROR(var, size)         \

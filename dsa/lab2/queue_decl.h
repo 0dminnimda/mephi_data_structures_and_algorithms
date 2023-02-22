@@ -15,7 +15,7 @@
 
 typedef struct QueueImpl *Queue;
 
-#define QUEUE_ERROR_TYPE "QueueError"
+#define QUEUE_ERROR_TYPE MAKE_ERROR_TYPE("QueueError")
 #define QUEUE_ERROR(message) MAKE_ERROR(QUEUE_ERROR_TYPE, message)
 
 Error default_queue(Queue *queue);

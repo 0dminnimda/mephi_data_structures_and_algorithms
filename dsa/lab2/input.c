@@ -5,8 +5,6 @@
 
 #include "error.h"
 
-#define INPUT_ERROR(message) MAKE_ERROR(INPUT_ERROR_TYPE, message)
-
 char *fread_line(FILE *stream) {
     size_t len = 0;
     size_t cap = 0;
