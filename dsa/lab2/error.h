@@ -3,21 +3,21 @@
 #include <string.h>
 
 typedef struct {
-    char *name;
+    char *type;
     char *message;
 } Error;
 
 #define COMPARE_ERRORS(error1, error2) \
-    ((error1.name == error2.name) ? 0 : strcmp(error1.name, error2.name))
+    ((error1.type == error2.type) ? 0 : strcmp(error1.type, error2.type))
 #define ARE_EQUAL_ERRORS(error1, error2) (COMPARE_ERRORS(error1, error2) == 0)
 
-#define IS_ERROR(error) (error.name != NULL)
-#define STRING_OR_EMPTY(str) ((str == NULL) ? "" : str)
-#define MAKE_ERROR(name, message) ((Error){name, STRING_OR_EMPTY(message)})
+#define IS_ERROR(error) (error.type != NULL)
 #define FPRINT_ERROR(stream, error) \
-    fprintf(stream, "%s: %s", error.name, error.message)
+    fprintf(stream, "%s: %s", error.type, error.message)
 
-// Errors
+#define STRING_OR_EMPTY(str) ((str == NULL) ? "" : str)
+#define MAKE_ERROR(type, message) ((Error){type, STRING_OR_EMPTY(message)})
+
 #define NOT_AN_ERROR MAKE_ERROR(NULL, NULL)
 #define OK NOT_AN_ERROR
 
