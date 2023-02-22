@@ -7,7 +7,6 @@
 #include "input.h"
 #include "load_balancer.h"
 #include "queue.h"
-#include "readline.h"
 
 Error sub_main() {
     int queue_count;
@@ -17,7 +16,7 @@ Error sub_main() {
     LoadBalancer lb;
     TRY(construct_load_balancer(&lb, queue_count));
 
-    char *input = readline(NULL);
+    char *input = read_line();
 
     printf("Hello, World!\n");
 
