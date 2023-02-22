@@ -19,16 +19,6 @@ static inline size_t distance(const void *ptr1, const void *ptr2, size_t size) {
     return abs(((char *)ptr1 - (char *)ptr2) / (long long)size);
 }
 
-// static error_t swap_s(void *a, void *b, size_t size) {
-//     char *temp = NEW(temp, size);
-//     if (temp != NULL) {
-//         memmove(temp, a, size);
-//         memmove(a, b, size);
-//         memmove(b, temp, size);
-//     }
-//     free(temp);
-// }
-
 static inline void swap(void *ptr1, void *ptr2, size_t size) {
     char *lhs = (char *)ptr1, *rhs = (char *)ptr2;
     while (size--) {
