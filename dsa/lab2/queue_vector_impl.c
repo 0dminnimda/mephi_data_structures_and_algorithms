@@ -27,8 +27,7 @@ static Error resize(Queue queue, size_t capacity) {
     if (capacity == queue->capacity) return OK;
 
     free_from(queue, capacity);
-    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM),
-          capacity * sizeof(QUEUE_ITEM));
+    RENEW(queue->data, capacity * sizeof(QUEUE_ITEM));
     queue->capacity = capacity;
 
     return OK;
