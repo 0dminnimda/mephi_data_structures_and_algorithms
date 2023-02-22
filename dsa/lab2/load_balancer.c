@@ -4,7 +4,7 @@
 
 #include "memo.h"
 
-error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
+Error construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
     lb->queue_count = queue_count;
     NEW(lb->queues, queue_count * sizeof(PassengerQueue));
     for (size_t i = 0; i < queue_count; i++) {
@@ -12,7 +12,7 @@ error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
         lb->queues[i].served = 0;
         lb->queues[i].uptime = 0;
     }
-    return 0;
+    return OK;
 }
 
 void destroy_load_balancer(LoadBalancer *lb) {

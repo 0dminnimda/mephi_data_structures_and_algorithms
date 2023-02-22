@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "error.h"
 #include "passenger.h"
 #include "queue.h"
 
@@ -17,7 +18,7 @@ typedef struct {
     size_t queue_count;
 } LoadBalancer;
 
-error_t construct_load_balancer(LoadBalancer *lb, size_t queue_count);
+Error construct_load_balancer(LoadBalancer *lb, size_t queue_count);
 void destroy_load_balancer(LoadBalancer *lb);
 
 typedef int (*queue_comparator)(const PassengerQueue *a,

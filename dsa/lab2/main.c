@@ -4,19 +4,31 @@
 #include <stdlib.h>
 
 #include "error.h"
-#include "queue.h"
+#include "input.h"
 #include "load_balancer.h"
+#include "queue.h"
+#include "readline.h"
 
-int main() {
-    size_t queue_count;
-    scanf("%zu", &queue_count);
+Error sub_main() {
+    int queue_count;
+    if (get_non_negative_int("", &queue_count))
+        return MAKE_ERROR("InputError", "Not a non-negative integer");
 
     LoadBalancer lb;
-    WITH_ERROR(construct_load_balancer(&lb, queue_count));
+    TRY(construct_load_balancer(&lb, queue_count));
+
+    char *input = readline(NULL);
 
     printf("Hello, World!\n");
 
     destroy_load_balancer(&lb);
+
+    return OK;
+}
+
+int main() {
+    THROW_ERRORS(sub_main());
+    return 0;
 }
 
 #else  // TEST

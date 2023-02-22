@@ -2,17 +2,17 @@
 
 #include "error.h"
 
+#define MEMORY_ERROR_TYPE "MemoryError"
+#define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
+
 #define NEW_WITH_ERROR(var, size, on_error) \
     (var = calloc(size, sizeof(char)));     \
     if ((size) && var == NULL) {            \
         on_error;                           \
     }
 
-#define NEW(var, size)                       \
-    NEW_WITH_ERROR(var, size, {              \
-        fprintf(stderr, "Bad allocation\n"); \
-        return (error_t)(-1);                \
-    })
+#define NEW(var, size) \
+    NEW_WITH_ERROR(var, size, return MEMORY_ERROR("Bad allocation");)
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
@@ -22,8 +22,6 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
         on_error;                                       \
     }
 
-#define RENEW(var, old_size, size)             \
-    RENEW_WITH_ERROR(var, old_size, size, {    \
-        fprintf(stderr, "Bad reallocation\n"); \
-        return (error_t)(-1);                  \
-    })
+#define RENEW(var, old_size, size)        \
+    RENEW_WITH_ERROR(var, old_size, size, \
+                     return MEMORY_ERROR("Bad reallocation");)

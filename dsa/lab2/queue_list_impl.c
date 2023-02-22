@@ -14,12 +14,17 @@ struct QueueImpl {
     size_t size;
 };
 
-error_t default_queue(Queue *queue) {
+Error default_queue(Queue *queue) {
     NEW(*queue, sizeof(struct QueueImpl));
     (*queue)->head = NULL;
     (*queue)->tail = NULL;
     (*queue)->size = 0;
-    return 0;
+    return OK;
+}
+
+Error construct_queue(Queue *queue, size_t size) {
+    TRY(default_queue(queue));
+    return OK;
 }
 
 void queue_clear(Queue queue) {
@@ -32,7 +37,7 @@ void destroy_queue(Queue queue) {
     free(queue);
 }
 
-error_t queue_push(Queue queue, QUEUE_ITEM value) {
+Error queue_push(Queue queue, QUEUE_ITEM value) {
     QueueNode *node = NEW(node, sizeof(QueueNode));
     node->value = value;
     node->next = NULL;
@@ -42,10 +47,10 @@ error_t queue_push(Queue queue, QUEUE_ITEM value) {
         queue->tail->next = node;
     queue->tail = node;
     queue->size++;
-    return 0;
+    return OK;
 }
 
-void queue_pop(Queue queue) {
+Error queue_pop(Queue queue) {
     assert(queue->size > 0);
     QueueNode *head = queue->head;
     queue->head = queue->head->next;
@@ -65,4 +70,4 @@ QUEUE_ITEM queue_back(Queue queue) {
     return queue->tail->value;
 }
 
-size_t queue_size(Queue queue) { return queue->size; }
+bool queue_is_empty(Queue queue) { return (bool)queue->size; }

@@ -11,19 +11,47 @@ struct QueueImpl {
     size_t head;
 };
 
-error_t default_queue(Queue *queue) {
+static void free_from(Queue queue, size_t index) {
+    for (size_t i = index; i < queue->size; i++)
+        QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head + i]);
+    if (queue->size > index) queue->size = index;
+}
+
+static void reshift(Queue queue) {
+    memmove(queue->data, queue->data + queue->head,
+            queue->size * sizeof(QUEUE_ITEM));
+    queue->head = 0;
+}
+
+static Error resize(Queue queue, size_t capacity) {
+    if (capacity == queue->capacity) return OK;
+
+    free_from(queue, capacity);
+    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM),
+          capacity * sizeof(QUEUE_ITEM));
+    queue->capacity = capacity;
+
+    return OK;
+}
+
+static Error reserve(Queue queue, size_t capacity) {
+    if (capacity <= queue->capacity) return OK;
+    return resize(queue, capacity);
+}
+
+Error default_queue(Queue *queue) {
     NEW(*queue, sizeof(struct QueueImpl));
     (*queue)->data = NULL;
     (*queue)->capacity = 0;
     (*queue)->size = 0;
     (*queue)->head = 0;
-    return 0;
+    return OK;
 }
 
-static void free_from(Queue queue, size_t index) {
-    for (size_t i = index; i < queue->size; i++)
-        QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head + i]);
-    if (queue->size > index) queue->size = index;
+Error construct_queue(Queue *queue, size_t size) {
+    TRY(default_queue(queue));
+    TRY(resize(*queue, size));
+    return OK;
 }
 
 void queue_clear(Queue queue) {
@@ -37,39 +65,17 @@ void destroy_queue(Queue queue) {
     free(queue);
 }
 
-static void reshift(Queue queue) {
-    memmove(queue->data, queue->data + queue->head,
-            queue->size * sizeof(QUEUE_ITEM));
-    queue->head = 0;
-}
-
-static error_t resize(Queue queue, size_t capacity) {
-    if (capacity == queue->capacity) return 0;
-
-    free_from(queue, capacity);
-    RENEW(queue->data, queue->capacity * sizeof(QUEUE_ITEM),
-          capacity * sizeof(QUEUE_ITEM));
-    queue->capacity = capacity;
-
-    return 0;
-}
-
-static error_t reserve(Queue queue, size_t capacity) {
-    if (capacity <= queue->capacity) return 0;
-    return resize(queue, capacity);
-}
-
-error_t queue_push(Queue queue, QUEUE_ITEM value) {
+Error queue_push(Queue queue, QUEUE_ITEM value) {
     if (queue->capacity <= queue->head + queue->size)
         if (queue->head)
             reshift(queue);
         else
-            WITH_ERROR(resize(queue, queue->size * 2 + 1));
+            return QUEUE_ERROR("Ran out of memory");
 
     queue->data[queue->head + queue->size] = value;
     queue->size++;
 
-    return 0;
+    return OK;
 }
 
 void queue_pop(Queue queue) {

@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "error.h"
@@ -14,15 +15,15 @@
 
 typedef struct QueueImpl *Queue;
 
-error_t default_queue(Queue *queue);
+#define QUEUE_ERROR_TYPE "QueueError"
+#define QUEUE_ERROR(message) MAKE_ERROR(QUEUE_ERROR_TYPE, message)
+
+Error default_queue(Queue *queue);
+Error construct_queue(Queue *queue, size_t size);
 void destroy_queue(Queue queue);
 
+bool queue_is_empty(Queue queue);
 void queue_clear(Queue queue);
 
-error_t queue_push(Queue queue, QUEUE_ITEM value);
-void queue_pop(Queue queue);
-
-QUEUE_ITEM queue_front(Queue queue);
-QUEUE_ITEM queue_back(Queue queue);
-
-size_t queue_size(Queue queue);
+Error queue_push(Queue queue, QUEUE_ITEM value);
+Error queue_pop(Queue queue, QUEUE_ITEM *value);
