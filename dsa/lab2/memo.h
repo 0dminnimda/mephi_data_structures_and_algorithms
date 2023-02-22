@@ -6,14 +6,12 @@
 #define MEMORY_ERROR_TYPE "MemoryError"
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
 
-#define NEW_WITH_ERROR(var, size, on_error) \
-    (var = calloc(size, sizeof(char)));     \
-    if ((size) && var == NULL) {            \
-        on_error;                           \
-    }
+#define NEW_ON_ERROR(var, size)         \
+    (var = calloc(size, sizeof(char))); \
+    if ((size) && var == NULL)
 
 #define NEW(var, size) \
-    NEW_WITH_ERROR(var, size, return MEMORY_ERROR("Bad allocation");)
+    NEW_ON_ERROR(var, size) return MEMORY_ERROR("Bad allocation");
 
 #if PLATFORM == Windows || PLATFORM == Apple || PLATFORM == Unix
 size_t memory_size(const void *m);
@@ -23,11 +21,9 @@ size_t memory_size(const void *m);
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
-#define RENEW_WITH_ERROR(var, size, on_error)            \
+#define RENEW_ON_ERROR(var, size)                        \
     (var = nulled_realloc(var, memory_size(var), size)); \
-    if ((size) && var == NULL) {                         \
-        on_error;                                        \
-    }
+    if ((size) && var == NULL)
 
 #define RENEW(var, size) \
-    RENEW_WITH_ERROR(var, size, return MEMORY_ERROR("Bad reallocation");)
+    RENEW_ON_ERROR(var, size) return MEMORY_ERROR("Bad reallocation");
