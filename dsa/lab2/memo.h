@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "error.h"
+#include "platform.h"
 
 #define MEMORY_ERROR_TYPE "MemoryError"
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
@@ -13,6 +14,12 @@
 
 #define NEW(var, size) \
     NEW_WITH_ERROR(var, size, return MEMORY_ERROR("Bad allocation");)
+
+#if PLATFORM == Windows || PLATFORM == Apple || PLATFORM == Unix
+size_t memory_size(const void *m);
+#else
+#error Unsupported platform
+#endif
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
