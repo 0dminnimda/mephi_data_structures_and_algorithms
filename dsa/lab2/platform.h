@@ -9,14 +9,14 @@
 #define PLATFORM_WINDOWS_64  1 << 2 | PLATFORM_WINDOWS
 #define PLATFORM_CYGWIN      1 << 3 | PLATFORM_WINDOWS
 
-#define PLATFORM_APPLE       1 << 10
+#define PLATFORM_UNIX        1 << 10
+#define PLATFORM_LINUX       1 << 11 | PLATFORM_UNIX
+#define PLATFORM_BSD         1 << 12 | PLATFORM_UNIX
+#define PLATFORM_HPUX        1 << 13 | PLATFORM_UNIX
+#define PLATFORM_AIX         1 << 14 | PLATFORM_UNIX
+#define PLATFORM_SOLARIS     1 << 15 | PLATFORM_UNIX
 
-#define PLATFORM_UNIX        1 << 20
-#define PLATFORM_LINUX       1 << 21 | PLATFORM_UNIX
-#define PLATFORM_BSD         1 << 22 | PLATFORM_UNIX
-#define PLATFORM_HPUX        1 << 23 | PLATFORM_UNIX
-#define PLATFORM_AIX         1 << 24 | PLATFORM_UNIX
-#define PLATFORM_SOLARIS     1 << 25 | PLATFORM_UNIX
+#define PLATFORM_APPLE       1 << 20 | PLATFORM_BSD
 
 #if defined(_WIN64)
     // Windows 64-bit
@@ -29,7 +29,7 @@
 #elif defined(__CYGWIN__)
     // Windows (Cygwin POSIX under Microsoft Window)
     #define PLATFORM_NAME "Cygwin"
-    #define PLATFORM PLATFORM_WINDOWS
+    #define PLATFORM PLATFORM_CYGWIN
 #elif defined(__APPLE__) && defined(__MACH__)
     // Apple OSX and iOS (Darwin)
     #include <TargetConditionals.h>
