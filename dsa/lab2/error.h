@@ -1,3 +1,6 @@
+#ifndef ERROR_H_
+#define ERROR_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,3 +43,5 @@ typedef struct {
     })
 
 #define CALL(func, ...) WITH_ERROR(func(__VA_ARGS__))
+
+#endif  // ERROR_H_
