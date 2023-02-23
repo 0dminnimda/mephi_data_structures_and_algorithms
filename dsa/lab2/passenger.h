@@ -11,6 +11,6 @@ typedef struct {
     size_t service_time;
 } Passenger;
 
-Passenger parse_passenger(char *string);
+Error parse_passenger(char **str, Passenger *passenger);
 
 #endif  // PASSENGER_H_
