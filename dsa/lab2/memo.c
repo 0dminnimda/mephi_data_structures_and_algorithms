@@ -9,7 +9,7 @@ size_t memory_size(const void *m) { return _msize((void *)m); }
 #elif IS_PLATFORM(APPLE)
 #include <malloc/malloc.h>
 size_t memory_size(const void *m) { return malloc_size(m); }
-#elif IS_PLATFORM(UNIX)
+#elif IS_PLATFORM(LINUX)
 #include <malloc.h>
 size_t memory_size(const void *m) { return malloc_usable_size((void *)m); }
 #endif
