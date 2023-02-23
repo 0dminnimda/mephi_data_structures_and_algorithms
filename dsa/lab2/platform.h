@@ -1,8 +1,9 @@
 #include <stdio.h>
 
 #define IS_PLATFORM(x) (defined(PLATFORM_ ## x) && (PLATFORM & PLATFORM_ ## x))
+#define IS_UNSUPPORTED_PLATFORM (PLATFORM == UNSUPPORTED_PLATFORM)
 
-#define PLATFORM_UNSUPPORTED 0
+#define UNSUPPORTED_PLATFORM 0
 
 #define PLATFORM_WINDOWS     1 << 0
 #define PLATFORM_WINDOWS_32  1 << 1 | PLATFORM_WINDOWS
@@ -78,7 +79,7 @@
     #define PLATFORM PLATFORM_SOLARIS
 #else
     #define PLATFORM_NAME "Unsupported Platform"
-    #define PLATFORM PLATFORM_UNSUPPORTED
+    #define PLATFORM UNSUPPORTED_PLATFORM
 #endif
 
 
