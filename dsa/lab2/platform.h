@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define IS_PLATFORM(x) (defined(PLATFORM_ ## x) && (PLATFORM & PLATFORM_ ## x))
+#define IS_PLATFORM(x) ((PLATFORM_ ## x) && ((PLATFORM) & (PLATFORM_ ## x)))
 #define IS_UNSUPPORTED_PLATFORM (PLATFORM == UNSUPPORTED_PLATFORM)
 
 #define UNSUPPORTED_PLATFORM 0
