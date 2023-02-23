@@ -27,3 +27,9 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
 #define RENEW(var, size) \
     RENEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad reallocation");
+
+#define DELETE(x) free(x)
+
+void **delete_n_return(void **ptr);
+#define DELETE_INPLACE(x) *delete_n_return((void **)&x)
+// DELETE_INPLACE returns a pointer and is a valid lvalue

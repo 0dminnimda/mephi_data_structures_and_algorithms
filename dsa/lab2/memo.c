@@ -20,3 +20,8 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size) {
         memset((char *)ptr + old_size, 0, new_size - old_size);
     return ptr;
 }
+
+inline void **delete_n_return(void **ptr) {
+    DELETE((void*)*ptr);
+    return ptr;
+}
