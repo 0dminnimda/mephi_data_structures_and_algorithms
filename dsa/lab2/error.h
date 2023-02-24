@@ -10,9 +10,10 @@ typedef struct {
     char *message;
 } Error;
 
-#define COMPARE_ERRORS(error1, error2) \
-    ((error1.type == error2.type) ? 0 : strcmp(error1.type, error2.type))
-#define ARE_EQUAL_ERRORS(error1, error2) (COMPARE_ERRORS(error1, error2) == 0)
+#define COMPARE_ERRORS(error_type1, error_type2) \
+    ((error_type1 == error_type2) ? 0 : strcmp(error_type1, error_type2))
+#define ARE_EQUAL_ERRORS(error_type1, error_type2) \
+    (COMPARE_ERRORS(error_type1, error_type2) == 0)
 
 #define IS_ERROR(error) (error.type != NULL)
 #define FPRINT_ERROR(stream, error) \
@@ -47,7 +48,7 @@ typedef struct {
         if (UNIQUE(error_i)-- == 0) THROW(error);
 
 #define CATCH_IF(condition) else if ((condition) && (UNIQUE(error_i) = 2))
-#define CATCH(target_error) CATCH_IF(ARE_EQUAL_ERRORS(error, target_error))
+#define CATCH(error_type) CATCH_IF(ARE_EQUAL_ERRORS(error.type, error_type))
 #define CATCH_ALL else
 #define CATCH_N_THROW CATCH_ALL THROW(error)
 
