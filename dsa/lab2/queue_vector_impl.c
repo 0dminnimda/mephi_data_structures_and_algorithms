@@ -48,8 +48,8 @@ Error default_queue(Queue *queue) {
 }
 
 Error construct_queue(Queue *queue, size_t size) {
-    TRY(default_queue(queue));
-    TRY(resize(*queue, size));
+    AUTO_TRY(default_queue(queue));
+    AUTO_TRY(resize(*queue, size));
     return OK;
 }
 

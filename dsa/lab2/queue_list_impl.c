@@ -23,7 +23,7 @@ Error default_queue(Queue *queue) {
 }
 
 Error construct_queue(Queue *queue, size_t size) {
-    TRY(default_queue(queue));
+    AUTO_TRY(default_queue(queue));
     return OK;
 }
 
