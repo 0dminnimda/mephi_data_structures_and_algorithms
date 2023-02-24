@@ -51,7 +51,8 @@ Error queue_push(Queue queue, QUEUE_ITEM value) {
 }
 
 Error queue_pop(Queue queue) {
-    assert(queue->size > 0);
+    if (queue->size <= 0)
+        return QUEUE_ERROR("U stupid, queue is empty");
     QueueNode *head = queue->head;
     queue->head = queue->head->next;
     QUEUE_ITEM_DESTRUCTOR(head->value);

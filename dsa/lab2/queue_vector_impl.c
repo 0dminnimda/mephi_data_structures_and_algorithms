@@ -77,8 +77,9 @@ Error queue_push(Queue queue, QUEUE_ITEM value) {
     return OK;
 }
 
-void queue_pop(Queue queue) {
-    assert(queue->size > 0);
+Error queue_pop(Queue queue) {
+    if (queue->size <= 0)
+        return QUEUE_ERROR("U stupid, queue is empty");
     QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
     queue->head++;
     queue->size--;
