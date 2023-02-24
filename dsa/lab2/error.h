@@ -31,7 +31,8 @@ typedef struct {
 #define VALUE_ERROR(message) MAKE_ERROR(VALUE_ERROR_TYPE, message)
 
 // Error handling
-#define THROW(error) return error;
+#define THROW(error) \
+    { return error; }
 
 #define UNIQUE(name) m__unique__variable__name__0123456789__##name##__
 
@@ -45,7 +46,7 @@ typedef struct {
 #define TRY(expr)                                        \
     BASE_TRY(expr)                                       \
     for (int UNIQUE(error_i) = 1; UNIQUE(error_i) != 2;) \
-        if (UNIQUE(error_i)-- == 0) THROW(error);
+        if (UNIQUE(error_i)-- == 0) THROW(error)
 
 #define CATCH_IF(condition) else if ((condition) && (UNIQUE(error_i) = 2))
 #define CATCH(error_type) CATCH_IF(ARE_EQUAL_ERRORS(error.type, error_type))
