@@ -29,7 +29,7 @@ int main() {
     Error error;
     TRY(sub_main())
     CATCH_ALL {
-        FPRINT_ERROR(stderr, error);
+        FPRINT_VERBOSE_ERROR(stderr, error);
         return -1;
     }
     return 0;
