@@ -4,7 +4,7 @@
 #include "error.h"
 #include "queue_decl.h"
 
-#define default_queue(queue) WITH_ERROR(default_queue(queue))
-#define queue_push(queue, value) WITH_ERROR(queue_push(queue, value))
+#define default_queue(queue) TRY(default_queue(queue))
+#define queue_push(queue, value) TRY(queue_push(queue, value))
 
 #endif  // QUEUE_H_
