@@ -10,6 +10,7 @@ typedef char *ErrorType;
 typedef struct {
     ErrorType type;
     char *message;
+    char *line;
 } Error;
 
 static inline int error_eq(ErrorType type1, ErrorType type2) {
@@ -29,8 +30,18 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
     fprintf(stream, "%s: %s\n", STRING_OR_DEFAULT((error).type, "Error"), \
             STRING_OR_EMPTY((error).message))
 
+#define FPRINT_VERBOSE_ERROR(stream, error) \
+    printf("\n");                           \
+    FPRINT_ERROR(stream, error);            \
+    printf("The error occurred at ./%s\n", error.line);
+
+#define STR(x) #x
+#define STR_EXPAND(x) STR(x)
+
+#define CURRENT_LINE (__FILE__ ":" STR_EXPAND(__LINE__))
+
 #define MAKE_ERROR_TYPE(type) ((ErrorType)(type))
-#define MAKE_ERROR(type, message) ((Error){(type), (message)})
+#define MAKE_ERROR(type, message) ((Error){(type), (message), CURRENT_LINE})
 
 // Errors
 #define NOT_AN_ERROR MAKE_ERROR(NULL, NULL)
