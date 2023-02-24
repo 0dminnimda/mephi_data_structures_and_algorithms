@@ -20,8 +20,17 @@ Error sub_main() {
     return OK;
 }
 
+Error throw() {
+    THROW(MAKE_ERROR("FuckError", "Fuck you!"));
+}
+
 int main() {
     NO_THROW_TRY(sub_main())
+    CATCH_ALL {                 
+        FPRINT_ERROR(stderr, error);
+    }
+
+    NO_THROW_TRY(throw())
     CATCH_ALL {                 
         FPRINT_ERROR(stderr, error);
     }
