@@ -3,8 +3,9 @@
 #include <errno.h>
 #include <string.h>
 
-#include "input.h"
+#include "error.h"
 #include "memo.h"
+#include "string.h"
 
 // parses passenger in a format "name/arrival_time/service_time"
 // and returns an Error if the format is invalid)
@@ -16,21 +17,21 @@ Error parse_passenger(char **str, Passenger *passenger) {
 
     char *name = *str = *str + strspn(*str, " ");
 
-    char *arrival_time = strchr(*str, '/');
-    if (arrival_time++ == NULL) return INPUT_ERROR("No arrival time specified");
+    char *arrival_time = *str = strchr(*str, '/');
+    if (arrival_time++ == NULL) return VALUE_ERROR("No arrival time specified");
 
-    char *service_time = strchr(arrival_time, '/');
-    if (service_time++ == NULL) return INPUT_ERROR("No service time specified");
+    TRY(parse_ulong(str, &p.arrival_time))
+    CATCH(VALUE_ERROR_TYPE)
+        return VALUE_ERROR("Arrival time is not a valid non-negative number");
+    CATCH_N_THROW
 
-    p.arrival_time = strtol(arrival_time, str, 10);
-    if (p.arrival_time < 0 || *str == arrival_time || errno != 0) {
-        return INPUT_ERROR("Arrival time is not a valid non-negative number");
-    }
+    char *service_time = *str = strchr(*str, '/');
+    if (service_time++ == NULL) return VALUE_ERROR("No service time specified");
 
-    p.service_time = strtol(service_time, str, 10);
-    if (p.service_time < 0 || *str == service_time || errno != 0) {
-        return INPUT_ERROR("Service time is not a valid non-negative number");
-    }
+    TRY(parse_ulong(str, &p.service_time))
+    CATCH(VALUE_ERROR_TYPE)
+        return VALUE_ERROR("Service time is not a valid non-negative number");
+    CATCH_N_THROW
 
     NEW(p.name, arrival_time - name);
     strncpy(p.name, name, arrival_time - name);
