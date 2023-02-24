@@ -13,10 +13,11 @@ typedef struct {
     char *line;
 } Error;
 
+// Comparison
 static inline int error_eq(ErrorType type1, ErrorType type2) {
     if (type1 == type2) return 1;
     if (type1 == NULL || type2 == NULL) return 0;
-    return strcmp(type1, type2);
+    return strcmp(type1, type2) == 0;
 }
 
 #define ARE_EQUAL_ERRORS(error_type1, error_type2) \
@@ -24,6 +25,7 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
 
 #define IS_ERROR(error) ((error).type != NULL)
 
+// Print
 #define STRING_OR_DEFAULT(str, default) (((str) == NULL) ? default : str)
 #define STRING_OR_EMPTY(str) STRING_OR_DEFAULT(str, "")
 #define FPRINT_ERROR(stream, error)                                       \
@@ -35,6 +37,7 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
     FPRINT_ERROR(stream, error);            \
     printf("The error occurred at ./%s\n", error.line);
 
+// Creation
 #define STR(x) #x
 #define STR_EXPAND(x) STR(x)
 
@@ -43,7 +46,7 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
 #define MAKE_ERROR_TYPE(type) ((ErrorType)(type))
 #define MAKE_ERROR(type, message) ((Error){(type), (message), CURRENT_LINE})
 
-// Errors
+// Standard Errors
 #define NOT_AN_ERROR MAKE_ERROR(NULL, NULL)
 #define OK NOT_AN_ERROR
 
