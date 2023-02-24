@@ -21,6 +21,9 @@ Error sub_main() {
 }
 
 int main() {
-    THROW_ERRORS(sub_main());
+    NO_THROW_TRY(sub_main())
+    CATCH_ALL {                 
+        FPRINT_ERROR(stderr, error);
+    }
     return 0;
 }

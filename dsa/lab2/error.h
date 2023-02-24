@@ -30,12 +30,6 @@ typedef struct {
 #define VALUE_ERROR(message) MAKE_ERROR(VALUE_ERROR_TYPE, message)
 
 // Error handling
-#define THROW_ERRORS(expr)           \
-    ON_ERROR(expr, {                 \
-        FPRINT_ERROR(stderr, error); \
-        return -1;                   \
-    })
-
 #define THROW(error) return error;
 
 #define UNIQUE(name) m__unique__variable__name__0123456789__##name##__
