@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "error.h"
 #include "input.h"
@@ -10,6 +11,14 @@
 #include "passenger.h"
 #include "queue.h"
 #include "string.h"
+
+void point_on_error(char *current, char *line) {
+    printf("\n%s\n", line);
+    for (size_t i = 0; i < current - line; i++) printf(" ");
+    printf("^\n");
+    for (size_t i = 0; i < current - line; i++) printf(" ");
+    printf("The wrong part\n");
+}
 
 Error sub_main() {
     Error error = OK;
@@ -30,16 +39,16 @@ Error sub_main() {
     AUTO_TRY(construct_load_balancer(&lb, queue_count));
 
     while (1) {
+        cur += strspn(cur, " ");
+        if (*cur == '\0') break;
+
         Passenger passenger = {0};
         TRY(parse_passenger(&cur, &passenger))
-        CATCH_ALL {
-            // printf("\n%s\n", line);
-            for (size_t i = 0; i < cur - line; i++) printf(" ");
-            printf("^\n");
-            for (size_t i = 0; i < cur - line; i++) printf(" ");
-            printf("The wrong part\n");
+        CATCH(PARSE_ERROR_TYPE) {
+            point_on_error(cur, line);
             break;
         }
+        CATCH_ALL break;
 
         fprint_passenger(stdout, &passenger), printf("\n");
 
