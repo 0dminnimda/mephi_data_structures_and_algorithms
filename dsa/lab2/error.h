@@ -72,4 +72,9 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
 #define CATCH_ALL else if (1)
 #define CATCH_N_THROW CATCH_ALL THROW(error)
 
+// #define CALL(...) \
+//     (m_error_state, __VA_ARGS__);  if (IS_ERROR(error)) { on_error; }
+// #define CALL_HELPER(...) (__VA_ARGS__) )
+// #define TRY_CALL(func) TRY( CALL_HELPER
+
 #endif  // ERROR_H_
