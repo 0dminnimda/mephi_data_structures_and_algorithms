@@ -15,16 +15,16 @@ typedef struct {
 #define ARE_EQUAL_ERRORS(error_type1, error_type2) \
     (COMPARE_ERRORS(error_type1, error_type2) == 0)
 
-#define IS_ERROR(error) (error.type != NULL)
+#define IS_ERROR(error) ((error).type != NULL)
 
-#define STRING_OR_DEFAULT(str, default) ((str == NULL) ? default : str)
+#define STRING_OR_DEFAULT(str, default) (((str) == NULL) ? default : str)
 #define STRING_OR_EMPTY(str) STRING_OR_DEFAULT(str, "")
-#define FPRINT_ERROR(stream, error)                                     \
-    fprintf(stream, "%s: %s\n", STRING_OR_DEFAULT(error.type, "Error"), \
-            STRING_OR_EMPTY(error.message))
+#define FPRINT_ERROR(stream, error)                                       \
+    fprintf(stream, "%s: %s\n", STRING_OR_DEFAULT((error).type, "Error"), \
+            STRING_OR_EMPTY((error).message))
 
-#define MAKE_ERROR_TYPE(type) ((char *)type)
-#define MAKE_ERROR(type, message) ((Error){type, message})
+#define MAKE_ERROR_TYPE(type) ((ErrorType)(type))
+#define MAKE_ERROR(type, message) ((Error){(type), (message)})
 
 // Errors
 #define NOT_AN_ERROR MAKE_ERROR(NULL, NULL)
