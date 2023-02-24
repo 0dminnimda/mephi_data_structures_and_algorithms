@@ -17,16 +17,18 @@ Error parse_passenger(char **str, Passenger *passenger) {
 
     char *name = *str = *str + strspn(*str, " ");
 
-    char *arrival_time = *str = strchr(*str, '/');
-    if (arrival_time++ == NULL) return VALUE_ERROR("No arrival time specified");
+    char *arrival_time = strchr(*str, '/');
+    if (arrival_time++ == NULL) return PARSE_ERROR("No arrival time specified");
+    *str = arrival_time;
 
     TRY(parse_ulong(str, &p.arrival_time))
     CATCH(VALUE_ERROR_TYPE)
         return VALUE_ERROR("Arrival time is not a valid non-negative number");
     CATCH_N_THROW
 
-    char *service_time = *str = strchr(*str, '/');
-    if (service_time++ == NULL) return VALUE_ERROR("No service time specified");
+    char *service_time = strchr(*str, '/');
+    if (service_time++ == NULL) return PARSE_ERROR("No service time specified");
+    *str = service_time;
 
     TRY(parse_ulong(str, &p.service_time))
     CATCH(VALUE_ERROR_TYPE)
