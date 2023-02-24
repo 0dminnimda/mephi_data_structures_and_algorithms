@@ -38,9 +38,12 @@ static int least_time_queue_cmp(const PassengerQueue *l,
     if (queue_size(l->queue) < queue_size(r->queue)) return -1;
     if (queue_size(l->queue) > queue_size(r->queue)) return 1;
 
+    size_t l_score = (l->served == 0)? 0 : l->uptime / l->served;
+    size_t r_score = (r->served == 0)? 0 : r->uptime / r->served;
+
     // second, choose the queue with the smaller average service time
-    if (l->uptime / l->served < r->uptime / r->served) return -1;
-    if (l->uptime / l->served > r->uptime / r->served) return 1;
+    if (l_score < r_score) return -1;
+    if (l_score > r_score) return 1;
 
     return 0;
 }
