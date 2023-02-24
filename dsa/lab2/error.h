@@ -16,7 +16,7 @@ typedef struct {
 
 #define IS_ERROR(error) (error.type != NULL)
 #define FPRINT_ERROR(stream, error) \
-    fprintf(stream, "%s: %s", error.type, error.message)
+    fprintf(stream, "%s: %s\n", error.type, error.message)
 
 #define STRING_OR_EMPTY(str) ((str == NULL) ? "" : str)
 #define MAKE_ERROR_TYPE(type) ((char *)type)
