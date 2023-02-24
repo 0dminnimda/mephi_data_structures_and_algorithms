@@ -13,6 +13,7 @@ Error parse_passenger(char **str, Passenger *passenger) {
 
     char *name = *str = *str + strspn(*str, " ");
     if (*name == '\0') return PARSE_ERROR("Encountered the end of the string");
+    if (*name == '/') return PARSE_ERROR("No name specified");
 
     char *arrival_time = strchr(*str, '/');
     if (arrival_time++ == NULL) return PARSE_ERROR("No arrival time specified");
