@@ -22,10 +22,14 @@ typedef struct {
 #define MAKE_ERROR_TYPE(type) ((char *)type)
 #define MAKE_ERROR(type, message) ((Error){type, STRING_OR_EMPTY(message)})
 
+// Errors
 #define NOT_AN_ERROR MAKE_ERROR(NULL, NULL)
 #define OK NOT_AN_ERROR
 
+#define VALUE_ERROR_TYPE MAKE_ERROR_TYPE("ValueError")
+#define VALUE_ERROR(message) MAKE_ERROR(VALUE_ERROR_TYPE, message)
 
+// Error handling
 #define THROW_ERRORS(expr)           \
     ON_ERROR(expr, {                 \
         FPRINT_ERROR(stderr, error); \
