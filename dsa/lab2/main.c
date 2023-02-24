@@ -26,10 +26,11 @@ Error sub_main() {
 }
 
 int main() {
-    NO_THROW_TRY(sub_main())
-    CATCH_ALL {                 
-        FPRINT_ERROR(stderr, error); 
-        return -1;                   
+    Error error;
+    TRY(sub_main())
+    CATCH_ALL {
+        FPRINT_ERROR(stderr, error);
+        return -1;
     }
     return 0;
 }

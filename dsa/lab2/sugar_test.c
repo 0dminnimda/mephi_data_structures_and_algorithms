@@ -25,12 +25,14 @@ Error throw() {
 }
 
 int main() {
-    NO_THROW_TRY(sub_main())
+    Error error;
+
+    TRY(sub_main())
     CATCH_ALL {                 
         FPRINT_ERROR(stderr, error);
     }
 
-    NO_THROW_TRY(throw())
+    TRY(throw())
     CATCH_ALL {                 
         FPRINT_ERROR(stderr, error);
     }
