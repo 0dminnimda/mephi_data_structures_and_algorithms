@@ -5,15 +5,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef char *ErrorType;
+
 typedef struct {
-    char *type;
+    ErrorType type;
     char *message;
 } Error;
 
-#define COMPARE_ERRORS(error_type1, error_type2) \
-    ((error_type1 == error_type2) ? 0 : strcmp(error_type1, error_type2))
+static inline int error_eq(ErrorType type1, ErrorType type2) {
+    if (type1 == type2) return 1;
+    if (type1 == NULL || type2 == NULL) return 0;
+    return strcmp(type1, type2);
+}
+
 #define ARE_EQUAL_ERRORS(error_type1, error_type2) \
-    (COMPARE_ERRORS(error_type1, error_type2) == 0)
+    error_eq((error_type1), (error_type2))
 
 #define IS_ERROR(error) ((error).type != NULL)
 
