@@ -16,14 +16,16 @@ Error parse_passenger(char **str, Passenger *passenger) {
     Passenger p = {0};
 
     char *name = *str = *str + strspn(*str, " ");
+    if (*name == '\0') return PARSE_ERROR("Encountered the end of the string");
 
     char *arrival_time = strchr(*str, '/');
     if (arrival_time++ == NULL) return PARSE_ERROR("No arrival time specified");
     *str = arrival_time;
 
     TRY(parse_ulong(str, &p.arrival_time))
-    CATCH(VALUE_ERROR_TYPE)
-        return VALUE_ERROR("Arrival time is not a valid non-negative number");
+    CATCH(PARSE_ERROR_TYPE) {
+        return PARSE_ERROR("Arrival time is not a valid non-negative number");
+    }
     CATCH_N_THROW
 
     char *service_time = strchr(*str, '/');
@@ -31,8 +33,9 @@ Error parse_passenger(char **str, Passenger *passenger) {
     *str = service_time;
 
     TRY(parse_ulong(str, &p.service_time))
-    CATCH(VALUE_ERROR_TYPE)
-        return VALUE_ERROR("Service time is not a valid non-negative number");
+    CATCH(PARSE_ERROR_TYPE) {
+        return PARSE_ERROR("Service time is not a valid non-negative number");
+    }
     CATCH_N_THROW
 
     NEW(p.name, arrival_time - name);
