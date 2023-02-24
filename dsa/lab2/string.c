@@ -10,7 +10,7 @@
         char *input = *str;                            \
         type result = base_parse_func(input, str, 10); \
         if (*str == input || errno != 0)               \
-            return VALUE_ERROR("Invalid " STR(type));  \
+            return PARSE_ERROR("Invalid " STR(type));  \
         *value = result;                               \
         return OK;                                     \
     }
