@@ -70,4 +70,4 @@ QUEUE_ITEM queue_back(Queue queue) {
     return queue->tail->value;
 }
 
-bool queue_is_empty(Queue queue) { return (bool)queue->size; }
+size_t queue_size(Queue queue) { return queue->size; }

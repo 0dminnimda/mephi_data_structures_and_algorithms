@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdlib.h>
 
 #include "error.h"
@@ -22,7 +21,7 @@ Error default_queue(Queue *queue);
 Error construct_queue(Queue *queue, size_t size);
 void destroy_queue(Queue queue);
 
-bool queue_is_empty(Queue queue);
+size_t queue_size(Queue queue);
 void queue_clear(Queue queue);
 
 Error queue_push(Queue queue, QUEUE_ITEM value);
