@@ -12,5 +12,6 @@ typedef struct {
 } Passenger;
 
 Error parse_passenger(char **str, Passenger *passenger);
+void fprint_passenger(FILE *stream, Passenger *passenger);
 
 #endif  // PASSENGER_H_
