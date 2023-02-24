@@ -21,12 +21,13 @@ char *fread_line(FILE *stream) {
             buf = new_buf;
         }
 
-        buf[len++] = fgetc(stream);
+        buf[len] = fgetc(stream);
         if (buf[len] == EOF) {
             free(buf);
             return NULL;
         }
         if (buf[len] == '\n') break;
+        len++;
     }
 
     buf[len] = '\0';
