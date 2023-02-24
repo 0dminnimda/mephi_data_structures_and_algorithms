@@ -7,11 +7,7 @@
 #include "memo.h"
 #include "string.h"
 
-// parses passenger in a format "name/arrival_time/service_time"
-// and returns an Error if the format is invalid)
-// also cannot modify an input string
-// thus allocates memory for the name (using NEW)
-// and updates the string pointer to point to the end of the passenger
+// parses Passenger in a format "name/arrival_time/service_time"
 Error parse_passenger(char **str, Passenger *passenger) {
     Passenger p = {0};
 
