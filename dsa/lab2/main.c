@@ -30,6 +30,7 @@ Error sub_main() {
     size_t queue_count = 0;
     TRY(parse_size_t(&cur, &queue_count))
     CATCH(PARSE_ERROR_TYPE) {
+        point_on_error(cur, line);
         return PARSE_ERROR(
             "Parsed queue count is not a valid non-negative number");
     }
@@ -50,10 +51,11 @@ Error sub_main() {
         }
         CATCH_ALL break;
 
-        fprint_passenger(stdout, &passenger), printf("\n");
+        size_t i = choose_least_time_queue(&lb);
+        queue_push(lb.queues[i].queue, passenger);
 
-        // size_t i = choose_least_time_queue(&lb);
-        // queue_push(lb.queues[i].queue, passenger);
+        printf("Choosing queue no. %zu <- ", i);
+        fprint_passenger(stdout, &passenger), printf("\n");
     }
 
     DELETE(line);
