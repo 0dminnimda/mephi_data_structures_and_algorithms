@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "sugar/sugar.h"
-#include "string.h"
+#include "common/string.h"
 
 // parses Passenger in a format "name/arrival_time/service_time"
 Error parse_passenger(char **str, Passenger *passenger) {

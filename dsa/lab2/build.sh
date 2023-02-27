@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MY_CC="cc"
-ARGS="input.c string.c passenger.c load_balancer.c queue/queue.c sugar/memo.c main.c -o main.out -g"
+ARGS="common/input.c common/string.c passenger.c load_balancer.c queue/queue.c sugar/memo.c main.c -o main.out -g"
 # ARGS="input.c memo.c sugar_test.c -o main.out -g"
 
 if [[ $(which cc &> /dev/null; echo $?) != "0" ]]; then

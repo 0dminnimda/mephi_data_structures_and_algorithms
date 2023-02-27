@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "sugar/sugar.h"
-#include "input.h"
+#include "common/input.h"
 
 Error sub_main() {
     char *a = NEW(a, 4);

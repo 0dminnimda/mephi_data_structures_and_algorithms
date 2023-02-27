@@ -5,11 +5,11 @@
 #include <string.h>
 
 #include "sugar/sugar.h"
-#include "input.h"
+#include "common/input.h"
 #include "load_balancer.h"
 #include "passenger.h"
 #include "queue/queue.h"
-#include "string.h"
+#include "common/string.h"
 
 void point_on_error(char *current, char *line) {
     printf("\n%s\n", line);
