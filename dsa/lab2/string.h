@@ -11,3 +11,4 @@ Error parse_long(char **str, long *value);
 Error parse_llong(char **str, llong *value);
 Error parse_ulong(char **str, ulong *value);
 Error parse_ullong(char **str, ullong *value);
+Error parse_size_t(char **str, size_t *value);
