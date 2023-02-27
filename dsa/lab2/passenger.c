@@ -19,7 +19,7 @@ Error parse_passenger(char **str, Passenger *passenger) {
     if (arrival_time++ == NULL) return PARSE_ERROR("No arrival time specified");
     *str = arrival_time;
 
-    TRY(parse_ulong(str, &p.arrival_time))
+    TRY(parse_size_t(str, &p.arrival_time))
     CATCH(PARSE_ERROR_TYPE) {
         return PARSE_ERROR("Arrival time is not a valid non-negative number");
     }
@@ -29,7 +29,7 @@ Error parse_passenger(char **str, Passenger *passenger) {
     if (service_time++ == NULL) return PARSE_ERROR("No service time specified");
     *str = service_time;
 
-    TRY(parse_ulong(str, &p.service_time))
+    TRY(parse_size_t(str, &p.service_time))
     CATCH(PARSE_ERROR_TYPE) {
         return PARSE_ERROR("Service time is not a valid non-negative number");
     }

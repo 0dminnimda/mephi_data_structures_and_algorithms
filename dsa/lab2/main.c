@@ -27,8 +27,8 @@ Error sub_main() {
     char *line = read_line();
     char *cur = line;
 
-    ulong queue_count = 0;
-    TRY(parse_ulong(&cur, &queue_count))
+    size_t queue_count = 0;
+    TRY(parse_size_t(&cur, &queue_count))
     CATCH(PARSE_ERROR_TYPE) {
         return PARSE_ERROR(
             "Parsed queue count is not a valid non-negative number");
