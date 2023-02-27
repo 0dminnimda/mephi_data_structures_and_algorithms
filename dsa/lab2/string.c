@@ -16,4 +16,6 @@
     }
 
 GENERATE_PARSE_FUNCTION(long, strtol)
+GENERATE_PARSE_FUNCTION(llong, strtoll)
 GENERATE_PARSE_FUNCTION(ulong, strtoul)
+GENERATE_PARSE_FUNCTION(ullong, strtoull)
