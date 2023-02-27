@@ -73,7 +73,6 @@ Error queue_push(Queue queue, QUEUE_ITEM value) {
 
     queue->data[queue->head + queue->size] = value;
     queue->size++;
-
     return OK;
 }
 
@@ -83,6 +82,7 @@ Error queue_pop(Queue queue) {
     QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
     queue->head++;
     queue->size--;
+    return OK;
 }
 
 QUEUE_ITEM queue_front(Queue queue) {

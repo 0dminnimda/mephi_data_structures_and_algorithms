@@ -59,6 +59,7 @@ Error queue_pop(Queue queue) {
     free(head);
     queue->size--;
     if (queue->size == 0) queue->tail = NULL;
+    return OK;
 }
 
 QUEUE_ITEM queue_front(Queue queue) {
