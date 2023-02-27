@@ -3,6 +3,8 @@
 #define PARSE_ERROR_TYPE MAKE_ERROR_TYPE("ParseError")
 #define PARSE_ERROR(message) MAKE_ERROR(PARSE_ERROR_TYPE, message)
 
+#define WHITESPACE " \t\n\r\x0b\x0c"
+
 typedef long long llong;
 typedef unsigned long ulong;
 typedef unsigned long long ullong;
