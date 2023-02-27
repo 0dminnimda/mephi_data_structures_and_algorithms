@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
+#include "sugar/sugar.h"
 #include "input.h"
-#include "memo.h"
-#include "platform.h"
 
 Error sub_main() {
     char *a = NEW(a, 4);

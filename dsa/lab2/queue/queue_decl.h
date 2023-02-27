@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "../error.h"
+#include "../sugar/sugar.h"
 #include "../passenger.h"
 
 #ifndef QUEUE_ITEM

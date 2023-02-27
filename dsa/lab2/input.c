@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
+#include "sugar/sugar.h"
 
 char *fread_line(FILE *stream) {
     size_t len = 0;

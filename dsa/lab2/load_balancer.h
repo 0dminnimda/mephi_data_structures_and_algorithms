@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "error.h"
+#include "sugar/sugar.h"
 #include "passenger.h"
 #include "queue/queue.h"
 
