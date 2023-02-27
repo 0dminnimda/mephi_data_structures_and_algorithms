@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "memo.h"
+#include "../memo.h"
 #include "queue_decl.h"
 
 struct QueueImpl {

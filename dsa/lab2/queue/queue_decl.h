@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "error.h"
-#include "passenger.h"
+#include "../error.h"
+#include "../passenger.h"
 
 #ifndef QUEUE_ITEM
 #define QUEUE_ITEM Passenger

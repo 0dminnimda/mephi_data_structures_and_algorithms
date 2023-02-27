@@ -5,7 +5,7 @@
 
 #include "error.h"
 #include "passenger.h"
-#include "queue.h"
+#include "queue/queue.h"
 
 typedef struct {
     Queue queue;

@@ -9,7 +9,7 @@
 #include "load_balancer.h"
 #include "memo.h"
 #include "passenger.h"
-#include "queue.h"
+#include "queue/queue.h"
 #include "string.h"
 
 void point_on_error(char *current, char *line) {
