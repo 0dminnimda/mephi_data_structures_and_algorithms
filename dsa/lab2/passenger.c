@@ -35,8 +35,8 @@ Error parse_passenger(char **str, Passenger *passenger) {
     }
     CATCH_N_THROW
 
-    NEW(p.name, arrival_time - name);
-    strncpy(p.name, name, arrival_time - name);
+    NEW(p.name, arrival_time - 1 - name);
+    strncpy(p.name, name, arrival_time - 1 - name);
 
     *passenger = p;
     return OK;
