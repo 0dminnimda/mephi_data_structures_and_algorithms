@@ -11,7 +11,7 @@
 Error parse_passenger(char **str, Passenger *passenger) {
     Passenger p = {0};
 
-    char *name = *str = *str + strspn(*str, " ");
+    char *name = *str = *str + strspn(*str, WHITESPACE);
     if (*name == '\0') return PARSE_ERROR("Encountered the end of the string");
     if (*name == '/') return PARSE_ERROR("No name specified");
 
@@ -25,7 +25,12 @@ Error parse_passenger(char **str, Passenger *passenger) {
     }
     CATCH_N_THROW
 
-    char *service_time = strchr(*str, '/');
+    // "name/123 invalid/123"
+    char *whitespace_end = *str = *str + strspn(*str, WHITESPACE);
+    if (*whitespace_end != '/')
+        return PARSE_ERROR("Arrival time is not a valid non-negative number");
+
+    char *service_time = *str;
     if (service_time++ == NULL) return PARSE_ERROR("No service time specified");
     *str = service_time;
 
