@@ -25,4 +25,4 @@ size_t queue_size(Queue queue);
 void queue_clear(Queue queue);
 
 Error queue_push(Queue queue, QUEUE_ITEM value);
-Error queue_pop(Queue queue, QUEUE_ITEM *value);
+Error queue_pop(Queue queue);
