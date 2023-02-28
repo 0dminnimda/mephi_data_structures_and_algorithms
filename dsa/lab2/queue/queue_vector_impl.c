@@ -76,8 +76,7 @@ Error queue_push(Queue queue, QUEUE_ITEM value) {
 }
 
 Error queue_pop(Queue queue) {
-    if (queue->size <= 0)
-        return QUEUE_ERROR("U stupid, queue is empty");
+    if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
     QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
     queue->head++;
     queue->size--;
@@ -95,3 +94,12 @@ QUEUE_ITEM queue_back(Queue queue) {
 }
 
 size_t queue_size(Queue queue) { return queue->size; }
+
+void fprint_queue(FILE *stream, Queue queue) {
+    for (size_t i = 0; i < queue->size; i++) {
+        QUEUE_ITEM_FPRINT(stream, &queue->data[queue->head + i]);
+        if (i) fprintf(stream, ", ");
+    }
+}
+
+void print_queue(Queue queue) { fprint_queue(stdout, queue); }
