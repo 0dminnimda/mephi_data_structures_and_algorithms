@@ -6,6 +6,7 @@
 /.vscode/
 /.bash_history
 /.gitconfig
+*.a
 *.o
 *.obj
 *.out
