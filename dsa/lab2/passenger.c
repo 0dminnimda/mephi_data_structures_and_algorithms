@@ -3,14 +3,10 @@
 #include <errno.h>
 #include <string.h>
 
-#include "sugar/sugar.h"
 #include "common/string.h"
+#include "sugar/sugar.h"
 
-
-inline void destroy_passenger(Passenger passenger) {
-    free(passenger.name);
-}
-
+void destroy_passenger(Passenger passenger) { free(passenger.name); }
 
 // parses Passenger in a format "name/arrival_time/service_time"
 Error parse_passenger(char **str, Passenger *passenger) {
@@ -52,11 +48,11 @@ Error parse_passenger(char **str, Passenger *passenger) {
     return OK;
 }
 
-inline void fprint_passenger(FILE *stream, Passenger *passenger) {
+void fprint_passenger(FILE *stream, Passenger *passenger) {
     fprintf(stream, "%s %zu %zu", passenger->name, passenger->arrival_time,
             passenger->service_time);
 }
 
-inline void print_passenger(Passenger *passenger) {
+void print_passenger(Passenger *passenger) {
     fprint_passenger(stdout, passenger);
 }
