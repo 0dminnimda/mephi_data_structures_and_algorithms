@@ -7,8 +7,6 @@ ifndef CC
 	AR := llvm-ar rc
 	LIB := -l
 else
-	# clang uses it automatically + does not support it for every target
-    override CFLAGS += -fPIC
 	AR := ar rcs
 	LIB := -l:
 endif
