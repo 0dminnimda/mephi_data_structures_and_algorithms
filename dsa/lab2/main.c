@@ -19,6 +19,15 @@ void point_on_error(char *current, char *line) {
     printf("The wrong part\n");
 }
 
+void print_load_state(size_t time, LoadBalancer *lb) {
+    printf("\nTime %zu\n", time);
+    for (size_t i = 0; i < lb->queue_count; i++) {
+        printf("queue %zu: ", i);
+        print_queue(lb->queues[i].queue);
+        printf("\n");
+    }
+}
+
 Error sub_main() {
     Error error = OK;
 
@@ -38,10 +47,12 @@ Error sub_main() {
     LoadBalancer lb = {0};
     AUTO_TRY(construct_load_balancer(&lb, queue_count));
 
+    size_t prev_arrival_time = 0;
     while (1) {
         cur += strspn(cur, " ");
         if (*cur == '\0') break;
 
+        char *pre_cur = cur;
         Passenger passenger = {0};
         TRY(parse_passenger(&cur, &passenger))
         CATCH(PARSE_ERROR_TYPE) {
@@ -50,11 +61,22 @@ Error sub_main() {
         }
         CATCH_ALL break;
 
+        if (prev_arrival_time > passenger.arrival_time) {
+            point_on_error(pre_cur, line);
+            error = PARSE_ERROR(
+                "Passengers should be introduced"
+                " in order of their arrival_time");
+            break;
+        } else if (prev_arrival_time != passenger.arrival_time) {
+            print_load_state(prev_arrival_time, &lb);
+        }
+        prev_arrival_time = passenger.arrival_time;
+
         size_t i = choose_least_time_queue(&lb);
         AUTO_TRY(queue_push(lb.queues[i].queue, passenger));
 
         printf("Choosing queue no. %zu <- ", i);
-        fprint_passenger(stdout, &passenger), printf("\n");
+        print_passenger(&passenger), printf("\n");
     }
 
     DELETE(line);
