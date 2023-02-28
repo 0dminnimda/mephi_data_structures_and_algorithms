@@ -97,8 +97,8 @@ size_t queue_size(Queue queue) { return queue->size; }
 
 void fprint_queue(FILE *stream, Queue queue) {
     for (size_t i = 0; i < queue->size; i++) {
-        QUEUE_ITEM_FPRINT(stream, &queue->data[queue->head + i]);
         if (i) fprintf(stream, ", ");
+        QUEUE_ITEM_FPRINT(stream, &queue->data[queue->head + i]);
     }
 }
 

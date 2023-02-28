@@ -74,8 +74,8 @@ size_t queue_size(Queue queue) { return queue->size; }
 
 void fprint_queue(FILE *stream, Queue queue) {
     for (QueueNode *node = queue->head; node != NULL; node = node->next) {
-        QUEUE_ITEM_FPRINT(stream, &node->value);
         if (node != queue->head) fprintf(stream, ", ");
+        QUEUE_ITEM_FPRINT(stream, &node->value);
     }
 }
 
