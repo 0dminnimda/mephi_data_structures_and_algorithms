@@ -73,10 +73,7 @@ Error sub_main() {
         prev_arrival_time = passenger.arrival_time;
 
         size_t i = choose_least_time_queue(&lb);
-        AUTO_TRY(queue_push(lb.queues[i].queue, passenger));
-
-        printf("Choosing queue no. %zu <- ", i);
-        print_passenger(&passenger), printf("\n");
+        AUTO_TRY(load_balancer_push(&lb, i, passenger));
     }
 
     DELETE(line);
