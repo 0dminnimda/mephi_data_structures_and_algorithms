@@ -57,3 +57,11 @@ void fprint_passenger(FILE *stream, Passenger *passenger) {
 void print_passenger(Passenger *passenger) {
     fprint_passenger(stdout, passenger);
 }
+
+void fprint_passenger_name(FILE *stream, Passenger *passenger) {
+    fprintf(stream, "%s", passenger->name);
+}
+
+void print_passenger_name(Passenger *passenger) {
+    fprint_passenger_name(stdout, passenger);
+}

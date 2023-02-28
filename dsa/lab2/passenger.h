@@ -17,4 +17,7 @@ Error parse_passenger(char **str, Passenger *passenger);
 void fprint_passenger(FILE *stream, Passenger *passenger);
 void print_passenger(Passenger *passenger);
 
+void fprint_passenger_name(FILE *stream, Passenger *passenger);
+void print_passenger_name(Passenger *passenger);
+
 #endif  // PASSENGER_H_
