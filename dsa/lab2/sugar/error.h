@@ -77,4 +77,15 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
 // #define CALL_HELPER(...) (__VA_ARGS__) )
 // #define TRY_CALL(func) TRY( CALL_HELPER
 
+// #define ON_ERROR            \
+//     sugar_exit:             \
+//     if (IS_ERROR(error))
+
+/*
+ON_ERROR {
+    DELETE(p.name);
+}
+return error;
+*/
+
 #endif  // ERROR_H_
