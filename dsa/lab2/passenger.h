@@ -13,6 +13,8 @@ typedef struct {
 
 void destroy_passenger(Passenger passenger);
 Error parse_passenger(char **str, Passenger *passenger);
+
 void fprint_passenger(FILE *stream, Passenger *passenger);
+void print_passenger(Passenger *passenger);
 
 #endif  // PASSENGER_H_

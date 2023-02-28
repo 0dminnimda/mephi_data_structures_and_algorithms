@@ -52,7 +52,11 @@ Error parse_passenger(char **str, Passenger *passenger) {
     return OK;
 }
 
-void fprint_passenger(FILE *stream, Passenger *passenger) {
+inline void fprint_passenger(FILE *stream, Passenger *passenger) {
     fprintf(stream, "%s %zu %zu", passenger->name, passenger->arrival_time,
             passenger->service_time);
+}
+
+inline void print_passenger(Passenger *passenger) {
+    fprint_passenger(stdout, passenger);
 }
