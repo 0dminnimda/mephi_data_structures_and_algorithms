@@ -1,7 +1,6 @@
 #include <assert.h>
 
-#include "../sugar/sugar.h"
-#include "queue_decl.h"
+#include "queue.h"
 
 typedef struct QueueNode {
     QUEUE_ITEM value;

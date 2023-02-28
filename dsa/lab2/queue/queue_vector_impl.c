@@ -1,8 +1,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "../sugar/sugar.h"
-#include "queue_decl.h"
+#include "queue.h"
 
 struct QueueImpl {
     QUEUE_ITEM *data;
