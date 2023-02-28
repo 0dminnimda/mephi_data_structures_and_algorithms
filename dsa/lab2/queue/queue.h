@@ -12,7 +12,10 @@
 #endif
 
 #ifndef QUEUE_ITEM_DESTRUCTOR
-#define QUEUE_ITEM_DESTRUCTOR(item)
+#define QUEUE_ITEM_DESTRUCTOR(item) destroy_passenger(item)
+// #define QUEUE_ITEM_DESTRUCTOR(item)
+#endif
+
 #endif
 
 typedef struct QueueImpl *Queue;
