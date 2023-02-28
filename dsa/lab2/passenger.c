@@ -10,6 +10,7 @@ void destroy_passenger(Passenger passenger) { free(passenger.name); }
 
 // parses Passenger in a format "name/arrival_time/service_time"
 Error parse_passenger(char **str, Passenger *passenger) {
+    Error error;
     Passenger p = {0};
 
     char *name = *str = *str + strspn(*str, WHITESPACE);
