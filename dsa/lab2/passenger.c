@@ -54,8 +54,10 @@ Error parse_passenger(char **str, Passenger *passenger) {
         return PARSE_ERROR("Service time is not a valid positive number");
     }
 
-    NEW(p.name, arrival_time - 1 - name);
-    strncpy(p.name, name, arrival_time - 1 - name);
+    size_t name_length = arrival_time - 1 - name;
+    NEW(p.name, name_length + 1);
+    strncpy(p.name, name, name_length);
+    p.name[name_length] = '\0';
 
     *passenger = p;
     return OK;
