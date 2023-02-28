@@ -18,6 +18,7 @@ ifeq ($(QUEUE),vector)
 else
     $(info INFO: using list implementation of queue)
 endif
+$(info )
 
 .PHONY: all
 all: build
@@ -30,8 +31,6 @@ build: common queue sugar
 queue:
 	$(CC) -c -o queue/queue.o queue/queue.c $(CFLAGS)
 	$(AR) queue.lib queue/queue.o
-# 	$(CC) -shared -o queue.lib queue/queue.c $(CFLAGS)
-#	$(MAKE) -C queue all CC=$(CC) CFLAGS=$(CFLAGS)
 
 .PHONY: common
 common:
