@@ -21,26 +21,38 @@ Error parse_passenger(char **str, Passenger *passenger) {
     if (arrival_time++ == NULL) return PARSE_ERROR("No arrival time specified");
     *str = arrival_time;
 
+    char *pre_arrival_time = *str;
     TRY(parse_size_t(str, &p.arrival_time))
     CATCH(PARSE_ERROR_TYPE) {
-        return PARSE_ERROR("Arrival time is not a valid non-negative number");
+        return PARSE_ERROR("Arrival time is not a valid positive number");
     }
     CATCH_N_THROW
+
+    if (p.arrival_time == 0) {
+        *str = pre_arrival_time;
+        return PARSE_ERROR("Arrival time is not a valid positive number");
+    }
 
     // "name/123 invalid/123"
     char *whitespace_end = *str = *str + strspn(*str, WHITESPACE);
     if (*whitespace_end != '/')
-        return PARSE_ERROR("Arrival time is not a valid non-negative number");
+        return PARSE_ERROR("Arrival time is not a valid positive number");
 
     char *service_time = *str;
     if (service_time++ == NULL) return PARSE_ERROR("No service time specified");
     *str = service_time;
 
+    char *pre_service_time = *str;
     TRY(parse_size_t(str, &p.service_time))
     CATCH(PARSE_ERROR_TYPE) {
-        return PARSE_ERROR("Service time is not a valid non-negative number");
+        return PARSE_ERROR("Service time is not a valid positive number");
     }
     CATCH_N_THROW
+
+    if (p.service_time == 0) {
+        *str = pre_service_time;
+        return PARSE_ERROR("Service time is not a valid positive number");
+    }
 
     NEW(p.name, arrival_time - 1 - name);
     strncpy(p.name, name, arrival_time - 1 - name);
