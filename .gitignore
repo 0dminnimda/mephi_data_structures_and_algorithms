@@ -7,9 +7,11 @@
 /.bash_history
 /.gitconfig
 *.o
+*.obj
 *.out
 *.pdb
 *.ilk
+*.lib
 /secret
 
 /**/lab*/main
