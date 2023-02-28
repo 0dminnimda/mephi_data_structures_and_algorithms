@@ -16,6 +16,9 @@
 // #define QUEUE_ITEM_DESTRUCTOR(item)
 #endif
 
+#ifndef QUEUE_ITEM_FPRINT
+#define QUEUE_ITEM_FPRINT(stream, item) fprint_passenger(stream, item)
+// #define QUEUE_ITEM_FPRINT(stream, item)
 #endif
 
 typedef struct QueueImpl *Queue;
