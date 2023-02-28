@@ -51,7 +51,7 @@ Error sub_main() {
         CATCH_ALL break;
 
         size_t i = choose_least_time_queue(&lb);
-        queue_push(lb.queues[i].queue, passenger);
+        AUTO_TRY(queue_push(lb.queues[i].queue, passenger));
 
         printf("Choosing queue no. %zu <- ", i);
         fprint_passenger(stdout, &passenger), printf("\n");

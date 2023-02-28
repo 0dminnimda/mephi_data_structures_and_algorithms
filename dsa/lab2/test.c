@@ -5,7 +5,7 @@
 
 int main() {
     Queue q;
-    default_queue(&q);
+    AUTO_TRY(default_queue(&q));
 
 #if FAILURE_TEST == 1
     queue_pop(q);
@@ -19,7 +19,7 @@ int main() {
         int x;
         scanf("%d", &x);
         if (x == 0) break;
-        queue_push(q, x);
+        AUTO_TRY(queue_push(q, x));
     }
 
     while (queue_size(q)) {
@@ -32,7 +32,7 @@ int main() {
         int x;
         scanf("%d", &x);
         if (x == 0) break;
-        queue_push(q, x);
+        AUTO_TRY(queue_push(q, x));
     }
 
     if (queue_size(q))

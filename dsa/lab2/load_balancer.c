@@ -8,7 +8,7 @@ Error construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
     lb->queue_count = queue_count;
     NEW(lb->queues, queue_count * sizeof(PassengerQueue));
     for (size_t i = 0; i < queue_count; i++) {
-        default_queue(&lb->queues[i].queue);
+        AUTO_TRY(default_queue(&lb->queues[i].queue));
         lb->queues[i].served = 0;
         lb->queues[i].uptime = 0;
     }
