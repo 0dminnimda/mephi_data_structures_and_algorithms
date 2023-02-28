@@ -10,7 +10,8 @@ Error construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
     for (size_t i = 0; i < queue_count; i++) {
         AUTO_TRY(default_queue(&lb->queues[i].queue));
         lb->queues[i].served = 0;
-        lb->queues[i].uptime = 0;
+        lb->queues[i].serviced_time = 0;
+        lb->queues[i].service_time_left = 0;
     }
     return OK;
 }
@@ -38,8 +39,8 @@ static int least_time_queue_cmp(const PassengerQueue *l,
     if (queue_size(l->queue) < queue_size(r->queue)) return -1;
     if (queue_size(l->queue) > queue_size(r->queue)) return 1;
 
-    size_t l_score = (l->served == 0)? 0 : l->uptime / l->served;
-    size_t r_score = (r->served == 0)? 0 : r->uptime / r->served;
+    size_t l_score = (l->served == 0) ? 0 : l->serviced_time / l->served;
+    size_t r_score = (r->served == 0) ? 0 : r->serviced_time / r->served;
 
     // second, choose the queue with the smaller average service time
     if (l_score < r_score) return -1;

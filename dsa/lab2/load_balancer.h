@@ -10,7 +10,8 @@
 typedef struct {
     Queue queue;
     size_t served;
-    size_t uptime;
+    size_t serviced_time;
+    size_t service_time_left;
 } PassengerQueue;
 
 typedef struct {
