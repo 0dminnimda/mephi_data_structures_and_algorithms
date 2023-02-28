@@ -23,6 +23,40 @@ void destroy_load_balancer(LoadBalancer *lb) {
     free(lb->queues);
 }
 
+static Error update_queue(PassengerQueue *pq, size_t delta_time) {
+    if (queue_size(pq->queue) == 0) {
+        assert(pq->service_time_left == 0);
+        return OK;
+    }
+    if (delta_time < pq->service_time_left) {
+        pq->serviced_time += delta_time;
+        pq->service_time_left -= delta_time;
+        return OK;
+    }
+
+    if (pq->service_time_left != 0) {
+        AUTO_TRY(queue_pop(pq->queue));
+        pq->served++;
+        pq->serviced_time += pq->service_time_left;
+    }
+    Passenger p = {0};
+    if (queue_size(pq->queue) != 0) {
+        AUTO_TRY(queue_front(pq->queue, &p));
+    } else {
+        pq->service_time_left = 0;
+        return OK;
+    }
+    delta_time -= pq->service_time_left;
+    pq->service_time_left = p.service_time;
+    return update_queue(pq, delta_time);
+}
+
+Error load_balancer_update(LoadBalancer *lb, size_t delta_time) {
+    for (size_t i = 0; i < lb->queue_count; i++) {
+        AUTO_TRY(update_queue(&lb->queues[i], delta_time));
+    }
+    return OK;
+}
 
 Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger) {
     AUTO_TRY(queue_push(lb->queues[i].queue, passenger));
