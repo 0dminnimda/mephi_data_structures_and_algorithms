@@ -4,6 +4,11 @@ ifndef CC
     $(info INFO: I did not find 'cc', so using 'clang' instead)
     override CFLAGS += -Wno-deprecated-declarations
     CC := clang
+	AR := llvm-ar rc
+else
+	# clang uses it automatically + does not support it for every target
+    override CFLAGS += -fPIC
+	AR := ar rcs
 endif
 
 QUEUE := list
@@ -18,10 +23,28 @@ endif
 all: build
 
 .PHONY: build
-build:
-	$(CC) common/input.c common/string.c sugar/memo.c passenger.c load_balancer.c queue/queue.c main.c -o main.out $(CFLAGS)
+build: common queue sugar
+	$(CC) passenger.c load_balancer.c main.c -o main.out -lcommon -lqueue -lsugar $(CFLAGS)
+
+.PHONY: queue
+queue:
+	$(CC) -c -o queue/queue.o queue/queue.c $(CFLAGS)
+	$(AR) queue.lib queue/queue.o
+# 	$(CC) -shared -o queue.lib queue/queue.c $(CFLAGS)
+#	$(MAKE) -C queue all CC=$(CC) CFLAGS=$(CFLAGS)
+
+.PHONY: common
+common:
+	$(CC) -c -o common/input.o common/input.c $(CFLAGS)
+	$(CC) -c -o common/string.o common/string.c $(CFLAGS)
+	$(AR) common.lib common/input.o common/string.o
+
+.PHONY: sugar
+sugar:
+	$(CC) -c -o sugar/memo.o sugar/memo.c $(CFLAGS)
+	$(AR) sugar.lib sugar/memo.o
 
 .PHONY: test
-test:
-	$(CC) common/input.c sugar/memo.c sugar_test.c -o test.out $(CFLAGS)
+test: common sugar
+	$(CC) sugar_test.c -o test.out -lcommon -lsugar $(CFLAGS)
 	./test.out
