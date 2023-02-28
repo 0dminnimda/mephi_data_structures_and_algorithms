@@ -33,6 +33,9 @@ void destroy_queue(Queue queue);
 size_t queue_size(Queue queue);
 void queue_clear(Queue queue);
 
+Error queue_front(Queue queue, QUEUE_ITEM *value);
+Error queue_back(Queue queue, QUEUE_ITEM *value);
+
 Error queue_push(Queue queue, QUEUE_ITEM value);
 Error queue_pop(Queue queue);
 

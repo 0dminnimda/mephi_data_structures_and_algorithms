@@ -83,14 +83,16 @@ Error queue_pop(Queue queue) {
     return OK;
 }
 
-QUEUE_ITEM queue_front(Queue queue) {
-    assert(queue->size > 0);
-    return queue->data[queue->head];
+Error queue_front(Queue queue, QUEUE_ITEM *value) {
+    if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
+    *value = queue->data[queue->head];
+    return OK;
 }
 
-QUEUE_ITEM queue_back(Queue queue) {
-    assert(queue->size > 0);
-    return queue->data[queue->head + queue->size - 1];
+Error queue_back(Queue queue, QUEUE_ITEM *value) {
+    if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
+    *value = queue->data[queue->head + queue->size - 1];
+    return OK;
 }
 
 size_t queue_size(Queue queue) { return queue->size; }
