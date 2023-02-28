@@ -3,7 +3,8 @@
 
 #include "queue/queue.h"
 
-int main() {
+Error sub_main() {
+    Error error;
     Queue q;
     AUTO_TRY(default_queue(&q));
 
@@ -50,3 +51,15 @@ int main() {
 
     destroy_queue(q);
 }
+
+
+int main() {
+    Error error;
+    TRY(sub_main())
+    CATCH_ALL {
+        FPRINT_VERBOSE_ERROR(stderr, error);
+        return -1;
+    }
+    return 0;
+}
+
