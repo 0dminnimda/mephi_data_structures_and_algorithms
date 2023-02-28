@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sugar/sugar.h"
 #include "common/input.h"
+#include "common/string.h"
 #include "load_balancer.h"
 #include "passenger.h"
 #include "queue/queue.h"
-#include "common/string.h"
+#include "sugar/sugar.h"
 
 void point_on_error(char *current, char *line) {
     printf("\n%s\n", line);
@@ -99,7 +99,6 @@ int main() {
 #include "test.c"
 #endif  // TEST
 
-
 /*
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9
 2 a/1/20 b/1/15 c/2/ d/5/8 e/6/5 f/6/9
@@ -115,7 +114,7 @@ int main() {
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f
-2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 
+2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f//9
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 /6/9
 */
