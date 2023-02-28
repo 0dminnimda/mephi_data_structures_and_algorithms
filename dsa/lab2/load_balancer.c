@@ -23,6 +23,12 @@ void destroy_load_balancer(LoadBalancer *lb) {
     free(lb->queues);
 }
 
+
+Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger) {
+    AUTO_TRY(queue_push(lb->queues[i].queue, passenger));
+    return OK;
+}
+
 size_t choose_queue(LoadBalancer *lb, queue_comparator queue_cmp) {
     assert(lb->queue_count > 0);
     size_t index = 0;
