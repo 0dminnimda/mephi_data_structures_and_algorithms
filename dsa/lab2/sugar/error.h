@@ -68,9 +68,12 @@ static inline int error_eq(ErrorType type1, ErrorType type2) {
         TRY(expr) CATCH_N_THROW \
     }
 
+#define BREAK_TRY(expr) TRY(expr) CATCH_N_BREAK
+
 #define CATCH(error_type) else if (ARE_EQUAL_ERRORS(error.type, (error_type)))
 #define CATCH_ALL else if (1)
 #define CATCH_N_THROW CATCH_ALL THROW(error)
+#define CATCH_N_BREAK CATCH_ALL break;
 
 // #define CALL(...) \
 //     (m_error_state, __VA_ARGS__);  if (IS_ERROR(error)) { on_error; }
