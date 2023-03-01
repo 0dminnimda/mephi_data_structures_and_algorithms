@@ -19,6 +19,26 @@ void point_on_error(char *current, char *line) {
     printf("The wrong part\n");
 }
 
+Error printed_load_balancer_update(LoadBalancer *lb, size_t arrival_time,
+                                   size_t delta_time) {
+    size_t end_arrival_time =
+        (delta_time == -1) ? -1 : arrival_time + delta_time;
+    while (arrival_time < end_arrival_time) {
+        delta_time = load_balancer_min_nonzero_delta_time(lb);
+
+        if (arrival_time + delta_time > end_arrival_time) {
+            delta_time = end_arrival_time - arrival_time;
+        }
+        if (delta_time == 0) break;
+        arrival_time += delta_time;
+
+        if (arrival_time < end_arrival_time)
+            printf("Time %zu (+%zu)\n", arrival_time, delta_time);
+        AUTO_TRY(load_balancer_update(lb, delta_time));
+        if (arrival_time < end_arrival_time) AUTO_TRY(print_load_balancer(lb));
+    }
+    return OK;
+}
 
 Error sub_main() {
     Error error = OK;
@@ -65,9 +85,9 @@ Error sub_main() {
                 " in order of their arrival_time");
             break;
         } else if (prev_arrival_time != passenger.arrival_time) {
-            AUTO_TRY(load_balancer_update(
-                &lb, passenger.arrival_time - prev_arrival_time));
-            printf("Time %zu\n", passenger.arrival_time);
+            size_t dt = passenger.arrival_time - prev_arrival_time;
+            AUTO_TRY(printed_load_balancer_update(&lb, prev_arrival_time, dt));
+            printf("Time %zu (+%zu)\n", passenger.arrival_time, dt);
         }
         prev_arrival_time = passenger.arrival_time;
 
@@ -80,16 +100,8 @@ Error sub_main() {
         print_load_balancer(&lb);
     }
 
-    if (!IS_ERROR(error)) {
-        while (1) {
-            size_t delta_time = load_balancer_min_nonzero_delta_time(&lb);
-            if (delta_time == 0) break;
-            prev_arrival_time += delta_time;
-            printf("Time %zu\n", prev_arrival_time);
-            AUTO_TRY(load_balancer_update(&lb, delta_time));
-            AUTO_TRY(print_load_balancer(&lb));
-        }
-    }
+    if (!IS_ERROR(error))
+        AUTO_TRY(printed_load_balancer_update(&lb, prev_arrival_time, -1));
 
     DELETE(line);
     destroy_load_balancer(&lb);
@@ -134,6 +146,7 @@ int main() {
 2 a/1/0
 
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10
+1 a/1/2 b/1/2 c/10/2
 */
 
 /*
@@ -175,4 +188,6 @@ valgrind --leak-check=full ./main.out
 2 a/1/0
 valgrind --leak-check=full ./main.out
 2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10
+valgrind --leak-check=full ./main.out
+1 a/1/2 b/1/2 c/10/2
 */
