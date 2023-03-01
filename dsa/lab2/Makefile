@@ -13,10 +13,10 @@ endif
 
 QUEUE := list
 ifeq ($(QUEUE),vector)
-    $(info INFO: using vector implementation of queue)
-	override CFLAGS += -D QUEUE_IMPL='V'
+    $(info INFO: using vector implementation of queue (QUEUE=$(QUEUE)))
+	override CFLAGS += -D QUEUE_IMPL=\'V\'
 else
-    $(info INFO: using list implementation of queue)
+    $(info INFO: using list implementation of queue (QUEUE=$(QUEUE)))
 endif
 $(info )
 
