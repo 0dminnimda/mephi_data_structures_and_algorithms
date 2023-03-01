@@ -24,7 +24,8 @@ void destroy_load_balancer(LoadBalancer *lb) {
     free(lb->queues);
 }
 
-static Error update_queue(PassengerQueue *pq, size_t delta_time) {
+static Error update_queue(LoadBalancer *lb, size_t i, size_t delta_time) {
+    PassengerQueue *pq = &lb->queues[i];
     if (queue_size(pq->queue) == 0) {
         assert(pq->service_time_left == 0);
         return OK;
@@ -49,12 +50,12 @@ static Error update_queue(PassengerQueue *pq, size_t delta_time) {
     }
     delta_time -= pq->service_time_left;
     pq->service_time_left = p.service_time;
-    return update_queue(pq, delta_time);
+    return update_queue(lb, i, delta_time);
 }
 
 Error load_balancer_update(LoadBalancer *lb, size_t delta_time) {
     for (size_t i = 0; i < lb->queue_count; i++) {
-        AUTO_TRY(update_queue(&lb->queues[i], delta_time));
+        AUTO_TRY(update_queue(lb, i, delta_time));
     }
     return OK;
 }
