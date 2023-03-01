@@ -8,27 +8,24 @@ typedef struct QueueNode {
 } QueueNode;
 
 struct QueueImpl {
-    QueueNode *head;
     QueueNode *tail;
     size_t size;
 };
 
 Error default_queue(Queue *queue) {
     NEW(*queue, sizeof(struct QueueImpl));
-    (*queue)->head = NULL;
     (*queue)->tail = NULL;
     (*queue)->size = 0;
     return OK;
 }
 
 Error construct_queue(Queue *queue, size_t size) {
-    AUTO_TRY(default_queue(queue));
-    return OK;
+    return default_queue(queue);
 }
 
 void queue_clear(Queue queue) {
     while (queue->size > 0) queue_pop(queue);
-    assert(queue->head == NULL);
+    assert(queue->tail == NULL);
 }
 
 void destroy_queue(Queue queue) {
@@ -39,11 +36,12 @@ void destroy_queue(Queue queue) {
 Error queue_push(Queue queue, QUEUE_ITEM value) {
     QueueNode *node = NEW(node, sizeof(QueueNode));
     node->value = value;
-    node->next = NULL;
-    if (queue->size == 0)
-        queue->head = node;
-    else
+    if (queue->size == 0) {
+        node->next = node;
+    } else {
+        node->next = queue->tail->next;
         queue->tail->next = node;
+    }
     queue->tail = node;
     queue->size++;
     return OK;
@@ -51,8 +49,8 @@ Error queue_push(Queue queue, QUEUE_ITEM value) {
 
 Error queue_pop(Queue queue) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
-    QueueNode *head = queue->head;
-    queue->head = queue->head->next;
+    QueueNode *head = queue->tail->next;
+    queue->tail->next = queue->tail->next->next;
     QUEUE_ITEM_DESTRUCTOR(head->value);
     free(head);
     queue->size--;
@@ -62,7 +60,7 @@ Error queue_pop(Queue queue) {
 
 Error queue_front(Queue queue, QUEUE_ITEM *value) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
-    *value = queue->head->value;
+    *value = queue->tail->next->value;
     return OK;
 }
 
@@ -75,9 +73,11 @@ Error queue_back(Queue queue, QUEUE_ITEM *value) {
 size_t queue_size(Queue queue) { return queue->size; }
 
 void fprint_queue(FILE *stream, Queue queue) {
-    for (QueueNode *node = queue->head; node != NULL; node = node->next) {
-        if (node != queue->head) fprintf(stream, ", ");
+    if (queue->tail == NULL) return;
+    QueueNode *node = queue->tail->next;
+    for (size_t i = 0; i < queue->size; i++, node = node->next) {
         QUEUE_ITEM_FPRINT(stream, &node->value);
+        if (node != queue->tail) fprintf(stream, ", ");
     }
 }
 
