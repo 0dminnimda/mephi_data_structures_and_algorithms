@@ -19,17 +19,6 @@ void point_on_error(char *current, char *line) {
     printf("The wrong part\n");
 }
 
-Error print_load_state(size_t time, LoadBalancer *lb) {
-    AUTO_TRY(load_balancer_update(lb, 0));  // load up the updates
-    printf("\nTime %zu\n", time);
-    for (size_t i = 0; i < lb->queue_count; i++) {
-        printf("queue %zu (%zu|%zu|%zu): ", i, lb->queues[i].served,
-               lb->queues[i].serviced_time, lb->queues[i].service_time_left);
-        print_queue(lb->queues[i].queue);
-        printf("\n");
-    }
-    return OK;
-}
 
 Error sub_main() {
     Error error = OK;
@@ -50,6 +39,10 @@ Error sub_main() {
     size_t queues_size = 4;
     LoadBalancer lb = {0};
     AUTO_TRY(construct_load_balancer(&lb, queue_count, queues_size));
+
+    printf("\n");
+    printf("Time %zu\n", (size_t)0);
+    AUTO_TRY(print_load_balancer(&lb));
 
     size_t prev_arrival_time = 0;
     while (1) {
@@ -72,10 +65,10 @@ Error sub_main() {
                 " in order of their arrival_time");
             break;
         } else if (prev_arrival_time != passenger.arrival_time) {
-            AUTO_TRY(print_load_state(prev_arrival_time, &lb));
+            AUTO_TRY(load_balancer_update(
+                &lb, passenger.arrival_time - prev_arrival_time));
+            printf("Time %zu\n", passenger.arrival_time);
         }
-        AUTO_TRY(load_balancer_update(
-            &lb, passenger.arrival_time - prev_arrival_time));
         prev_arrival_time = passenger.arrival_time;
 
         size_t i = choose_least_time_queue(&lb);
@@ -84,21 +77,18 @@ Error sub_main() {
             destroy_passenger(passenger);
             break;
         }
+        print_load_balancer(&lb);
     }
 
     if (!IS_ERROR(error)) {
-        AUTO_TRY(print_load_state(prev_arrival_time, &lb));
         while (1) {
-            size_t max_delta_time = 0;
-            for (size_t i = 0; i < lb.queue_count; i++) {
-                if (max_delta_time < lb.queues[i].service_time_left)
-                    max_delta_time = lb.queues[i].service_time_left;
-            }
-            if (!max_delta_time) break;
-            prev_arrival_time += max_delta_time;
-            AUTO_TRY(load_balancer_update(&lb, max_delta_time));
+            size_t delta_time = load_balancer_min_nonzero_delta_time(&lb);
+            if (delta_time == 0) break;
+            prev_arrival_time += delta_time;
+            printf("Time %zu\n", prev_arrival_time);
+            AUTO_TRY(load_balancer_update(&lb, delta_time));
+            AUTO_TRY(print_load_balancer(&lb));
         }
-        AUTO_TRY(print_load_state(prev_arrival_time, &lb));
     }
 
     DELETE(line);
