@@ -47,8 +47,9 @@ Error sub_main() {
     }
     CATCH_N_THROW
 
+    size_t queue_size = 4;
     LoadBalancer lb = {0};
-    AUTO_TRY(construct_load_balancer(&lb, queue_count));
+    AUTO_TRY(construct_load_balancer(&lb, queue_count, queue_size));
 
     size_t prev_arrival_time = 0;
     while (1) {

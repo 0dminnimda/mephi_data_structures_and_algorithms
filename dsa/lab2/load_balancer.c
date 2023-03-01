@@ -4,11 +4,12 @@
 
 #include "sugar/sugar.h"
 
-Error construct_load_balancer(LoadBalancer *lb, size_t queue_count) {
+Error construct_load_balancer(LoadBalancer *lb, size_t queue_count,
+                              size_t queue_size) {
     lb->queue_count = queue_count;
     NEW(lb->queues, queue_count * sizeof(PassengerQueue));
     for (size_t i = 0; i < queue_count; i++) {
-        AUTO_TRY(default_queue(&lb->queues[i].queue));
+        AUTO_TRY(construct_queue(&lb->queues[i].queue, queue_size));
         lb->queues[i].served = 0;
         lb->queues[i].serviced_time = 0;
         lb->queues[i].service_time_left = 0;

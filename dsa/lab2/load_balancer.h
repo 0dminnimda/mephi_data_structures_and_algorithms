@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-#include "sugar/sugar.h"
 #include "passenger.h"
 #include "queue/queue.h"
+#include "sugar/sugar.h"
 
 typedef struct {
     Queue queue;
@@ -19,7 +19,8 @@ typedef struct {
     size_t queue_count;
 } LoadBalancer;
 
-Error construct_load_balancer(LoadBalancer *lb, size_t queue_count);
+Error construct_load_balancer(LoadBalancer *lb, size_t queue_count,
+                              size_t queue_size);
 void destroy_load_balancer(LoadBalancer *lb);
 
 Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger);
