@@ -78,7 +78,11 @@ Error sub_main() {
         prev_arrival_time = passenger.arrival_time;
 
         size_t i = choose_least_time_queue(&lb);
-        AUTO_TRY(load_balancer_push(&lb, i, passenger));
+        TRY(load_balancer_push(&lb, i, passenger))
+        CATCH_ALL {
+            destroy_passenger(passenger);
+            break;
+        }
     }
 
     if (!IS_ERROR(error)) {
