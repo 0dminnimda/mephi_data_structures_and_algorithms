@@ -62,6 +62,16 @@ Error load_balancer_update(LoadBalancer *lb, size_t delta_time) {
 
 Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger) {
     AUTO_TRY(queue_push(lb->queues[i].queue, passenger));
+
+Error print_load_balancer(LoadBalancer *lb) {
+    AUTO_TRY(load_balancer_update(lb, 0));  // load up the updates
+    for (size_t i = 0; i < lb->queue_count; i++) {
+        printf("  queue %zu (%zu|%zu|%zu): ", i, lb->queues[i].served,
+               lb->queues[i].serviced_time, lb->queues[i].service_time_left);
+        print_queue(lb->queues[i].queue);
+        printf("\n");
+    }
+    printf("\n");
     return OK;
 }
 
