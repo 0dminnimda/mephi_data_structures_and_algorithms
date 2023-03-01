@@ -73,25 +73,28 @@ Error sub_main() {
         } else if (prev_arrival_time != passenger.arrival_time) {
             AUTO_TRY(print_load_state(prev_arrival_time, &lb));
         }
-        AUTO_TRY(load_balancer_update(&lb, passenger.arrival_time - prev_arrival_time));
+        AUTO_TRY(load_balancer_update(
+            &lb, passenger.arrival_time - prev_arrival_time));
         prev_arrival_time = passenger.arrival_time;
 
         size_t i = choose_least_time_queue(&lb);
         AUTO_TRY(load_balancer_push(&lb, i, passenger));
     }
 
-    AUTO_TRY(print_load_state(prev_arrival_time, &lb));
-    while (1) {
-        size_t max_delta_time = 0;
-        for (size_t i = 0; i < lb.queue_count; i++) {
-            if (max_delta_time < lb.queues[i].service_time_left)
-                max_delta_time = lb.queues[i].service_time_left;
+    if (!IS_ERROR(error)) {
+        AUTO_TRY(print_load_state(prev_arrival_time, &lb));
+        while (1) {
+            size_t max_delta_time = 0;
+            for (size_t i = 0; i < lb.queue_count; i++) {
+                if (max_delta_time < lb.queues[i].service_time_left)
+                    max_delta_time = lb.queues[i].service_time_left;
+            }
+            if (!max_delta_time) break;
+            prev_arrival_time += max_delta_time;
+            AUTO_TRY(load_balancer_update(&lb, max_delta_time));
         }
-        if (!max_delta_time) break;
-        prev_arrival_time += max_delta_time;
-        AUTO_TRY(load_balancer_update(&lb, max_delta_time));
+        AUTO_TRY(print_load_state(prev_arrival_time, &lb));
     }
-    AUTO_TRY(print_load_state(prev_arrival_time, &lb));
 
     DELETE(line);
     destroy_load_balancer(&lb);
