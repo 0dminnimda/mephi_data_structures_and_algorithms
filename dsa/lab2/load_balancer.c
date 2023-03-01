@@ -60,8 +60,16 @@ Error load_balancer_update(LoadBalancer *lb, size_t delta_time) {
     return OK;
 }
 
+
+Error load_balancer_pop(LoadBalancer *lb, size_t i) {
+    AUTO_TRY(queue_pop(lb->queues[i].queue));
+    return OK;
+}
+
 Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger) {
     AUTO_TRY(queue_push(lb->queues[i].queue, passenger));
+    return OK;
+}
 
 Error print_load_balancer(LoadBalancer *lb) {
     AUTO_TRY(load_balancer_update(lb, 0));  // load up the updates
