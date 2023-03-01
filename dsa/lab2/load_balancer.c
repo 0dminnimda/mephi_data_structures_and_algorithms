@@ -4,6 +4,10 @@
 
 #include "sugar/sugar.h"
 
+#ifndef SIZE_T_MAX
+#define SIZE_T_MAX ((size_t)(-1))
+#endif
+
 Error construct_load_balancer(LoadBalancer *lb, size_t queue_count,
                               size_t queue_size) {
     lb->queue_count = queue_count;
@@ -60,6 +64,15 @@ Error load_balancer_update(LoadBalancer *lb, size_t delta_time) {
     return OK;
 }
 
+size_t load_balancer_min_nonzero_delta_time(LoadBalancer *lb) {
+    size_t delta_time = SIZE_T_MAX;
+    for (size_t i = 0; i < lb->queue_count; i++) {
+        size_t value = lb->queues[i].service_time_left;
+        if (value < delta_time && value != 0) delta_time = value;
+    }
+    if (delta_time == SIZE_T_MAX) return 0;
+    return delta_time;
+}
 
 Error load_balancer_pop(LoadBalancer *lb, size_t i) {
     AUTO_TRY(queue_pop(lb->queues[i].queue));

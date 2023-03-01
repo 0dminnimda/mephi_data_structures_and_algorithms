@@ -28,6 +28,7 @@ Error load_balancer_push(LoadBalancer *lb, size_t i, Passenger passenger);
 
 Error load_balancer_update(LoadBalancer *lb, size_t delta_time);
 Error print_load_balancer(LoadBalancer *lb);
+size_t load_balancer_min_nonzero_delta_time(LoadBalancer *lb);
 
 typedef int (*queue_comparator)(const PassengerQueue *a,
                                 const PassengerQueue *b);
