@@ -46,11 +46,57 @@ sugar:
 	$(AR) sugar.lib sugar/memo.o sugar/custom_malloc.o
 
 .PHONY: test
-test: common sugar
+test:
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/ d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2 d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/ d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15  d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c//10 d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 /2/10 d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f//9" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 /6/9" | ./main.out
+	- echo "2 a/0/20" | ./main.out
+	- echo "2 a/1/0" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10 1 a/1/2 b/1/2 c/10/2" | ./main.out
+	- echo "1 a/1/2 b/1/2 c/10/2" | ./main.out
+
+.PHONY: valgrind_test
+valgrind_test:
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/ d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2 d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/ d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15  d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c//10 d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 /2/10 d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f//9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 /6/9" | valgrind --leak-check=full ./main.out
+	- echo "2 a/0/20" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/0" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10 1 a/1/2 b/1/2 c/10/2" | valgrind --leak-check=full ./main.out
+	- echo "1 a/1/2 b/1/2 c/10/2" | valgrind --leak-check=full ./main.out
+
+.PHONY: sugar_test
+sugar_test: common sugar
 	$(CC) sugar/test.c -o sugar/test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
 	./sugar/test.out
 
-.PHONY: valgrind_test
-valgrind_test: common sugar
+.PHONY: valgrind_sugar_test
+valgrind_sugar_test: common sugar
 	$(CC) sugar/test.c -o sugar/test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
 	valgrind --leak-check=full ./sugar/test.out
