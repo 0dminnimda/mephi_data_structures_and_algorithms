@@ -6,7 +6,7 @@
 #define MEMORY_ERROR_TYPE MAKE_ERROR_TYPE("MemoryError")
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
 
-#define NEW_OR_FAIL(var, size)         \
+#define NEW_OR_FAIL(var, size)          \
     (var = calloc(size, sizeof(char))); \
     if ((size) && var == NULL)
 
@@ -21,7 +21,7 @@ size_t memory_size(const void *m);
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 
-#define RENEW_OR_FAIL(var, size)                        \
+#define RENEW_OR_FAIL(var, size)                         \
     (var = nulled_realloc(var, memory_size(var), size)); \
     if ((size) && var == NULL)
 
