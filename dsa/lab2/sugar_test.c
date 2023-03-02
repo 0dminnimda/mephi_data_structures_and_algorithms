@@ -14,6 +14,13 @@ Error sub_main() {
     printf("Hello, %s! %s\n", PLATFORM_NAME, a);
 
     DELETE(a);
+    a = NULL;
+
+    RENEW(a, 11);
+    strcpy(a, "123456789");
+    printf("Hello, %zu! %s\n", memory_size(a), a);
+
+    printf("Hello, %zu! %s\n", memory_size(NULL), a);
 
     return OK;
 }
