@@ -80,6 +80,7 @@ Error sub_main() {
         CATCH_ALL break;
 
         if (prev_arrival_time > passenger.arrival_time) {
+            destroy_passenger(passenger);
             point_on_error(line, pre_cur, cur-pre_cur);
             error = PARSE_ERROR(
                 "Passengers should be introduced"
