@@ -4,10 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+// if the alignment is not critical for your system + you want the smallest size
+// than #define ALIGNED_SIZE sizeof(size_t) in your user code
+
 #if defined(__STDC__) && __STDC_VERSION__ >= 201112L
 #define ALIGNED_SIZE _Alignof(max_align_t)
 #elif !defined(ALIGNED_SIZE)
-#define ALIGNED_SIZE sizeof(double)
+#define ALIGNED_SIZE sizeof(long double)
 #endif
 
 /*
