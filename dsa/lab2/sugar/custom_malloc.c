@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+Use of max_align_t allows to retain alignment,
+with the cost of additional memory usage
+Thus returned pointers will be aligned
+*/
+
 #define SIZE(ptr) (((max_align_t *)ptr)[-1])
 #define BEGINNING(ptr) (&SIZE(ptr))
 
