@@ -20,7 +20,8 @@ Error sub_main() {
     strcpy(a, "123456789");
     printf("Hello, %zu! %s\n", memory_size(a), a);
 
-    printf("Hello, %zu! %s\n", memory_size(NULL), a);
+    DELETE_INPLACE(a) = NULL;
+    printf("Hello, %zu! %p\n", memory_size(a), a);
 
     return OK;
 }
