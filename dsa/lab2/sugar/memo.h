@@ -11,19 +11,19 @@ void *sugar_new(size_t size);
 void *sugar_renew(void *ptr, size_t size);
 void *sugar_delete(void *ptr);
 
-#define NEW_OR_FAIL(var, size)  \
+#define NEW_OR_ELSE(var, size)  \
     (var = sugar_new(size)); \
     if ((size) && var == NULL)
 
 #define NEW(var, size) \
-    NEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad allocation");
+    NEW_OR_ELSE(var, size) return MEMORY_ERROR("Bad allocation");
 
-#define RENEW_OR_FAIL(var, size)      \
+#define RENEW_OR_ELSE(var, size)      \
     (var = sugar_renew(var, size)); \
     if ((size) && var == NULL)
 
 #define RENEW(var, size) \
-    RENEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad reallocation");
+    RENEW_OR_ELSE(var, size) return MEMORY_ERROR("Bad reallocation");
 
 // DELETE returns a pointer back
 #define DELETE(x) sugar_delete(x)
