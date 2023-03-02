@@ -65,8 +65,9 @@ test:
 	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 /6/9" | ./main.out
 	- echo "2 a/0/20" | ./main.out
 	- echo "2 a/1/0" | ./main.out
-	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10 1 a/1/2 b/1/2 c/10/2" | ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10" | ./main.out
 	- echo "1 a/1/2 b/1/2 c/10/2" | ./main.out
+	- echo "1 a/2/2 b/1/2" | ./main.out
 
 .PHONY: valgrind_test
 valgrind_test:
@@ -88,8 +89,9 @@ valgrind_test:
 	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 /6/9" | valgrind --leak-check=full ./main.out
 	- echo "2 a/0/20" | valgrind --leak-check=full ./main.out
 	- echo "2 a/1/0" | valgrind --leak-check=full ./main.out
-	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10 1 a/1/2 b/1/2 c/10/2" | valgrind --leak-check=full ./main.out
+	- echo "2 a/1/20 b/1/15 c/2/10 d/5/8 e/6/5 f/6/9 g/20/3 h/20/5 i/21/4 j/25/9 i/25/3 k/25/7 l/100/10 m/111/9 n/112/3 o/112/10" | valgrind --leak-check=full ./main.out
 	- echo "1 a/1/2 b/1/2 c/10/2" | valgrind --leak-check=full ./main.out
+	- echo "1 a/2/2 b/1/2" | valgrind --leak-check=full ./main.out
 
 .PHONY: sugar_test
 sugar_test: common sugar
