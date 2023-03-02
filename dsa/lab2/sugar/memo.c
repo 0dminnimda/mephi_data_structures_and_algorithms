@@ -5,14 +5,19 @@
 
 #if IS_PLATFORM(WINDOWS)
 #include <malloc.h>
-size_t memory_size(const void *m) { return _msize((void *)m); }
+#define unsafe_memory_size(m) _msize((void *)m)
 #elif IS_PLATFORM(APPLE)
 #include <malloc/malloc.h>
-size_t memory_size(const void *m) { return malloc_size(m); }
+#define unsafe_memory_size(m) malloc_size(m)
 #elif IS_PLATFORM(LINUX)
 #include <malloc.h>
-size_t memory_size(const void *m) { return malloc_usable_size((void *)m); }
+#define unsafe_memory_size(m) malloc_usable_size((void *)m)
 #endif
+
+size_t memory_size(const void *m) {
+    if (m == NULL) return 0;
+    return unsafe_memory_size(m);
+}
 
 void *nulled_realloc(void *ptr, size_t old_size, size_t new_size) {
     ptr = realloc(ptr, new_size);
