@@ -103,7 +103,7 @@ Error sub_main() {
     if (!IS_ERROR(error))
         AUTO_TRY(printed_load_balancer_update(&lb, prev_arrival_time, -1));
 
-    DELETE(line);
+    free(line);  // since read_line uses regular malloc
     destroy_load_balancer(&lb);
 
     return error;
