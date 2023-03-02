@@ -29,18 +29,17 @@ size_t memory_size(const void *m) {
     return unsafe_memory_size(m);
 }
 
-void *sugar_malloc(size_t size) {
-    return calloc(size, sizeof(char));
-}
+void *sugar_new(size_t size) { return calloc(size, sizeof(char)); }
 
-static inline void *nulled_realloc(void *ptr, size_t old_size, size_t new_size) {
+static inline void *nulled_realloc(void *ptr, size_t old_size,
+                                   size_t new_size) {
     ptr = realloc(ptr, new_size);
     if (ptr != NULL && new_size > old_size)
         memset((char *)ptr + old_size, 0, new_size - old_size);
     return ptr;
 }
 
-void *sugar_realloc(void *ptr, size_t size) {
+void *sugar_renew(void *ptr, size_t size) {
     return nulled_realloc(ptr, memory_size(ptr), size);
 }
 

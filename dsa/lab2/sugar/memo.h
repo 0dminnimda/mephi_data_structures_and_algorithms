@@ -7,25 +7,23 @@
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
 
 size_t memory_size(const void *m);
-void *sugar_malloc(size_t size);
+void *sugar_new(size_t size);
+void *sugar_renew(void *ptr, size_t size);
+void *sugar_delete(void *ptr);
 
 #define NEW_OR_FAIL(var, size)  \
-    (var = sugar_malloc(size)); \
+    (var = sugar_new(size)); \
     if ((size) && var == NULL)
 
 #define NEW(var, size) \
     NEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad allocation");
 
-void *sugar_realloc(void *ptr, size_t size);
-
 #define RENEW_OR_FAIL(var, size)      \
-    (var = sugar_realloc(var, size)); \
+    (var = sugar_renew(var, size)); \
     if ((size) && var == NULL)
 
 #define RENEW(var, size) \
     RENEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad reallocation");
-
-void *sugar_delete(void *ptr);
 
 // DELETE returns a pointer back
 #define DELETE(x) sugar_delete(x)
