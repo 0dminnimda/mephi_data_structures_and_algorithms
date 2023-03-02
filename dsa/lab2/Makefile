@@ -49,3 +49,8 @@ sugar:
 test: common sugar
 	$(CC) sugar/test.c -o sugar/test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
 	./sugar/test.out
+
+.PHONY: valgrind_test
+valgrind_test: common sugar
+	$(CC) sugar/test.c -o sugar/test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
+	valgrind --leak-check=full ./sugar/test.out
