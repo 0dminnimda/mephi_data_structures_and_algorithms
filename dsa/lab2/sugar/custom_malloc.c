@@ -10,8 +10,8 @@ with the cost of additional memory usage
 Thus returned pointers will be aligned
 */
 
-#define SIZE(ptr) (((max_align_t *)ptr)[-1])
-#define BEGINNING(ptr) (&SIZE(ptr))
+#define BEGINNING(ptr) (&(((max_align_t *)ptr)[-1]))
+#define SIZE(ptr) (((size_t *)BEGINNING(ptr))[0])
 
 void *custom_malloc(size_t size) {
     if (size == 0) return NULL;
@@ -44,7 +44,7 @@ void *custom_realloc(void *ptr, size_t size) {
 
 size_t custom_malloc_size(const void *ptr) {
     if (ptr == NULL) return 0;
-    return (size_t)SIZE(ptr);
+    return SIZE(ptr);
 }
 
 void custom_free(void *ptr) {
