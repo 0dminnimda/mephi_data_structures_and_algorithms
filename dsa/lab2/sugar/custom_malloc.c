@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !(defined(__STDC__) && __STDC_VERSION__ >= 201112L)
+typedef double max_align_t;
+#endif
+
 /*
 Use of max_align_t allows to retain alignment,
 with the cost of additional memory usage
