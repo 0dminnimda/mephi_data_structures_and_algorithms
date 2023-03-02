@@ -11,6 +11,8 @@ Error sub_main() {
     printf("Hello, World! %s\n", a);
 
     RENEW(a, 11);
+    printf("Hello, %s! %s\n", PLATFORM_NAME, a);
+
     strcpy(a, "123456789");
     printf("Hello, %s! %s\n", PLATFORM_NAME, a);
 
