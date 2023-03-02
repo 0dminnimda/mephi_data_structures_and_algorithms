@@ -6,12 +6,7 @@
 #define MEMORY_ERROR_TYPE MAKE_ERROR_TYPE("MemoryError")
 #define MEMORY_ERROR(message) MAKE_ERROR(MEMORY_ERROR_TYPE, message)
 
-#if IS_PLATFORM(WINDOWS) || IS_PLATFORM(APPLE) || IS_PLATFORM(LINUX)
 size_t memory_size(const void *m);
-#else
-#error Unsupported platform
-#endif
-
 void *sugar_malloc(size_t size);
 
 #define NEW_OR_FAIL(var, size)  \

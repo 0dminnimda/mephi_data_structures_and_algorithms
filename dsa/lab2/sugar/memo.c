@@ -3,7 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if IS_PLATFORM(WINDOWS)
+#if !defined(MEMO_USE_CUSTOM_MALLOC) && \
+    !(IS_PLATFORM(WINDOWS) || IS_PLATFORM(APPLE) || IS_PLATFORM(LINUX))
+#define MEMO_USE_CUSTOM_MALLOC
+#endif
+
+#ifdef MEMO_USE_CUSTOM_MALLOC
+#include "custom_malloc.h"
+#define unsafe_memory_size(m) malloc_size(m)
+#elif IS_PLATFORM(WINDOWS)
 #include <malloc.h>
 #define unsafe_memory_size(m) _msize((void *)m)
 #elif IS_PLATFORM(APPLE)
@@ -12,6 +20,8 @@
 #elif IS_PLATFORM(LINUX)
 #include <malloc.h>
 #define unsafe_memory_size(m) malloc_usable_size((void *)m)
+#else
+#error Unreachable
 #endif
 
 size_t memory_size(const void *m) {
