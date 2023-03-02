@@ -10,9 +10,17 @@ struct QueueImpl {
     size_t head;
 };
 
+static inline size_t real_index(Queue queue, size_t index) {
+    return (queue->head + index) % queue->capacity;
+}
+
+static inline QUEUE_ITEM *at(Queue queue, size_t index) {
+    return &queue->data[real_index(queue, index)];
+}
+
 static void free_from(Queue queue, size_t index) {
     for (size_t i = index; i < queue->size; i++)
-        QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head + i]);
+        QUEUE_ITEM_DESTRUCTOR(*at(queue, i));
     if (queue->size > index) queue->size = index;
 }
 
@@ -64,20 +72,15 @@ void destroy_queue(Queue queue) {
 }
 
 Error queue_push(Queue queue, QUEUE_ITEM value) {
-    if (queue->capacity <= queue->head + queue->size)
-        if (queue->head)
-            reshift(queue);
-        else
-            return QUEUE_ERROR("Ran out of memory");
-
-    queue->data[queue->head + queue->size] = value;
+    if (queue->capacity <= queue->size) return QUEUE_ERROR("Ran out of memory");
+    *at(queue, queue->size) = value;
     queue->size++;
     return OK;
 }
 
 Error queue_pop(Queue queue) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
-    QUEUE_ITEM_DESTRUCTOR(queue->data[queue->head]);
+    QUEUE_ITEM_DESTRUCTOR(*at(queue, 0));
     queue->head++;
     queue->size--;
     return OK;
@@ -85,13 +88,13 @@ Error queue_pop(Queue queue) {
 
 Error queue_front(Queue queue, QUEUE_ITEM *value) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
-    *value = queue->data[queue->head];
+    *value = *at(queue, 0);
     return OK;
 }
 
 Error queue_back(Queue queue, QUEUE_ITEM *value) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
-    *value = queue->data[queue->head + queue->size - 1];
+    *value = *at(queue, queue->size - 1);
     return OK;
 }
 
@@ -100,7 +103,7 @@ size_t queue_size(Queue queue) { return queue->size; }
 void fprint_queue(FILE *stream, Queue queue) {
     for (size_t i = 0; i < queue->size; i++) {
         if (i) fprintf(stream, ", ");
-        QUEUE_ITEM_FPRINT(stream, &queue->data[queue->head + i]);
+        QUEUE_ITEM_FPRINT(stream, at(queue, i));
     }
 }
 
