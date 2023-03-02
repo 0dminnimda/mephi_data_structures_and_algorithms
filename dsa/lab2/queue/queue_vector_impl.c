@@ -59,8 +59,8 @@ void queue_clear(Queue queue) {
 
 void destroy_queue(Queue queue) {
     if (queue && queue->data) queue_clear(queue);
-    if (queue) free(queue->data);
-    free(queue);
+    if (queue) DELETE(queue->data);
+    DELETE(queue);
 }
 
 Error queue_push(Queue queue, QUEUE_ITEM value) {

@@ -6,7 +6,7 @@
 #include "common/string.h"
 #include "sugar/sugar.h"
 
-void destroy_passenger(Passenger passenger) { free(passenger.name); }
+void destroy_passenger(Passenger passenger) { DELETE(passenger.name); }
 
 // parses Passenger in a format "name/arrival_time/service_time"
 Error parse_passenger(char **str, Passenger *passenger) {

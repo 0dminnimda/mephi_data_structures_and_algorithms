@@ -25,7 +25,7 @@ void destroy_load_balancer(LoadBalancer *lb) {
     if (lb == NULL) return;
     for (size_t i = 0; i < lb->queue_count; i++)
         destroy_queue(lb->queues[i].queue);
-    free(lb->queues);
+    DELETE(lb->queues);
 }
 
 static Error update_queue(LoadBalancer *lb, size_t i, size_t delta_time) {

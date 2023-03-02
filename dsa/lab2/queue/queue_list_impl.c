@@ -30,7 +30,7 @@ void queue_clear(Queue queue) {
 
 void destroy_queue(Queue queue) {
     if (queue) queue_clear(queue);
-    free(queue);
+    DELETE(queue);
 }
 
 Error queue_push(Queue queue, QUEUE_ITEM value) {
@@ -52,7 +52,7 @@ Error queue_pop(Queue queue) {
     QueueNode *head = queue->tail->next;
     queue->tail->next = queue->tail->next->next;
     QUEUE_ITEM_DESTRUCTOR(head->value);
-    free(head);
+    DELETE(head);
     queue->size--;
     if (queue->size == 0) queue->tail = NULL;
     return OK;
