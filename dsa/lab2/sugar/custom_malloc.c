@@ -4,34 +4,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !(defined(__STDC__) && __STDC_VERSION__ >= 201112L)
-typedef double max_align_t;
+#if defined(__STDC__) && __STDC_VERSION__ >= 201112L
+#define ALIGNED_SIZE _Alignof(max_align_t)
+#elif !defined(ALIGNED_SIZE)
+#define ALIGNED_SIZE sizeof(double)
 #endif
 
 /*
-Use of max_align_t allows to retain alignment,
+Use of ALIGNED_SIZE allows to retain alignment,
 with the cost of additional memory usage
 Thus returned pointers will be aligned
 */
 
-#define BEGINNING(ptr) (&(((max_align_t *)ptr)[-1]))
+#define BEGINNING(ptr) ((char *)ptr - ALIGNED_SIZE)
 #define SIZE(ptr) (((size_t *)BEGINNING(ptr))[0])
 
 void *custom_malloc(size_t size) {
     if (size == 0) return NULL;
-    max_align_t *ret = malloc(sizeof(max_align_t) + size);
+    void *ret = malloc(ALIGNED_SIZE + size);
     if (ret == NULL) return NULL;
     *(size_t *)ret = size;
-    return &ret[1];
+    return (char *)ret + ALIGNED_SIZE;
 }
 
 void *custom_calloc(size_t num, size_t size) {
     size = num * size;  // FIXME: no overflow checks
     if (size == 0) return NULL;
-    max_align_t *ret = calloc(sizeof(max_align_t) + size, 1);
+    void *ret = calloc(ALIGNED_SIZE + size, 1);
     if (ret == NULL) return NULL;
     *(size_t *)ret = size;
-    return &ret[1];
+    return (char *)ret + ALIGNED_SIZE;
 }
 
 void *custom_realloc(void *ptr, size_t size) {
@@ -40,10 +42,10 @@ void *custom_realloc(void *ptr, size_t size) {
         return NULL;
     }
     void *beginning = ptr == NULL ? NULL : BEGINNING(ptr);
-    max_align_t *ret = realloc(beginning, sizeof(max_align_t) + size);
+    void *ret = realloc(beginning, ALIGNED_SIZE + size);
     if (ret == NULL) return NULL;
     *(size_t *)ret = size;
-    return &ret[1];
+    return (char *)ret + ALIGNED_SIZE;
 }
 
 size_t custom_malloc_size(const void *ptr) {
