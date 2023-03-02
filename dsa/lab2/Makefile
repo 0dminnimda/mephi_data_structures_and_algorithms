@@ -42,7 +42,8 @@ common:
 .PHONY: sugar
 sugar:
 	$(CC) -c -o sugar/memo.o sugar/memo.c $(CFLAGS)
-	$(AR) sugar.lib sugar/memo.o
+	$(CC) -c -o sugar/custom_malloc.o sugar/custom_malloc.c $(CFLAGS)
+	$(AR) sugar.lib sugar/memo.o sugar/custom_malloc.o
 
 .PHONY: test
 test: common sugar
