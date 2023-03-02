@@ -11,10 +11,11 @@
 #include "queue/queue.h"
 #include "sugar/sugar.h"
 
-void point_on_error(char *current, char *line) {
+void point_on_error(char *line, char *current, size_t length) {
     printf("\n%s\n", line);
     for (size_t i = 0; i < current - line; i++) printf(" ");
-    printf("^\n");
+    for (size_t i = 0; i < length; i++) printf("^");
+    printf("\n");
     for (size_t i = 0; i < current - line; i++) printf(" ");
     printf("The wrong part\n");
 }
@@ -50,7 +51,7 @@ Error sub_main() {
     size_t queue_count = 0;
     TRY(parse_size_t(&cur, &queue_count))
     CATCH(PARSE_ERROR_TYPE) {
-        point_on_error(cur, line);
+        point_on_error(line, cur, 1);
         return PARSE_ERROR(
             "Parsed queue count is not a valid non-negative number");
     }
@@ -73,13 +74,13 @@ Error sub_main() {
         Passenger passenger = {0};
         TRY(parse_passenger(&cur, &passenger))
         CATCH(PARSE_ERROR_TYPE) {
-            point_on_error(cur, line);
+            point_on_error(line, cur, 1);
             break;
         }
         CATCH_ALL break;
 
         if (prev_arrival_time > passenger.arrival_time) {
-            point_on_error(pre_cur, line);
+            point_on_error(line, pre_cur, cur-pre_cur);
             error = PARSE_ERROR(
                 "Passengers should be introduced"
                 " in order of their arrival_time");
