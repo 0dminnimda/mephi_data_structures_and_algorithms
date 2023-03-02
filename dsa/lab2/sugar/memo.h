@@ -21,10 +21,10 @@ void *sugar_malloc(size_t size);
 #define NEW(var, size) \
     NEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad allocation");
 
-void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
+void *sugar_realloc(void *ptr, size_t size);
 
-#define RENEW_OR_FAIL(var, size)                         \
-    (var = nulled_realloc(var, memory_size(var), size)); \
+#define RENEW_OR_FAIL(var, size)      \
+    (var = sugar_realloc(var, size)); \
     if ((size) && var == NULL)
 
 #define RENEW(var, size) \
