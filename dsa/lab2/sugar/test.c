@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include "sugar/sugar.h"
-#include "common/input.h"
+#include "sugar.h"
+#include "../common/input.h"
 
 Error sub_main() {
     char *a = NEW(a, 4);

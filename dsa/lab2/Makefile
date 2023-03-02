@@ -47,5 +47,5 @@ sugar:
 
 .PHONY: test
 test: common sugar
-	$(CC) sugar_test.c -o test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
-	./test.out
+	$(CC) sugar/test.c -o sugar/test.out -L. $(LIB)common.lib $(LIB)sugar.lib $(CFLAGS)
+	./sugar/test.out
