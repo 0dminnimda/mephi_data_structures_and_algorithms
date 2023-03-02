@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "sugar/sugar.h"
 #include "common/input.h"
@@ -20,8 +21,27 @@ Error sub_main() {
     strcpy(a, "123456789");
     printf("Hello, %zu! %s\n", memory_size(a), a);
 
+    RENEW(a, 0);
+    printf("Hello, %zu!\n", memory_size(a));
+
+    NEW(a, 0);
+    printf("Hello, %zu!\n", memory_size(a));
+
     DELETE_INPLACE(a) = NULL;
     printf("Hello, %zu! %p\n", memory_size(a), a);
+
+    NEW_OR_ELSE(a, ULLONG_MAX) {
+        printf("Hello, new no mem!\n");
+    } else {
+        printf("Hello, new yes mem!\n");
+    }
+
+    RENEW_OR_ELSE(a, ULLONG_MAX) {
+        printf("Hello, renew no mem!\n");
+    } else {
+        printf("Hello, renew yes mem!\n");
+        DELETE(a);
+    }
 
     return OK;
 }
