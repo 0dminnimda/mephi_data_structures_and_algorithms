@@ -26,7 +26,7 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size) {
     return ptr;
 }
 
-inline void **delete_n_return(void **ptr) {
-    DELETE((void*)*ptr);
+void *sugar_delete(void *ptr) {
+    free(ptr);
     return ptr;
 }

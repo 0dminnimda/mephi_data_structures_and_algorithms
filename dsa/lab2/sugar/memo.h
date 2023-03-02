@@ -28,9 +28,10 @@ void *nulled_realloc(void *ptr, size_t old_size, size_t new_size);
 #define RENEW(var, size) \
     RENEW_OR_FAIL(var, size) return MEMORY_ERROR("Bad reallocation");
 
+void *sugar_delete(void *ptr);
+
 // DELETE returns a pointer back
-#define DELETE(x) (free(x), x)
+#define DELETE(x) sugar_delete(x)
 
 // DELETE_INPLACE returns a pointer back and is a valid lvalue
-void **delete_n_return(void **ptr);
-#define DELETE_INPLACE(x) *delete_n_return((void **)&x)
+#define DELETE_INPLACE(x) *(DELETE(x), &x)
