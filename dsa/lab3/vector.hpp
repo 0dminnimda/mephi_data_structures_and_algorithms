@@ -86,6 +86,28 @@ class Vector {
         swap(capacity_, b.capacity_);
         swap(size_, b.size_);
     }
+
+    std::string to_string() const {
+        using std::to_string;  // allow custom implementations
+        std::string result;
+        result += "[";
+        for (std::size_t i = 0; i < size_; i++) {
+            if (i) result += ", ";
+            result += to_string(data_[i]);
+        }
+        result += "]";
+        return result;
+    }
 };
+
+template <class T>
+void swap(Vector<T> &a, Vector<T> &b) {
+    return a.swap(b);
+}
+
+template <class T>
+std::string to_string(const Vector<T> &v) {
+    return v.to_string();
+}
 
 #endif  // VECTOR_H_
