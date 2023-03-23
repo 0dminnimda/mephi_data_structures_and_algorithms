@@ -4,7 +4,7 @@
 
 #define TABLE_PRINT_ERRORS
 
-#include "../common/input.h"
+#include "common/input.h"
 #include "table.h"
 
 void printMenu();

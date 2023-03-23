@@ -30,34 +30,12 @@ void destroyTable(Table *table) {
     free(table);
 }
 
-// bool insertItem(Table *table, KeyType key, InfoType *info) {
-//     for (IndexType i = 0; i < table->msize; i++) {
-//         if (table->ks[i].key == 0) {
-//             table->ks[i].key = key;
-//             table->ks[i].info = malloc(sizeof(Item));
-//             if (table->ks[i].info == NULL) {
-//                 fprintf(stderr, "Error: Out of memory\n");
-//                 exit(EXIT_FAILURE);
-//             }
-//             table->ks[i].info->key = key;
-//             table->ks[i].info->info = info;
-//             return true;
-//         }
-//     }
-//     fprintf(stderr, "Error: Table is full\n");
-//     return false;
-// }
-
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     // Validate the data
     if (key == 0) {
         TABLE_ERROR("Error: Trying to insert an invalid empty key\n");
         return false;
     }
-    // if (parKey != 0 && searchByKey(table, parKey) == NULL) {
-    //     TABLE_ERROR("Error: Trying to insert with an invalid parent key\n");
-    //     return false;
-    // }
 
     // Check if table is full
     if (table->ks[table->msize - 1].key != 0) {
@@ -176,27 +154,6 @@ bool importTable(Table *table, const char *filename) {
     fclose(file);
     return true;
 }
-
-// bool removeByParentKey(Table *table, KeyType parKey) {
-//     bool found = false;
-//     IndexType it = 0;
-//     for (IndexType i = 0; i < table->msize; i++) {
-//         if (table->ks[i].par == parKey) {
-//             if (found) {
-//                 TABLE_ERROR("Error: Duplicate parent keys\n");
-//                 return false;
-//             }
-//             found = true;
-//             it = i;
-//         }
-//     }
-//     if (found) {
-//         deleteItem(table, table->ks[it].key);
-//     } else {
-//         TABLE_ERROR("Error: No items found with parent key\n");
-//     }
-//     return found;
-// }
 
 bool removeByKeyIfNotParent(Table *table, KeyType key) {
     // Check if the item has a parent key in the table
