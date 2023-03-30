@@ -33,12 +33,12 @@ typedef struct {
 
 Table *createTable(IndexType msize);
 void destroyTable(Table *table);
+KeySpace *findFirstKeySpaceByParent(Table *table, KeyType parKey);
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info);
 bool deleteItem(Table *table, KeyType key);
 Item *searchByKey(Table *table, KeyType key);
 void outputTable(Table *table);
 bool importTable(Table *table, const char *filename);
-// bool removeByParentKey(Table *table, KeyType parKey);
 bool removeByKeyIfNotParent(Table *table, KeyType key);
 Table *searchByParentKey(Table *table, KeyType parKey);
 

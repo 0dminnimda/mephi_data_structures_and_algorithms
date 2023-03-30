@@ -30,6 +30,26 @@ void destroyTable(Table *table) {
     free(table);
 }
 
+KeySpace *findFirstKeySpaceByParent(Table *table, KeyType parKey) {
+    IndexType left = 0;
+    IndexType right = table->msize - 1;
+
+    while (left <= right) {
+        IndexType mid = (left + right) / 2;
+
+        if (table->ks[mid].par >= parKey) {
+            if (mid == 0 || table->ks[mid - 1].par < parKey) {
+                return &table->ks[mid];
+            }
+            right = mid;
+        } else {
+            left = mid;
+        }
+    }
+
+    return NULL;
+}
+
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     // Validate the data
     if (key == 0) {
