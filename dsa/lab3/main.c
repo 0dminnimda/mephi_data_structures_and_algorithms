@@ -154,7 +154,7 @@ void searchByParentKeyCommand(Table *table) {
 void printMenu() {
     printf("Menu:\n");
     printf("i   Insert element\n");
-    printf("d   Delete element\n");
+    // printf("d   Delete element\n");
     printf("s   Search by key\n");
     printf("o   Output table\n");
     printf("f   Import from file\n");
@@ -187,8 +187,8 @@ int main() {
 
         if (strcmp(input, "i") == 0) {
             insertCommand(table);
-        } else if (strcmp(input, "d") == 0) {
-            removeByKeyCommand(table);
+        // } else if (strcmp(input, "d") == 0) {
+        //     removeByKeyCommand(table);
         } else if (strcmp(input, "ssp") == 0) {
             findFirstKeySpaceByParentCommand(table);
         } else if (strcmp(input, "s") == 0) {
