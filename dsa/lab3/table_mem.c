@@ -109,21 +109,31 @@ bool deleteItem(Table *table, KeyType key) {
         return false;
     }
 
+    IndexType previous_index = -1;
+    KeyType previous_parent = -1;
     bool found = false;
     for (IndexType i = 0; i < table->msize; i++) {
         if (found) {
-            // Shift all following items
-            table->ks[i - 1] = table->ks[i];
+            // Shift one following item per parent
+            if (table->ks[i].par != previous_parent) {
+                table->ks[previous_index] = table->ks[i - 1];
+                previous_index = i - 1;
+                previous_parent = table->ks[i].par;
+            }
         } else if (table->ks[i].key == key) {
             // Delete the target item
             free(table->ks[i].info->info);
             free(table->ks[i].info);
             found = true;
+            previous_index = i;
+            previous_parent = table->ks[i].par;
         }
     }
 
     if (found) {
-        // Clear the previous last value
+        // End is also a change in the parent
+        table->ks[previous_index] = table->ks[table->msize - 1];
+        // Clear the last value as it is always empty after delete
         table->ks[table->msize - 1].key = 0;
         table->ks[table->msize - 1].par = 0;
         table->ks[table->msize - 1].info = NULL;
