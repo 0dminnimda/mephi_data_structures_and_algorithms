@@ -204,13 +204,12 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
 
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize);
-    for (IndexType i = 0; i < table->msize; i++) {
-        if (table->ks[i].key != 0 && table->ks[i].par == parKey) {
-            if (!insertItem(newTable, table->ks[i].key, table->ks[i].par,
-                            *(table->ks[i].info->info))) {
-                destroyTable(newTable);
-                return NULL;
-            }
+    for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
+        KeySpace ks = table->ks[i];
+        if (ks.par != parKey || ks.key == 0) break;
+        if (!insertItem(newTable, ks.key, ks.par, *(ks.info->info))) {
+            destroyTable(newTable);
+            return NULL;
         }
     }
     return newTable;
