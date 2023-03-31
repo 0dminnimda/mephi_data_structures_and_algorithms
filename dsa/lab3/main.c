@@ -170,7 +170,13 @@ void printTable(Table *table) {
     // }
 }
 
-void printItem(Item *item) { printf("Key: %u\tInfo: %u\n", item->key, *(item->info)); }
+void printItem(Item *item) {
+    if (item == NULL) {
+        printf("Empty Item\n");
+    } else {
+        printf("Key: %u\tInfo: %u\n", item->key, *(item->info));
+    }
+}
 
 int main() {
     Table *table = createTable(10);
