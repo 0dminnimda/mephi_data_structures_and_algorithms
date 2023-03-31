@@ -65,12 +65,19 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
         return false;
     }
 
-    // Find the index where the new item should be inserted
-    IndexType index = 0;
-    while (index < table->msize && table->ks[index].par <= parKey) {
-        if (table->ks[index].key == 0) break;
-        index++;
+    // Find the index where the new item should be inserted + check uniqueness
+    IndexType index = -1;
+    for (IndexType i = 0; i < table->msize; ++i) {
+        if (table->ks[i].key == 0) break;
+        if (table->ks[i].key == key) {
+            TABLE_ERROR("Error: Trying to insert a duplicate key\n");
+            return false;
+        }
+        if (table->ks[i].par <= parKey) {
+            index = i;
+        }
     }
+    index++;
 
     // Shift all items with higher parent key to the right
     for (IndexType i = table->msize - 1; i > index; --i) {
