@@ -50,7 +50,7 @@ void removeByKeyCommand(Table *table) {
     free(input);
 }
 
-void findFirstKeySpaceByParentCommand(Table *table) {
+void findFirstPlaceByParentCommand(Table *table) {
     printf("Enter parent key to search for: ");
     char *input = read_line();
 
@@ -58,13 +58,9 @@ void findFirstKeySpaceByParentCommand(Table *table) {
     KeyType parKey;
     int count = sscanf(input, "%u", &parKey);
     if (count == 1) {
-        KeySpace *space = findFirstKeySpaceByParent(table, parKey);
-        if (space != NULL) {
-            printf("Item found:\n");
-            printItem(space->info);
-        } else {
-            printf("Item not found\n");
-        }
+        IndexType index = findFirstPlaceByParent(table, parKey);
+        printf("Item found (at %lu):\n", index);
+        printItem(table->ks[index].info);
     } else {
         printf("Error: Invalid input format\n");
     }
@@ -190,7 +186,7 @@ int main() {
         // } else if (strcmp(input, "d") == 0) {
         //     removeByKeyCommand(table);
         } else if (strcmp(input, "ssp") == 0) {
-            findFirstKeySpaceByParentCommand(table);
+            findFirstPlaceByParentCommand(table);
         } else if (strcmp(input, "s") == 0) {
             searchByKeyCommand(table);
         } else if (strcmp(input, "o") == 0) {

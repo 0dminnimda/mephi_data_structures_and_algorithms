@@ -30,16 +30,18 @@ void destroyTable(Table *table) {
     free(table);
 }
 
-KeySpace *findFirstKeySpaceByParent(Table *table, KeyType parKey) {
+IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
     IndexType left = 0;
     IndexType right = table->msize - 1;
 
-    while (left <= right) {
+    while (left < right) {
+        printf("%lu %lu\n", left, right);
         IndexType mid = (left + right) / 2;
 
-        if (table->ks[mid].par >= parKey) {
-            if (mid == 0 || table->ks[mid - 1].par < parKey) {
-                return &table->ks[mid];
+        if (table->ks[mid].par >= parKey || table->ks[mid].key == 0) {
+            if (mid == 0) return mid;
+            if (table->ks[mid - 1].par < parKey && table->ks[mid - 1].key != 0) {
+                return mid;
             }
             right = mid;
         } else {
@@ -47,7 +49,8 @@ KeySpace *findFirstKeySpaceByParent(Table *table, KeyType parKey) {
         }
     }
 
-    return NULL;
+    TABLE_ERROR("Error: Unreachable code was reached\n");
+    return 0;
 }
 
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {

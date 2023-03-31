@@ -33,7 +33,7 @@ typedef struct {
 
 Table *createTable(IndexType msize);
 void destroyTable(Table *table);
-KeySpace *findFirstKeySpaceByParent(Table *table, KeyType parKey);
+IndexType findFirstPlaceByParent(Table *table, KeyType parKey);
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info);
 bool deleteItem(Table *table, KeyType key);
 Item *searchByKey(Table *table, KeyType key);
