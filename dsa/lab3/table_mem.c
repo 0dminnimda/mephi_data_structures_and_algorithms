@@ -156,7 +156,7 @@ Item *searchByKey(Table *table, KeyType key) {
 void outputTable(Table *table) {
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            printf("%u: %u %u\n", table->ks[i].key, table->ks[i].par,
+            printf("[%lu] = %u: %u %u\n", i, table->ks[i].key, table->ks[i].par,
                    *(table->ks[i].info->info));
         }
     }
