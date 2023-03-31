@@ -79,9 +79,19 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     }
     index++;
 
-    // Shift all items with higher parent key to the right
-    for (IndexType i = table->msize - 1; i > index; --i) {
-        table->ks[i] = table->ks[i - 1];
+    // Shift one following item per parent
+    KeySpace previous_space = table->ks[index];
+    IndexType previous_index = index;
+    KeyType previous_parent = table->ks[index].par;
+    for (IndexType i = index + 1; i < table->msize; ++i) {
+        if (table->ks[i].par != previous_parent) {
+            KeySpace tmp = table->ks[i];
+            table->ks[i] = previous_space;
+            previous_space = tmp;
+
+            previous_index = i;
+            previous_parent = table->ks[i].par;
+        }
     }
 
     // Insert the new item
