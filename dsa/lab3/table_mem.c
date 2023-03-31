@@ -35,7 +35,6 @@ IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
     IndexType right = table->msize - 1;
 
     while (left < right) {
-        printf("%lu %lu\n", left, right);
         IndexType mid = (left + right) / 2;
 
         if (table->ks[mid].par >= parKey || table->ks[mid].key == 0) {
@@ -74,7 +73,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     }
 
     // Shift all items with higher parent key to the right
-    for (IndexType i = table->msize - 1; i > index; i--) {
+    for (IndexType i = table->msize - 1; i > index; --i) {
         table->ks[i] = table->ks[i - 1];
     }
 
