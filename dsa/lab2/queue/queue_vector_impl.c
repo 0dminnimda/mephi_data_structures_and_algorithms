@@ -82,6 +82,7 @@ Error queue_pop(Queue queue) {
     if (queue->size <= 0) return QUEUE_ERROR("U stupid, queue is empty");
     QUEUE_ITEM_DESTRUCTOR(*at(queue, 0));
     queue->head++;
+    queue->head = queue->head % queue->capacity;
     queue->size--;
     return OK;
 }
