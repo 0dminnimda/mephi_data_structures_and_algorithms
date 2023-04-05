@@ -177,7 +177,7 @@ void outputTable(Table *table) {
     printf("metaKey = %u\n", table->metaKey);
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            printf("[%lu] = %u: %u %u\n", i, table->ks[i].key, table->ks[i].par,
+            printf("[%lu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par,
                    *(table->ks[i].info->info));
         }
     }
@@ -206,7 +206,7 @@ bool importTable(Table *table, const char *filename) {
     KeyType key;
     KeyType par;
     InfoType info;
-    while (fscanf(file, "%u: %u %u", &key, &par, &info) == 3) {
+    while (fscanf(file, "%u <- %u: %u", &key, &par, &info) == 3) {
         if (!insertItem(table, key, par, info)) {
             fclose(file);
             return false;
