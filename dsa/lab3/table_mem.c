@@ -65,7 +65,10 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
         return false;
     }
 
-    // Find the index where the new item should be inserted + check uniqueness
+    // Find the index where the new item should be inserted
+    // + check key uniqueness
+    // + check parKey existance
+    bool parKeyFound = (parKey == 0) || (parKey == table->metaKey);
     IndexType index = -1;
     for (IndexType i = 0; i < table->msize; ++i) {
         if (table->ks[i].key == 0) break;
@@ -76,6 +79,13 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
         if (table->ks[i].par <= parKey) {
             index = i;
         }
+        if (table->ks[i].key == parKey) {
+            parKeyFound = true;
+        }
+    }
+    if (!parKeyFound) {
+        TABLE_ERROR("Error: Parent key is not present in the table\n");
+        return false;
     }
     index++;
 
@@ -164,6 +174,7 @@ Item *searchByKey(Table *table, KeyType key) {
 }
 
 void outputTable(Table *table) {
+    printf("metaKey = %u\n", table->metaKey);
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
             printf("[%lu] = %u: %u %u\n", i, table->ks[i].key, table->ks[i].par,
@@ -191,6 +202,7 @@ bool importTable(Table *table, const char *filename) {
     }
 
     // Insert the the table
+    fscanf(file, "metaKey = %u", &(table->metaKey));  // it's fine to skip it
     KeyType key;
     KeyType par;
     InfoType info;
@@ -224,6 +236,7 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
 
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize);
+    newTable->metaKey = parKey;
     for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
         KeySpace ks = table->ks[i];
         if (ks.par != parKey || ks.key == 0) break;
