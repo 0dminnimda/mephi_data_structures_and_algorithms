@@ -1,6 +1,6 @@
 .PHONY: table_mem
 table_mem:
-	clang common/input.c table_mem.c main.c -o main.out -O0 -g -Wno-deprecated-declarations
+	clang common/input.c table_mem.c item_mem.c main.c -o main.out -O0 -g -Wno-deprecated-declarations
 
 .PHONY: run_table_mem
 run_table_mem:

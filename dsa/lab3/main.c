@@ -174,7 +174,9 @@ void printItem(Item *item) {
     if (item == NULL) {
         printf("Empty Item\n");
     } else {
-        printf("Key: %u\tInfo: %u\n", item->key, *(item->info));
+        InfoType info = -1;
+        getInfo(item, &info);
+        printf("Key: %u\tInfo: %u\n", itemKey(item), info);
     }
 }
 
