@@ -173,9 +173,9 @@ void outputTable(Table *table) {
         if (table->ks[i].key != 0) {
             InfoType info = -1;
             if (getInfo(table->ks[i].info, &info))
-                printf("[%lu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par, info);
+                printf("[%zu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par, info);
             else
-                printf("[%lu] = error getting the info", i);
+                printf("[%zu] = error getting the info", i);
         }
     }
 }

@@ -59,7 +59,7 @@ void findFirstPlaceByParentCommand(Table *table) {
     int count = sscanf(input, "%u", &parKey);
     if (count == 1) {
         IndexType index = findFirstPlaceByParent(table, parKey);
-        printf("Item found (at %lu):\n", index);
+        printf("Item found (at %zu):\n", index);
         printItem(table->ks[index].info);
     } else {
         printf("Error: Invalid input format\n");
