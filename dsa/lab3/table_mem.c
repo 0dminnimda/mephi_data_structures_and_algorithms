@@ -26,6 +26,18 @@ void freeInfo(Item *item) {
     free(item->info);
 }
 
+bool createItem(Table *table, IndexType index, InfoType info) {
+    table->ks[index].info = calloc(1, sizeof(Item));
+    if (table->ks[index].info == NULL) {
+        fprintf(stderr, "Error: Out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+    table->ks[index].info->key = table->ks[index].key;
+    allocInfo(table->ks[index].info);
+    if (!setInfo(table->ks[index].info, info)) return false;
+    return true;
+}
+
 Table *createTable(IndexType msize) {
     Table *table = calloc(1, sizeof(Table));
     if (table == NULL) {
@@ -129,15 +141,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     // Insert the new item
     table->ks[index].key = key;
     table->ks[index].par = parKey;
-    table->ks[index].info = calloc(1, sizeof(Item));
-    if (table->ks[index].info == NULL) {
-        fprintf(stderr, "Error: Out of memory\n");
-        exit(EXIT_FAILURE);
-    }
-    table->ks[index].info->key = key;
-    allocInfo(table->ks[index].info);
-    if (!setInfo(table->ks[index].info, info)) return false;
-    return true;
+    return createItem(table, index, info);
 }
 
 bool deleteItem(Table *table, KeyType key) {
