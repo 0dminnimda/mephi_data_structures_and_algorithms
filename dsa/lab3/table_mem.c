@@ -4,6 +4,28 @@
 
 #include "table.h"
 
+bool getInfo(Item *item, InfoType *value) {
+    *value = *(item->info);
+    return true;
+}
+
+bool setInfo(Item *item, InfoType value) {
+    *(item->info) = value;
+    return true;
+}
+
+void allocInfo(Item *item) {
+    item->info = calloc(1, sizeof(InfoType));
+    if (item->info == NULL) {
+        fprintf(stderr, "Error: Out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void freeInfo(Item *item) {
+    free(item->info);
+}
+
 Table *createTable(IndexType msize) {
     Table *table = calloc(1, sizeof(Table));
     if (table == NULL) {
@@ -22,7 +44,7 @@ Table *createTable(IndexType msize) {
 void destroyTable(Table *table) {
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            free(table->ks[i].info->info);
+            freeInfo(table->ks[i].info);
             free(table->ks[i].info);
         }
     }
@@ -107,18 +129,14 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     // Insert the new item
     table->ks[index].key = key;
     table->ks[index].par = parKey;
-    table->ks[index].info = malloc(sizeof(Item));
+    table->ks[index].info = calloc(1, sizeof(Item));
     if (table->ks[index].info == NULL) {
         fprintf(stderr, "Error: Out of memory\n");
         exit(EXIT_FAILURE);
     }
     table->ks[index].info->key = key;
-    table->ks[index].info->info = malloc(sizeof(InfoType));
-    if (table->ks[index].info->info == NULL) {
-        fprintf(stderr, "Error: Out of memory\n");
-        exit(EXIT_FAILURE);
-    }
-    *(table->ks[index].info->info) = info;
+    allocInfo(table->ks[index].info);
+    if (!setInfo(table->ks[index].info, info)) return false;
     return true;
 }
 
@@ -142,7 +160,7 @@ bool deleteItem(Table *table, KeyType key) {
             }
         } else if (table->ks[i].key == key) {
             // Delete the target item
-            free(table->ks[i].info->info);
+            freeInfo(table->ks[i].info);
             free(table->ks[i].info);
             found = true;
             previous_index = i;
@@ -177,8 +195,11 @@ void outputTable(Table *table) {
     printf("metaKey = %u\n", table->metaKey);
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            printf("[%lu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par,
-                   *(table->ks[i].info->info));
+            InfoType info = -1;
+            if (getInfo(table->ks[i].info, &info))
+                printf("[%lu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par, info);
+            else
+                printf("[%lu] = error getting the info", i);
         }
     }
 }
@@ -193,7 +214,7 @@ bool importTable(Table *table, const char *filename) {
     // Clean the table
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            free(table->ks[i].info->info);
+            freeInfo(table->ks[i].info);
             free(table->ks[i].info);
             table->ks[i].key = 0;
             table->ks[i].par = 0;
@@ -240,7 +261,8 @@ Table *searchByParentKey(Table *table, KeyType parKey) {
     for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
         KeySpace ks = table->ks[i];
         if (ks.par != parKey || ks.key == 0) break;
-        if (!insertItem(newTable, ks.key, ks.par, *(ks.info->info))) {
+        InfoType info = -1;
+        if (!getInfo(table->ks[i].info, &info) || !insertItem(newTable, ks.key, ks.par, info)) {
             destroyTable(newTable);
             return NULL;
         }
