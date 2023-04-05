@@ -80,6 +80,11 @@ IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
         } else {
             left = mid;
         }
+
+        // would cause infinite loop, return best possible option
+        if (left == right - 1) {
+            return left;
+        }
     }
 
     TABLE_ERROR("Error: Unreachable code was reached\n");
