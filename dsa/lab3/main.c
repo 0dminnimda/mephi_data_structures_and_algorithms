@@ -5,6 +5,7 @@
 #define TABLE_PRINT_ERRORS
 
 #include "common/input.h"
+#include "file_holder.h"
 #include "table.h"
 
 void printMenu();
@@ -21,9 +22,7 @@ void insertCommand(Table *table) {
     int count = sscanf(input, "%u %u %u", &key, &parKey, &info);
     if (count == 3) {
         bool success = insertItem(table, key, parKey, info);
-        if (!success) {
-            printf("Error: Failed to insert item into table\n");
-        }
+        if (!success) { printf("Error: Failed to insert item into table\n"); }
     } else {
         printf("Error: Invalid input format\n");
     }
@@ -40,9 +39,7 @@ void removeByKeyCommand(Table *table) {
     int count = sscanf(input, "%u", &key);
     if (count == 1) {
         bool success = deleteItem(table, key);
-        if (!success) {
-            printf("Error: Failed to delete item from table\n");
-        }
+        if (!success) { printf("Error: Failed to delete item from table\n"); }
     } else {
         printf("Error: Invalid input format\n");
     }
@@ -98,9 +95,7 @@ void importCommand(Table *table) {
 
     // Import table from file
     bool success = importTable(table, input);
-    if (!success) {
-        printf("Error: Failed to import table from file\n");
-    }
+    if (!success) { printf("Error: Failed to import table from file\n"); }
 
     free(input);
 }
@@ -114,9 +109,7 @@ void removeByKeyIfNotParentCommand(Table *table) {
     int count = sscanf(input, "%u", &key);
     if (count == 1) {
         bool success = removeByKeyIfNotParent(table, key);
-        if (!success) {
-            printf("Error: Failed to remove item from table\n");
-        }
+        if (!success) { printf("Error: Failed to remove item from table\n"); }
     } else {
         printf("Error: Invalid input format\n");
     }
@@ -181,7 +174,16 @@ void printItem(Item *item) {
 }
 
 int main() {
-    Table *table = createTable(10);
+    Table *table = createTable(5, 0);
+
+#ifdef LAB3_EXT
+    printf("Input the table filename: ");
+    char *input = read_line();
+    bool ok = syncTableWithFile(table, input);
+    free(input);
+    if (!ok) { printf("Could not sync the table with the file\n"); }
+#endif
+
     printMenu();
 
     bool run = true;
