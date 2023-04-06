@@ -219,5 +219,9 @@ int main() {
     }
 
     destroyTable(table);
+#ifdef LAB3_EXT
+    freeFile();
+#endif
+
     return 0;
 }
