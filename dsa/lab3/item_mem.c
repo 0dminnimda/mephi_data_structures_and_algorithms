@@ -1,6 +1,6 @@
-#include "item.h"
-
 #include <stdio.h>
+
+#include "item.h"
 
 struct Item {
     InfoType *info;
@@ -25,9 +25,7 @@ void allocInfo(Item *item) {
     }
 }
 
-void freeInfo(Item *item) {
-    free(item->info);
-}
+void freeInfo(Item *item) { free(item->info); }
 
 bool createItem(Table *table, IndexType index, InfoType info) {
     table->ks[index].info = calloc(1, sizeof(Item));
@@ -41,6 +39,4 @@ bool createItem(Table *table, IndexType index, InfoType info) {
     return true;
 }
 
-KeyType itemKey(Item *item) {
-    return item->key;
-}
+KeyType itemKey(Item *item) { return item->key; }

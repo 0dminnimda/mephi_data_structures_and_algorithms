@@ -5,8 +5,8 @@ typedef struct Item Item;
 
 #include <stdbool.h>
 
-#include "typedefs.h"
 #include "table.h"
+#include "typedefs.h"
 
 bool getInfo(Item *item, InfoType *value);
 bool setInfo(Item *item, InfoType value);

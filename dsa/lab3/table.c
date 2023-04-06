@@ -1,8 +1,8 @@
+#include "table.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "table.h"
 
 
 Table *createTable(IndexType msize) {
@@ -173,7 +173,8 @@ void outputTable(Table *table) {
         if (table->ks[i].key != 0) {
             InfoType info = -1;
             if (getInfo(table->ks[i].info, &info))
-                printf("[%zu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par, info);
+                printf("[%zu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par,
+                       info);
             else
                 printf("[%zu] = error getting the info", i);
         }
@@ -238,7 +239,8 @@ Table *searchByParentKey(Table *table, KeyType parKey) {
         KeySpace ks = table->ks[i];
         if (ks.par != parKey || ks.key == 0) break;
         InfoType info = -1;
-        if (!getInfo(table->ks[i].info, &info) || !insertItem(newTable, ks.key, ks.par, info)) {
+        if (!getInfo(table->ks[i].info, &info) ||
+            !insertItem(newTable, ks.key, ks.par, info)) {
             destroyTable(newTable);
             return NULL;
         }
