@@ -5,3 +5,10 @@ AlwaysBreakTemplateDeclarations: true
 NamespaceIndentation: All
 IndentPPDirectives: BeforeHash
 AccessModifierOffset: -4
+AllowShortIfStatementsOnASingleLine: true
+AllowShortBlocksOnASingleLine: true
+BraceWrapping:
+  AfterIf: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
