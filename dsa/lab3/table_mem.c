@@ -1,11 +1,10 @@
-#include "table.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "table.h"
 
-Table *createTable(IndexType msize) {
+Table *createTable(IndexType msize, KeyType metaKey) {
     Table *table = calloc(1, sizeof(Table));
     if (table == NULL) {
         fprintf(stderr, "Error: Out of memory\n");
@@ -17,8 +16,11 @@ Table *createTable(IndexType msize) {
         exit(EXIT_FAILURE);
     }
     table->msize = msize;
+    table->metaKey = metaKey;
     return table;
 }
+
+bool syncTableWithFile(Table *table, const char *filename) { return true; }
 
 void destroyTable(Table *table) {
     for (IndexType i = 0; i < table->msize; i++) {
@@ -49,9 +51,7 @@ IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
         }
 
         // would cause infinite loop, return best possible option
-        if (left == right - 1) {
-            return left;
-        }
+        if (left == right - 1) { return left; }
     }
 
     TABLE_ERROR("Error: Unreachable code was reached\n");
@@ -82,12 +82,8 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
             TABLE_ERROR("Error: Trying to insert a duplicate key\n");
             return false;
         }
-        if (table->ks[i].par <= parKey) {
-            index = i;
-        }
-        if (table->ks[i].key == parKey) {
-            parKeyFound = true;
-        }
+        if (table->ks[i].par <= parKey) { index = i; }
+        if (table->ks[i].key == parKey) { parKeyFound = true; }
     }
     if (!parKeyFound) {
         TABLE_ERROR("Error: Parent key is not present in the table\n");
@@ -159,9 +155,7 @@ bool deleteItem(Table *table, KeyType key) {
 
 Item *searchByKey(Table *table, KeyType key) {
     for (IndexType i = 0; i < table->msize; i++) {
-        if (table->ks[i].key == key) {
-            return table->ks[i].info;
-        }
+        if (table->ks[i].key == key) { return table->ks[i].info; }
     }
     TABLE_ERROR("Error: Item not found\n");
     return NULL;
@@ -233,8 +227,7 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
 }
 
 Table *searchByParentKey(Table *table, KeyType parKey) {
-    Table *newTable = createTable(table->msize);
-    newTable->metaKey = parKey;
+    Table *newTable = createTable(table->msize, parKey);
     for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
         KeySpace ks = table->ks[i];
         if (ks.par != parKey || ks.key == 0) break;
