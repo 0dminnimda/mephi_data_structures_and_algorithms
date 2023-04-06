@@ -29,3 +29,10 @@ bool setInfo(Item *item, InfoType value) {
 void allocInfo(Item *item) {}
 
 void freeInfo(Item *item) {}
+
+bool createItem(Table *table, IndexType index, InfoType info) {
+    // todo
+    return true;
+}
+
+KeyType itemKey(Item *item) { return item->key; }
