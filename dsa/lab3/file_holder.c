@@ -10,7 +10,7 @@ FILE *currentFile(FILE *in, bool set) {
 
 FILE *setFile(const char *filename) {
     freeFile();
-    FILE *fp = fopen(filename, "rb+");
+    FILE *fp = fopen(filename, "ab+");
     if (fp == NULL) perror("Could not open the file");
     return currentFile(fp, true);
 }
