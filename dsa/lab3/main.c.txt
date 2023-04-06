@@ -1,0 +1,92 @@
+/*
+Write program in C:
+
+Console application to work with library table interactively (MVC)
+
+No dup keys/must have parent key or null.
+Ordered by parent key. Parent key may duplicate.
+
+Operations:
+
+- Insert element with unique key
+- Delete element by key
+- Search by key (returns an iterator of matches)
+- Output to standard stream
+- Import from text file
+- Remove by key if no parent keys in table = key
+- Search by parent key value, return new table of matches
+
+Requirements:
+
+- No globals
+- If input incorrect, show error, then continue
+- If error in table op, show it, then continue
+- Correct memory usage
+
+Library: `table.h`:
+
+```c
+typedef unsigned int KeyType;
+typedef unsigned int InfoType;
+typedef size_t IndexType;
+
+typedef struct {
+    InfoType *info;
+    KeyType key;
+} Item;
+
+typedef struct {
+    KeyType key;
+    KeyType par;
+    Item *info;
+} KeySpace;
+
+typedef struct {
+    KeySpace *ks;
+    IndexType msize;
+} Table;
+
+Table *createTable(IndexType msize);
+void destroyTable(Table *table);
+bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info);
+bool deleteItem(Table *table, KeyType key);
+Item *searchByKey(Table *table, KeyType key);
+void outputTable(Table *table);
+bool importTable(Table *table, const char *filename);
+bool removeByKeyIfNotParent(Table *table, KeyType key);
+Table *searchByParentKey(Table *table, KeyType parKey);
+```
+
+You can use `char *read_line()` function from `input.h`
+
+*/
+
+// Here's an example console application in C that works with the `table.h` library
+// interactively using the Model-View-Controller (MVC) design pattern:
+
+
+
+...
+
+
+
+// This console application uses the `table.h` library to create, modify, and print a
+// table of items interactively. The application follows the Model-View-Controller (MVC)
+// design pattern, where the `table.h` library represents the model, the console
+// input/output functions represent the view, and the controller functions handle user
+// input and modify the model accordingly.
+
+// The controller functions include `insert`, `removeByKey`, `searchByKey`, `output`,
+// `import`, `removeByKeyIfNotParent`, and `searchByParentKey`. These functions interact
+// with the `table.h` library to perform various operations on the table of items.
+
+// The view functions include `printMenu`, `printTable`, and `printItem`. These functions
+// print messages and data to the console to provide feedback to the user.
+
+// The application uses the `read_line` function from `input.h` to read user input from
+// the console. The `read_line` function dynamically allocates memory for the input
+// string, which is then freed at the end of each controller function.
+
+// The application meets the requirements specified in the prompt, including no global
+// variables, error handling for incorrect input and table operations, and correct memory
+// usage.
