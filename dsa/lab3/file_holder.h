@@ -2,3 +2,4 @@
 
 FILE *setFile(char *filename);
 FILE *getFile();
+void freeFile();
