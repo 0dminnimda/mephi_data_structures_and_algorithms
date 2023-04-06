@@ -25,7 +25,7 @@ bool syncTableWithFile(Table *table, const char *filename) { return true; }
 void destroyTable(Table *table) {
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            freeInfo(table->ks[i].info);
+            free(table->ks[i].info->info);
             free(table->ks[i].info);
         }
     }
@@ -109,7 +109,19 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     // Insert the new item
     table->ks[index].key = key;
     table->ks[index].par = parKey;
-    return createItem(table, index, info);
+    table->ks[index].info = malloc(sizeof(Item));
+    if (table->ks[index].info == NULL) {
+        fprintf(stderr, "Error: Out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+    table->ks[index].info->key = key;
+    table->ks[index].info->info = malloc(sizeof(InfoType));
+    if (table->ks[index].info->info == NULL) {
+        fprintf(stderr, "Error: Out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+    *(table->ks[index].info->info) = info;
+    return true;
 }
 
 bool deleteItem(Table *table, KeyType key) {
@@ -132,7 +144,7 @@ bool deleteItem(Table *table, KeyType key) {
             }
         } else if (table->ks[i].key == key) {
             // Delete the target item
-            freeInfo(table->ks[i].info);
+            free(table->ks[i].info->info);
             free(table->ks[i].info);
             found = true;
             previous_index = i;
@@ -165,12 +177,8 @@ void outputTable(Table *table) {
     printf("metaKey = %u\n", table->metaKey);
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            InfoType info = -1;
-            if (getInfo(table->ks[i].info, &info))
-                printf("[%zu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par,
-                       info);
-            else
-                printf("[%zu] = error getting the info", i);
+            printf("[%lu] = %u <- %u: %u\n", i, table->ks[i].key, table->ks[i].par,
+                   *(table->ks[i].info->info));
         }
     }
 }
@@ -185,7 +193,7 @@ bool importTable(Table *table, const char *filename) {
     // Clean the table
     for (IndexType i = 0; i < table->msize; i++) {
         if (table->ks[i].key != 0) {
-            freeInfo(table->ks[i].info);
+            free(table->ks[i].info->info);
             free(table->ks[i].info);
             table->ks[i].key = 0;
             table->ks[i].par = 0;
@@ -231,9 +239,7 @@ Table *searchByParentKey(Table *table, KeyType parKey) {
     for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
         KeySpace ks = table->ks[i];
         if (ks.par != parKey || ks.key == 0) break;
-        InfoType info = -1;
-        if (!getInfo(table->ks[i].info, &info) ||
-            !insertItem(newTable, ks.key, ks.par, info)) {
+        if (!insertItem(newTable, ks.key, ks.par, *(ks.info->info))) {
             destroyTable(newTable);
             return NULL;
         }
