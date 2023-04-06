@@ -11,12 +11,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "typedefs.h"
+typedef unsigned int KeyType;
+typedef unsigned int InfoType;
+typedef size_t IndexType;
+
+typedef struct {
+    InfoType *info;
+    KeyType key;
+} Item;
 
 typedef struct {
     KeyType key;
     KeyType par;
-    struct Item *info;
+    Item *info;
 } KeySpace;
 
 typedef struct {
@@ -25,9 +32,8 @@ typedef struct {
     KeyType metaKey;
 } Table;
 
-#include "item.h"
-
-Table *createTable(IndexType msize);
+Table *createTable(IndexType msize, KeyType metaKey);
+bool syncTableWithFile(Table *table, const char *filename);
 void destroyTable(Table *table);
 IndexType findFirstPlaceByParent(Table *table, KeyType parKey);
 bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info);
