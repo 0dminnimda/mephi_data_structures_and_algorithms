@@ -163,15 +163,7 @@ void printMenu() {
     printf("q   Quit\n");
 }
 
-void printTable(Table *table) {
-    outputTable(table);
-    // printf("Table:\n");
-    // printf("Index\tKey\tParent Key\tInfo\n");
-    // for (IndexType i = 0; i < table->msize; i++) {
-    //     printf("%lu\t%u\t%u\t\t%u\n", i, table->ks[i].key, table->ks[i].par,
-    //            table->ks[i].info->info);
-    // }
-}
+void printTable(Table *table) { outputTable(table); }
 
 void printItem(Item *item) {
     if (item == NULL) {
