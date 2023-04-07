@@ -324,11 +324,9 @@ Table *searchByParentKey(Table *table, KeyType parKey) {
     }
     KeySpace *ks = NULL;
     IndexType r = findFirstPlaceByParent(table, parKey);
-    printf("%zu\n", r);
     for (IndexType i = r; i < table->msize; i++) {
         freeKeyspace(&ks);
         ks = getKeyspace(table, i);
-        printf("%zu %p\n", i, ks);
         if (!ks || ks->par != parKey || ks->key == 0) break;
         if (!insertItem(newTable, ks->key, ks->par, *(ks->info->info))) {
             freeKeyspace(&ks);
