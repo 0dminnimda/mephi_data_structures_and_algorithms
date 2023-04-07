@@ -318,7 +318,8 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
 
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize, parKey);
-    if (!syncTableWithFile(newTable, "parent_search_result.dat")) {
+    newTable->fp = fopen("parent_search_result.dat", "wb+");
+    if (newTable->fp == NULL) {
         destroyTable(newTable);
         return NULL;
     }
