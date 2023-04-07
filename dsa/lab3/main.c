@@ -122,9 +122,6 @@ void removeByKeyIfNotParentCommand(Table *table) {
 }
 
 void searchByParentKeyCommand(Table *table) {
-    FILE *main_file = getFile();
-    setFile(fopen("parent_search_result.dat", "wb+"));
-
     printf("Enter parent key to search for: ");
     char *input = read_line();
 
@@ -145,9 +142,6 @@ void searchByParentKeyCommand(Table *table) {
     }
 
     free(input);
-
-    freeFile();
-    setFile(main_file);
 }
 
 void printMenu() {
