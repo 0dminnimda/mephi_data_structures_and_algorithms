@@ -82,10 +82,7 @@ Table *createTable(IndexType msize, KeyType metaKey) {
     return table;
 }
 
-bool syncTableWithFile(Table *table, const char *filename) {
-    bool existed = file_exists(filename);
-
-    table->fp = fopen(filename, existed ? "rb+" : "wb+");
+bool syncTableWithFilePointer(Table *table, bool existed) {
     if (table->fp == NULL) { return false; }
     if (fseek(table->fp, 0, SEEK_SET)) { return false; }
 
@@ -98,6 +95,12 @@ bool syncTableWithFile(Table *table, const char *filename) {
         for (IndexType i = 0; i < table->msize; ++i) { setKeyspace(table, i, NULL); }
     }
     return true;
+}
+
+bool syncTableWithFile(Table *table, const char *filename) {
+    bool existed = file_exists(filename);
+    table->fp = fopen(filename, existed ? "rb+" : "wb+");
+    return syncTableWithFilePointer(table, existed);
 }
 
 void destroyTable(Table *table) {
@@ -338,7 +341,7 @@ KeySpace *nextWithParent(Table *table, KeyType parKey) {
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize, parKey);
     newTable->fp = fopen("parent_search_result.dat", "wb+");
-    if (newTable->fp == NULL) {
+    if (!syncTableWithFilePointer(newTable, false)) {
         destroyTable(newTable);
         return NULL;
     }
