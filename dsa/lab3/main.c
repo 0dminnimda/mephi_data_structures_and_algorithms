@@ -57,7 +57,11 @@ void findFirstPlaceByParentCommand(Table *table) {
     if (count == 1) {
         IndexType index = findFirstPlaceByParent(table, parKey);
         printf("Item found (at %zu):\n", index);
+#ifdef LAB3_EXT
+        printf("Skipping values\n");
+#else
         printItem(table->ks[index].info);
+#endif
     } else {
         printf("Error: Invalid input format\n");
     }
