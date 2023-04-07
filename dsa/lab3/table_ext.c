@@ -316,6 +316,25 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
     return deleteItem(table, key);
 }
 
+KeySpace *nextWithParent(Table *table, KeyType parKey) {
+    static IndexType index = 0;
+    static KeyType par = 0;
+
+    if (parKey != -1) {
+        par = parKey;
+        index = findFirstPlaceByParent(table, par);
+        return NULL;
+    }
+
+    KeySpace *ks = getKeyspace(table, index);
+    if (ks->par != par || ks->key == 0) {
+        freeKeyspace(&ks);
+        return NULL;
+    }
+    ++index;
+    return ks;
+}
+
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize, parKey);
     newTable->fp = fopen("parent_search_result.dat", "wb+");
@@ -323,17 +342,15 @@ Table *searchByParentKey(Table *table, KeyType parKey) {
         destroyTable(newTable);
         return NULL;
     }
-    KeySpace *ks = NULL;
-    IndexType r = findFirstPlaceByParent(table, parKey);
-    for (IndexType i = r; i < table->msize; i++) {
-        freeKeyspace(&ks);
-        ks = getKeyspace(table, i);
-        if (!ks || ks->par != parKey || ks->key == 0) break;
+
+    KeySpace *ks = nextWithParent(table, parKey);
+    while ((ks = nextWithParent(table, -1))) {
         if (!insertItem(newTable, ks->key, ks->par, *(ks->info->info))) {
-            freeKeyspace(&ks);
             destroyTable(newTable);
-            return NULL;
+            newTable = NULL;
+            break;
         }
+        freeKeyspace(&ks);
     }
     freeKeyspace(&ks);
     return newTable;
