@@ -16,8 +16,9 @@ bool file_exists(const char *filename) {
 #define KEYSPACE_OFFSET (sizeof(KeyType) + sizeof(KeyType) + sizeof(InfoType))
 #define KEYSPACE_INDEX_OFFSET(index) (TABLE_OFFSET + KEYSPACE_OFFSET * index)
 
-bool setKeyspaceAsFields(IndexType index, KeyType key, KeyType par, InfoType info) {
-    FILE *fp = getFile();
+bool setKeyspaceAsFields(Table *table, IndexType index, KeyType key, KeyType par,
+                         InfoType info) {
+    FILE *fp = table->fp;
     if (fp == NULL) { return false; }
     if (fseek(fp, KEYSPACE_INDEX_OFFSET(index), SEEK_SET)) { return false; }
     if (!fwrite(&key, sizeof(KeyType), 1, fp)) { return false; }
@@ -26,13 +27,13 @@ bool setKeyspaceAsFields(IndexType index, KeyType key, KeyType par, InfoType inf
     return true;
 }
 
-bool setKeyspace(IndexType index, const KeySpace *ks) {
-    if (!ks) return setKeyspaceAsFields(index, 0, 0, 0);
-    return setKeyspaceAsFields(index, ks->key, ks->par, *(ks->info->info));
+bool setKeyspace(Table *table, IndexType index, const KeySpace *ks) {
+    if (!ks) return setKeyspaceAsFields(table, index, 0, 0, 0);
+    return setKeyspaceAsFields(table, index, ks->key, ks->par, *(ks->info->info));
 }
 
-KeySpace *getKeyspace(IndexType index) {
-    FILE *fp = getFile();
+KeySpace *getKeyspace(Table *table, IndexType index) {
+    FILE *fp = table->fp;
     if (fp == NULL) { return false; }
 
     KeySpace *ks = calloc(1, sizeof(KeySpace));
@@ -84,22 +85,25 @@ Table *createTable(IndexType msize, KeyType metaKey) {
 bool syncTableWithFile(Table *table, const char *filename) {
     bool existed = file_exists(filename);
 
-    FILE *fp = setFile(fopen(filename, existed ? "rb+" : "wb+"));
-    if (fp == NULL) { return false; }
-    if (fseek(fp, 0, SEEK_SET)) { return false; }
+    table->fp = fopen(filename, existed ? "rb+" : "wb+");
+    if (table->fp == NULL) { return false; }
+    if (fseek(table->fp, 0, SEEK_SET)) { return false; }
 
     if (existed) {
-        if (fread(&table->msize, sizeof(IndexType), 1, fp) != 1) { return false; }
-        if (fread(&table->metaKey, sizeof(KeyType), 1, fp) != 1) { return false; }
+        if (fread(&table->msize, sizeof(IndexType), 1, table->fp) != 1) { return false; }
+        if (fread(&table->metaKey, sizeof(KeyType), 1, table->fp) != 1) { return false; }
     } else {
-        if (fwrite(&table->msize, sizeof(IndexType), 1, fp) != 1) { return false; }
-        if (fwrite(&table->metaKey, sizeof(KeyType), 1, fp) != 1) { return false; }
-        for (IndexType i = 0; i < table->msize; ++i) { setKeyspace(i, NULL); }
+        if (fwrite(&table->msize, sizeof(IndexType), 1, table->fp) != 1) { return false; }
+        if (fwrite(&table->metaKey, sizeof(KeyType), 1, table->fp) != 1) { return false; }
+        for (IndexType i = 0; i < table->msize; ++i) { setKeyspace(table, i, NULL); }
     }
     return true;
 }
 
-void destroyTable(Table *table) { free(table); }
+void destroyTable(Table *table) {
+    if (table && table->fp != NULL) fclose(table->fp);
+    free(table);
+}
 
 IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
     IndexType left = 0;
@@ -107,11 +111,11 @@ IndexType findFirstPlaceByParent(Table *table, KeyType parKey) {
 
     while (left < right) {
         IndexType mid = (left + right) / 2;
-        KeySpace *ks = getKeyspace(mid);
+        KeySpace *ks = getKeyspace(table, mid);
 
         if (!ks || ks->par >= parKey || ks->key == 0) {
             freeKeyspace(&ks);
-            KeySpace *ks = getKeyspace(mid - 1);
+            KeySpace *ks = getKeyspace(table, mid - 1);
             if (mid == 0) return mid;
             if (ks && ks->par < parKey && ks->key != 0) {
                 freeKeyspace(&ks);
@@ -140,7 +144,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     }
 
     // Check if table is full
-    KeySpace *ks = getKeyspace(table->msize - 1);
+    KeySpace *ks = getKeyspace(table, table->msize - 1);
     if (ks && ks->key != 0) {
         freeKeyspace(&ks);
         TABLE_ERROR("Error: Table is full\n");
@@ -155,7 +159,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     IndexType index = -1;
     for (IndexType i = 0; i < table->msize; ++i) {
         freeKeyspace(&ks);
-        ks = getKeyspace(i);
+        ks = getKeyspace(table, i);
         if (!ks || ks->key == 0) break;
         if (ks->key == key) {
             freeKeyspace(&ks);
@@ -174,13 +178,13 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     index++;
 
     // Shift one following item per parent
-    KeySpace *previous_space = getKeyspace(index);
+    KeySpace *previous_space = getKeyspace(table, index);
     IndexType previous_index = index;
     KeyType previous_parent = previous_space ? previous_space->par : 0;
     for (IndexType i = index + 1; i < table->msize; ++i) {
-        ks = getKeyspace(i);
+        ks = getKeyspace(table, i);
         if (!ks || ks->par != previous_parent) {
-            setKeyspace(i, previous_space);
+            setKeyspace(table, i, previous_space);
             freeKeyspace(&previous_space);
             previous_space = ks;
 
@@ -193,7 +197,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
     freeKeyspace(&previous_space);
 
     // Insert the new item
-    return setKeyspaceAsFields(index, key, parKey, info);
+    return setKeyspaceAsFields(table, index, key, parKey, info);
 }
 
 bool deleteItem(Table *table, KeyType key) {
@@ -207,13 +211,13 @@ bool deleteItem(Table *table, KeyType key) {
     KeyType previous_parent = -1;
     bool found = false;
     for (IndexType i = 0; i < table->msize; i++) {
-        KeySpace *ks = getKeyspace(i);
+        KeySpace *ks = getKeyspace(table, i);
         if (found) {
             // Shift one following item per parent
             if (ks && ks->par != previous_parent) {
                 freeKeyspace(&ks);
-                ks = getKeyspace(i - 1);
-                setKeyspace(previous_index, ks);
+                ks = getKeyspace(table, i - 1);
+                setKeyspace(table, previous_index, ks);
                 previous_index = i - 1;
                 previous_parent = ks->par;
             }
@@ -228,11 +232,11 @@ bool deleteItem(Table *table, KeyType key) {
 
     if (found) {
         // End is also a change in the parent
-        KeySpace *ks = getKeyspace(table->msize - 1);
-        if (ks) setKeyspace(previous_index, ks);
+        KeySpace *ks = getKeyspace(table, table->msize - 1);
+        if (ks) setKeyspace(table, previous_index, ks);
         freeKeyspace(&ks);
         // Clear the last value as it is always empty after delete
-        setKeyspaceAsFields(table->msize - 1, 0, 0, 0);
+        setKeyspaceAsFields(table, table->msize - 1, 0, 0, 0);
     } else {
         TABLE_ERROR("Error: Item not found\n");
     }
@@ -243,7 +247,7 @@ Item *searchByKey(Table *table, KeyType key) {
     KeySpace *ks = NULL;
     for (IndexType i = 0; i < table->msize; i++) {
         freeKeyspace(&ks);
-        ks = getKeyspace(i);
+        ks = getKeyspace(table, i);
         if (ks && ks->key == key) {
             Item *res = ks->info;
             free(ks);
@@ -258,7 +262,7 @@ Item *searchByKey(Table *table, KeyType key) {
 void outputTable(Table *table) {
     printf("metaKey = %u\n", table->metaKey);
     for (IndexType i = 0; i < table->msize; i++) {
-        KeySpace *ks = getKeyspace(i);
+        KeySpace *ks = getKeyspace(table, i);
         if (ks && ks->key != 0)
             printf("[%zu] = %u <- %u: %u\n", i, ks->key, ks->par, *(ks->info->info));
         else if (!ks)
@@ -275,7 +279,7 @@ bool importTable(Table *table, const char *filename) {
     }
 
     // Clean the table
-    for (IndexType i = 0; i < table->msize; i++) { setKeyspace(i, NULL); }
+    for (IndexType i = 0; i < table->msize; i++) { setKeyspace(table, i, NULL); }
 
     // Insert the the table
     fscanf(file, "metaKey = %u", &(table->metaKey));  // it's fine to skip it
@@ -296,7 +300,7 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
     // Check if the item has a parent key in the table
     bool hasParent = false;
     for (IndexType i = 0; i < table->msize; i++) {
-        KeySpace *ks = getKeyspace(i);
+        KeySpace *ks = getKeyspace(table, i);
         if (ks && ks->key != 0 && ks->par == key) {
             hasParent = true;
             break;
@@ -314,10 +318,17 @@ bool removeByKeyIfNotParent(Table *table, KeyType key) {
 
 Table *searchByParentKey(Table *table, KeyType parKey) {
     Table *newTable = createTable(table->msize, parKey);
+    if (!syncTableWithFile(newTable, "parent_search_result.dat")) {
+        destroyTable(newTable);
+        return NULL;
+    }
     KeySpace *ks = NULL;
-    for (IndexType i = findFirstPlaceByParent(table, parKey); i < table->msize; i++) {
+    IndexType r = findFirstPlaceByParent(table, parKey);
+    printf("%zu\n", r);
+    for (IndexType i = r; i < table->msize; i++) {
         freeKeyspace(&ks);
-        ks = getKeyspace(i);
+        ks = getKeyspace(table, i);
+        printf("%zu %p\n", i, ks);
         if (!ks || ks->par != parKey || ks->key == 0) break;
         if (!insertItem(newTable, ks->key, ks->par, *(ks->info->info))) {
             freeKeyspace(&ks);

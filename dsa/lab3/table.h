@@ -30,6 +30,7 @@ typedef struct {
     KeySpace *ks;
     IndexType msize;
     KeyType metaKey;
+    FILE *fp;
 } Table;
 
 Table *createTable(IndexType msize, KeyType metaKey);
