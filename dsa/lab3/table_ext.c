@@ -35,9 +35,9 @@ KeySpace *getKeyspace(IndexType index) {
     FILE *fp = getFile();
     if (fp == NULL) { return false; }
 
-    KeySpace *ks = malloc(sizeof(KeySpace));
-    Item *item = malloc(sizeof(Item));
-    InfoType *info = malloc(sizeof(InfoType));
+    KeySpace *ks = calloc(1, sizeof(KeySpace));
+    Item *item = calloc(1, sizeof(Item));
+    InfoType *info = calloc(1, sizeof(InfoType));
     if (!ks || !item || !info) {
         fprintf(stderr, "Error: Out of memory\n");
         goto fail;
