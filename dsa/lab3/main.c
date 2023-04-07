@@ -122,6 +122,9 @@ void removeByKeyIfNotParentCommand(Table *table) {
 }
 
 void searchByParentKeyCommand(Table *table) {
+    FILE *main_file = getFile();
+    setFile(fopen("parent_search_result.dat", "wb+"));
+
     printf("Enter parent key to search for: ");
     char *input = read_line();
 
@@ -142,6 +145,9 @@ void searchByParentKeyCommand(Table *table) {
     }
 
     free(input);
+
+    freeFile();
+    setFile(main_file);
 }
 
 void printMenu() {
@@ -171,9 +177,7 @@ void printItem(Item *item) {
     if (item == NULL) {
         printf("Empty Item\n");
     } else {
-        InfoType info = -1;
-        getInfo(item, &info);
-        printf("Key: %u\tInfo: %u\n", itemKey(item), info);
+        printf("Key: %u\tInfo: %u\n", item->key, *(item->info));
     }
 }
 
@@ -181,8 +185,12 @@ int main() {
     Table *table = createTable(5, 0);
 
 #ifdef LAB3_EXT
-    printf("Input the table filename: ");
+    printf("Input the table filename [table.dat]: ");
     char *input = read_line();
+    if (*input == '\0') {
+        free(input);
+        input = strdup("table.dat");
+    }
     bool ok = syncTableWithFile(table, input);
     free(input);
     if (!ok) { printf("Could not sync the table with the file\n"); }
