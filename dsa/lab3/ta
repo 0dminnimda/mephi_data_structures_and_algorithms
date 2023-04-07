@@ -1,0 +1,266 @@
+
+Необходимо спроектировать и разработать на языке C:
+
+1. Прикладную программу, позволяющую пользователю в диалоговом режиме работать с таблицей.
+
+2. Библиотеку, предоставляющую функциональность по работе с таблицей, размещенной в основной памяти (лабораторная работа № 3а).
+3. Библиотеку, предоставляющую фунциональность по работе с таблицей, размещенной во внешней памяти (лабораторная работа № 3б).
+
+
+Таблица задаётся структурой:
+
+```c
+struct Table {
+   // указатель на пространство ключей
+   KeySpace *ks;
+   // опциональное поле, ограничивающее размер пространства ключей,
+   // его наличие определяется типом организации соответствующего пространства,
+   // в соответствии с условиями индивидуального задания
+   // размер области пространства ключей
+   IndexType msize;
+   // опциональное поле с текущим количеством элементов
+   // в пространстве ключей,
+   // его наличие определяется типом организации соответствующего пространства,
+   // в соответствии с условиями индивидуального задания
+   // количество элементов в области пространства ключей
+   IndexType csize;
+};
+```
+
+Элементы таблицы задаются следующей структурой:
+
+```c
+struct Item {
+   // указатель на информацию
+   InfoType *info;
+   // опциональные поля, для оптимизации выполнения операций,
+   // состав и наличие которых должны быть обоснованы:
+   // ключ элемента
+   KetType key;
+   // связь с элементом пространства ключей по индексу
+   IndexType ind;
+   // связь с элементом пространства ключей по указателю
+   PointerType *p1;
+};
+```
+
+Должны быть предусмотрены следующие операции:
+
+1. включение нового элемента в таблицу с соблюдением ограничений на уникальность значений ключевой информации;
+
+2. удаление из таблицы элемента по заданному значению ключа;
+3. поиск в таблице элемента по заданному значению ключа, результатом поиска должны быть копии всех найденных элементов со значениями ключей;
+4. вывод содержимого таблицы в стандартный поток;
+5. импорт данных из текстового файла;
+6. особые операции, в соответствии с индивидуальным заданием.
+
+Необходимо разработать два варианта решения задачи (лабораторные работы 3а и 3б):
+
+1. Сама таблица и информация, относящаяся к элементам таблицы, хранятся в основной памяти.
+
+2. Сама таблица и информация, относящаяся к элементам таблицы, хранятся во внешней памяти (используется двоичный файл произвольного доступа). Описатель таблицы и описатели
+пространств ключей считывается из файла (или создаются в первый раз) в начале сеанса работы и записывается в файл в конце сеанса работы. Информация, относящаяся к элементам
+таблицы, записывается в файл сразу же при выполнении операции включения в таблицу и в
+основной памяти не хранится (возможно за исключением элемента, с которым производится
+текущая операция). Все операции выполняются с описателем таблицы и пространств ключей,
+размещенными в основной памяти. Все структуры данных модифицируются соответствующим образом (замена указателей на смещение в файле и т.п.). Имя файла вводится по запросу
+из программы и хранится в описателе таблицы.
+
+Существует ряд дополнительных задач, не обязательных к выполнению, но позволяющих получить дополнительные баллы.
+*ИНФОРМАЦИЯ О ДОПОЛНИТЕЛЬНЫХ БАЛЛАХ БУДЕТ УТОЧНЕНА ПОЗДНЕЕ*
+
+Дополнительные задачи:
+
+1. `*` Реализация поиска как итератора одним из возможных способов (например, в виде функции, которая при каждом вызове возвращает очередной из найденных элементов).
+
+2. `**` Аналогично п. 2, но все операции выполняются с пространствами ключей, размещенными во внешней памяти, в основной памяти может храниться только описатель таблицы.
+3. `***` Аналогично предыдущему заданию, но с реализацией буферизации файловых операций (можно считывать и записывать по несколько записей) и кэширования записей (тип кэша и стратегии управления кэшем выбираются по согласованию с преподавателем).
+
+1. Логически законченные части алгоритма решения задачи должны быть оформлены в виде отдельных функций с параметрами. Использование глобальных переменных не допускается.
+
+2. Функции для работы с таблицами не должны быть диалоговыми, т. е. они должны принимать все необходимые данные в качестве параметров и возвращать результат работы в виде соответствующих структур данных и кодов ошибок (исключение: функции вывода таблицы в стандартный поток вывода или записи файл).
+3. Диалоговые функции должны использовать описанные выше функции, т. е. должен быть реализован принцип Model-View-Controller (MVC).
+4. Программа должна осуществлять проверку корректности вводимых данных и, в случае ошибок, выдавать соответствующие сообщения, после чего продолжать работу.
+5. В случае возникновения ошибочных ситуаций при выполнении операций с таблицами программа должна выводить соответствующие сообщения, после чего продолжать работу.
+6. Для работы с таблицами, размещенными во внешней памяти, должна использоваться модифицированная структура, определяющую элемент таблицы, в которую включена длина информации и её смещение в файле.
+7. Для работы с таблицами, размещенными во внешней памяти, должны использовать функции `fread()` и `fwrite()`, которым в качестве аргумента должна передаваться реальная длина информации.
+8. Для сборки программы и библиотек должна использоваться система сборки (например: Make или CMake).
+9. Библиотеки и прикладная программа должны собираться независимо друг от друга.
+10. Программа должна корректным образом работать с памятью, для проверки необходимо использовать соответствующие программные средства, например: `valgrind`, санитайзеры, встроенные в IDE средства и т.д.
+
+
+Просматриваемая таблица на основе вектора.
+Элементы пространства ключей таблицы заданы следующей структурой:
+
+```c
+struct KeySpace {
+    // ненулевой ключ элемента
+    KeyType key;
+    // ключ родительского элемента, может быть нулевым
+    KeyType par;
+    // указатель на информацию
+    Item *info;
+};
+```
+
+Максимальный размер таблицы ограничен величиной `msize` и указывается при её инициализации.
+
+В пространстве не может быть двух элементов с одинаковыми значениями ключей, а значение ключа родительского элемента для элемента должно совпадать с каким-либо значением ключа элемента, существующего в таблице, либо быть нулевым. Элементы таблицы упорядочены по значению ключа родительского элемента. Значение ключа родительского элемента может дублироваться в таблице.
+
+Для таблицы предусмотрены следующие особые операции:
+
+- удаление из таблицы элемента, заданного своим ключом, при условии, что в таблице нет элементов, в поле ключа родительского элемента которых указано значение, совпадающее с заданным;
+
+- поиск в таблице всех элементов, заданных значением ключа родительского элемента; результатом поиска должна быть новая таблица, содержащая найденные элементы.
+
+Должны поддерживаться следующие типы данных:
+
+- ключ — беззнаковое целое число;
+
+- значение — беззнаковое целое число.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Need to design and develop in C language:
+
+1. An application program that allows the user to work with the table in an interactive mode.
+
+2. A library that provides functionality for working with a table located in the main memory (laboratory work No. 3a).
+3. A library that provides functionality for working with a table located in external memory (laboratory work No. 3b).
+
+
+The table is defined by the structure:
+
+```c
+struct Table {
+    // pointer to keyspace
+    KeySpace *ks;
+    // optional field that limits the size of the key space,
+    // its presence is determined by the type of organization of the corresponding space,
+    // according to the conditions of the individual job
+    // keyspace region size
+    IndexType msize;
+    // optional field with the current number of elements
+    // in keyspace,
+    // its presence is determined by the type of organization of the corresponding space,
+    // according to the conditions of the individual job
+    // number of elements in the keyspace area
+    IndexType csize;
+};
+```
+
+Table elements are defined by the following structure:
+
+```c
+struct Item {
+    // pointer to information
+    InfoType *info;
+    // optional fields, to optimize the execution of operations,
+    // composition and presence of which must be justified:
+    // element key
+    KetType key;
+    // link to keyspace element by index
+    IndexType ind;
+    // link to keyspace element by pointer
+    PointerType *p1;
+};
+```
+
+The following operations must be provided:
+
+1. inclusion of a new element in the table subject to restrictions on the uniqueness of key information values;
+
+2. deleting an element from the table by a given key value;
+3. search in the element table by the given key value, the result of the search should be copies of all found elements with key values;
+4. outputting the contents of the table to the standard stream;
+5. import of data from a text file;
+6. special operations, in accordance with the individual task.
+
+It is necessary to develop two options for solving the problem (laboratory works 3a and 3b):
+
+1. The table itself and information related to the elements of the table are stored in main memory.
+
+2. The table itself and information related to the elements of the table are stored in external memory (a binary random access file is used). Table descriptor and descriptors
+keyspaces are read from the file (or created for the first time) at the start of the session and written to the file at the end of the session. Element related information
+table is written to the file immediately when the include-to-table operation is performed and in
+main memory is not stored (perhaps with the exception of the element with which
+current operation). All operations are performed on the table and keyspace descriptor,
+located in main memory. All data structures are modified accordingly (replacement of file offset pointers, etc.). File name is entered upon request
+from the program and stored in the table descriptor.
+
+There are a number of additional tasks that are not mandatory, but allow you to get additional points.
+*ADDITIONAL POINTS TO BE UPDATED*
+
+Additional tasks:
+
+1. `*` Implementing search as an iterator in one of the possible ways (for example, as a function that returns the next of the found elements each time it is called).
+
+2. `**` As in point 2, but all operations are performed with keyspaces located in external memory, only the table descriptor can be stored in main memory.
+3. `***` Similar to the previous task, but with the implementation of buffering of file operations (you can read and write several records) and caching of records (cache type and cache management strategies are chosen in agreement with the teacher).
+
+1. Logically completed parts of the algorithm for solving the problem should be designed as separate functions with parameters. The use of global variables is not allowed.
+
+2. Functions for working with tables should not be interactive, i.e. they should take all the necessary data as parameters and return the result of work in the form of appropriate data structures and error codes (exception: functions for outputting a table to standard output or writing a file ).
+3. Dialog functions must use the functions described above, i.e. the Model-View-Controller (MVC) principle must be implemented.
+4. The program must check the correctness of the input data and, in case of errors, issue appropriate messages, and then continue working.
+5. In case of error situations when performing operations with tables, the program should display appropriate messages, and then continue working.
+6. To work with tables located in external memory, a modified structure should be used that defines the element of the table, which includes the length of information and its offset in the file.
+7. To work with tables located in external memory, you must use the `fread()` and `fwrite()` functions, which should be passed the actual length of the information as an argument.
+8. A build system (for example: Make or CMake) must be used to build the program and libraries.
+9. Libraries and application program must be built independently of each other.
+10. The program must work correctly with memory, for verification it is necessary to use the appropriate software tools, for example: `valgrind`, sanitizers, tools built into the IDE, etc.
+
+
+The vector-based table to look up.
+The keyspace elements of a table are defined by the following structure:
+
+```c
+struct KeySpace {
+     // non-null element key
+     keyType key;
+     // parent element key, can be null
+     KeyType par;
+     // pointer to information
+     Item *info;
+};
+```
+
+The maximum size of a table is limited by `msize` and is specified when it is initialized.
+
+A space cannot have two elements with the same key values, and the parent element key value for an element must match any element key value that exists in the table, or be null. The elements of the table are ordered by the value of the parent element's key. The key value of the parent element may be duplicated in the table.
+
+The table has the following special operations:
+
+- removal from the table of an element specified by its key, provided that there are no elements in the table whose parent element's key field contains a value that matches the specified one;
+
+- searches the table for all elements specified by the value of the parent element key; the result of the search should be a new table containing the found elements.
+
+The following data types must be supported:
+
+- key is an unsigned integer;
+
+- value is an unsigned integer.
