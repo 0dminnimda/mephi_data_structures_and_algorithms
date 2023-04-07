@@ -9,7 +9,6 @@ FILE *currentFile(FILE *in, bool set) {
 }
 
 FILE *setFile(FILE *fp) {
-    freeFile();
     if (fp == NULL) perror("Could not open the file");
     return currentFile(fp, true);
 }
