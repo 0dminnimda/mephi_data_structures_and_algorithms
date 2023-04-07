@@ -1,5 +1,5 @@
 #include <stdio.h>
 
-FILE *setFile(const char *filename);
+FILE *setFile(FILE *fp);
 FILE *getFile();
 void freeFile();

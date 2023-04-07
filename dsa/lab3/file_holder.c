@@ -8,9 +8,8 @@ FILE *currentFile(FILE *in, bool set) {
     return fp;
 }
 
-FILE *setFile(const char *filename) {
+FILE *setFile(FILE *fp) {
     freeFile();
-    FILE *fp = fopen(filename, "ab+");
     if (fp == NULL) perror("Could not open the file");
     return currentFile(fp, true);
 }
