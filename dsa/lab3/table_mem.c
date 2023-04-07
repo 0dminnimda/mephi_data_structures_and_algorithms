@@ -102,7 +102,7 @@ bool insertItem(Table *table, KeyType key, KeyType parKey, InfoType info) {
             previous_space = tmp;
 
             previous_index = i;
-            previous_parent = table->ks[i].par;
+            previous_parent = previous_space.par;
         }
     }
 
