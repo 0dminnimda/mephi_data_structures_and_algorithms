@@ -19,6 +19,8 @@ with the cost of additional memory usage
 Thus returned pointers will be aligned
 */
 
+// TODO: create gist + https://stackoverflow.com/a/36734227/12141949
+
 #define BEGINNING(ptr) ((char *)ptr - ALIGNED_SIZE)
 #define SIZE(ptr) (((size_t *)BEGINNING(ptr))[0])
 
