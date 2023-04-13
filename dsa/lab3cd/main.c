@@ -21,8 +21,14 @@ int main() {
             RelType release;
             printf("Enter key and release:\n");
             scanf("%u %u", &key, &release);
-            delete(table, key, release);
+            delete_one_version(table, key, release);
         } else if (strcmp(input, "da") == 0) {
+            KeyType key;
+            RelType release;
+            printf("Enter key:\n");
+            scanf("%u %u", &key, &release);
+            delete_all_versions(table, key, release);
+        } else if (strcmp(input, "sa") == 0) {
             KeyType key;
             printf("Enter key:\n");
             scanf("%u", &key);
