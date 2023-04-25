@@ -27,10 +27,10 @@ typedef struct Table {
 } Table;
 
 #define FOR_KEY_SPACE(name, init) \
-    for (KeySpace *name = init; name->next != NULL; name = name->next)
+    for (KeySpace *name = init; name != NULL; name = name->next)
 
 #define FOR_NODE(name, init) \
-    for (Node *name = init; name != NULL && name->next != NULL; name = name->next)
+    for (Node *name = init; name != NULL; name = name->next)
 
 Table *create_table(IndexType msize) {
     Table *table = calloc(1, sizeof(Table));
@@ -53,15 +53,24 @@ bool insert(Table *table, KeyType key, Item info) {
             target_ks = ks;
             break;
         }
-        prev_ks = ks;
+        if (ks->node)
+            prev_ks = ks;
     }
-
-    if (!target_ks) {
-        target_ks = calloc(1, sizeof(KeySpace));
+    if (!prev_ks) {
+        printf("no prev_ks\n");
+        target_ks = table->ks + index;
         target_ks->key = key;
+        target_ks->node = NULL;
+        target_ks->next = NULL;
+    } else {
+        printf("yes prev_ks\n");
+        if (!target_ks) {
+            printf("no target_ks\n");
+            target_ks = calloc(1, sizeof(KeySpace));
+            target_ks->key = key;
+        }
+        prev_ks->next = target_ks;
     }
-    assert(prev_ks);
-    prev_ks->next = target_ks;
 
     Node *new_node = calloc(1, sizeof(Node));
     new_node->info = calloc(1, sizeof(Item));
@@ -109,7 +118,7 @@ bool delete_one_version(Table *table, KeyType key, RelType release) {
     FOR_NODE(node, ks->node) {
         if (node->release == release) {
             if (ks->node == node) {
-                ks->node = NULL;
+                ks->node = node->next;
             } else {
                 prev_node->next = node->next;
             }
@@ -123,8 +132,7 @@ bool delete_one_version(Table *table, KeyType key, RelType release) {
     return false;
 }
 
-bool delete_all_versions(Table *table, KeyType key) {
-    KeySpace *ks = search(table, key);
+bool free_key_space(Table *table, KeySpace *ks) {
     if (ks == NULL) return false;
 
     Node *prev_node = NULL;
@@ -136,6 +144,10 @@ bool delete_all_versions(Table *table, KeyType key) {
     if (prev_node) free(prev_node->info);
     free(prev_node);
     return true;
+}
+
+bool delete_all_versions(Table *table, KeyType key) {
+    return free_key_space(table, search(table, key));
 }
 
 void output(Table *table) {
@@ -218,19 +230,12 @@ Node *search_all(Table *table, KeyType key) {
 }
 
 void free_table(Table *table) {
+    printf("free table %p\n", table);
     for (IndexType i = 0; i < table->msize; i++) {
-        KeySpace *ks = table->ks + i;
-        while (ks->next != NULL) {
-            KeySpace *next_ks = ks->next;
-            Node *node = ks->node;
-            while (node != NULL) {
-                Node *next_node = node->next;
-                free(node->info);
-                free(node);
-                node = next_node;
-            }
-            free(ks);
-            ks = next_ks;
+        printf("free index %zu, %p %d %p %p\n", i, table->ks + i, (table->ks + i)->key, (table->ks + i)->next, (table->ks + i)->node);
+        FOR_KEY_SPACE(ks, table->ks + i) {
+            printf("free ks %p\n", ks);
+            free_key_space(table, ks);
         }
     }
     free(table->ks);
