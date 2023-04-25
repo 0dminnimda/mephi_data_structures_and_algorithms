@@ -10,7 +10,9 @@ int main() {
     while (run) {
         printf("> ");
         char *input = read_line();
-        if (strcmp(input, "i") == 0) {
+        if (strcmp(input, "q") == 0) {
+            run = false;
+        } else if (strcmp(input, "i") == 0) {
             KeyType key;
             Item info;
             printf("Enter key and info:\n");
