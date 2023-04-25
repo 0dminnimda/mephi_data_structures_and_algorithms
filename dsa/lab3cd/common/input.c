@@ -19,8 +19,8 @@ char *fread_line(FILE *stream) {
             buf = new_buf;
         }
 
-        buf[len] = fgetc(stream);
-        if (buf[len] == EOF) {
+        int c = buf[len] = fgetc(stream);
+        if (c == EOF) {
             free(buf);
             return NULL;
         }
