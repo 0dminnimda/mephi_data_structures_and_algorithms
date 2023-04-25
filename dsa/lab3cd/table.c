@@ -59,7 +59,6 @@ bool insert(Table *table, KeyType key, Item info) {
         if (first_ks->node) {
             printf("yes first ks node\n");
             target_ks = calloc(1, sizeof(KeySpace));
-
             target_ks->next = first_ks->next;
             first_ks->next = target_ks;
         } else {
@@ -114,57 +113,39 @@ bool delete_one_version(Table *table, KeyType key, RelType release) {
     return false;
 }
 
-bool free_key_space(Table *table, KeySpace *ks) {
-    printf("free ks %p\n", ks);
+bool free_key_space_contents(Table *table, KeySpace *ks) {
+    // printf("free ks %p %d %p %p\n", ks, ks->key, ks->next, ks->node);
     if (ks == NULL) return false;
 
     Node *prev_node = NULL;
     FOR_NODE(node, ks->node) {
-        printf("  free node %p\n", prev_node);
+        // printf("  free node %p\n", prev_node);
         if (prev_node) free(prev_node->info);
         free(prev_node);
         prev_node = node;
     }
-    printf("  free node %p\n", prev_node);
+    // printf("  free node %p\n", prev_node);
     if (prev_node) free(prev_node->info);
     free(prev_node);
     return true;
 }
 
 bool delete_all_versions(Table *table, KeyType key) {
-    return free_key_space(table, search(table, key));
+    return free_key_space_contents(table, search(table, key));
 }
 
 void output(Table *table) {
     printf("Table contents:\n");
     for (IndexType i = 0; i < table->msize; i++) {
+        printf("table->ks[%zu]:\n", i);
         FOR_KEY_SPACE(ks, table->ks + i) {
-            printf("[%zu] -> %u:\n", i, ks->key);
+            if (!ks->node) continue;
+            printf("  [%u]:\n", ks->key);
             FOR_NODE(node, ks->node)
-                printf("  version %u = %u\n", node->release, *(node->info));
+                printf("    version %u = %u\n", node->release, *(node->info));
         }
     }
 }
-
-// void import(Table *table, const char *filename) {
-//     FILE *fp = fopen(filename, "r");
-//     if (fp == NULL) {
-//         printf("Error: could not open file %s\n", filename);
-//         exit(1);
-//     }
-//     char line[100];
-//     while (fgets(line, sizeof(line), fp) != NULL) {
-//         KeyType key;
-//         RelType release;
-//         Item *info = calloc(1, sizeof(Item));
-//         if (sscanf(line, "%u %u %u", &key, &release, info) != 3) {
-//             printf("Error: invalid input format in file %s\n", filename);
-//             exit(1);
-//         }
-//         insert(table, key, release, info);
-//     }
-//     fclose(fp);
-// }
 
 #define TABLE_ERROR(...) "popo"
 
@@ -215,12 +196,16 @@ Node *search_all(Table *table, KeyType key) {
 }
 
 void free_table(Table *table) {
-    printf("free table %p\n", table);
+    // printf("free table %p\n", table);
     for (IndexType i = 0; i < table->msize; i++) {
-        printf("free index %zu, %p %d %p %p\n", i, table->ks + i, (table->ks + i)->key, (table->ks + i)->next, (table->ks + i)->node);
+        // printf("free index %zu\n", i);
+        KeySpace *prev_ks = NULL;
         FOR_KEY_SPACE(ks, table->ks + i) {
-            free_key_space(table, ks);
+            free_key_space_contents(table, ks);
+            free(prev_ks);
+            if (table->ks + i != ks) prev_ks = ks;
         }
+        free(prev_ks);
     }
     free(table->ks);
     free(table);
