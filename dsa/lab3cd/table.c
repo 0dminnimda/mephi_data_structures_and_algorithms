@@ -4,6 +4,12 @@
 #include <string.h>
 #include <assert.h>
 
+#ifndef NO_TABLE_PRINT_ERRORS
+    #define TABLE_ERROR(msg) fprintf(stderr, msg)
+#else
+    #define TABLE_ERROR(msg)
+#endif
+
 typedef size_t IndexType;
 typedef unsigned int KeyType;
 typedef unsigned int RelType;
@@ -57,12 +63,12 @@ bool insert(Table *table, KeyType key, Item info) {
 
     if (!target_ks) {
         if (first_ks->node) {
-            printf("yes first ks node\n");
+            // printf("yes first ks node\n");
             target_ks = calloc(1, sizeof(KeySpace));
             target_ks->next = first_ks->next;
             first_ks->next = target_ks;
         } else {
-            printf("no first ks node\n");
+            // printf("no first ks node\n");
             target_ks = first_ks;
         }
         target_ks->key = key;
@@ -91,9 +97,29 @@ KeySpace *search(Table *table, KeyType key) {
     return NULL;
 }
 
+Node *search_spesific(Table *table, KeyType key, RelType release) {
+    KeySpace *ks = search(table, key);
+    if (ks == NULL) {
+        TABLE_ERROR("Error: Key not found\n");
+        return NULL;
+    }
+
+    FOR_NODE(node, ks->node) {
+        if (node->release == release) {
+            return node;
+        }
+    }
+
+    TABLE_ERROR("Error: Release not found\n");
+    return NULL;
+}
+
 bool delete_one_version(Table *table, KeyType key, RelType release) {
     KeySpace *ks = search(table, key);
-    if (ks == NULL) return false;
+    if (ks == NULL) {
+        TABLE_ERROR("Error: Key not found\n");
+        return false;
+    }
 
     Node *prev_node = NULL;
     FOR_NODE(node, ks->node) {
@@ -110,12 +136,16 @@ bool delete_one_version(Table *table, KeyType key, RelType release) {
         prev_node = node;
     }
 
+    TABLE_ERROR("Error: Release not found\n");
     return false;
 }
 
 bool free_key_space_contents(Table *table, KeySpace *ks) {
     // printf("free ks %p %d %p %p\n", ks, ks->key, ks->next, ks->node);
-    if (ks == NULL) return false;
+    if (ks == NULL) {
+        TABLE_ERROR("Error: Key not found\n");
+        return false;
+    }
 
     Node *prev_node = NULL;
     FOR_NODE(node, ks->node) {
@@ -142,12 +172,10 @@ void output(Table *table) {
             if (!ks->node) continue;
             printf("  [%u]:\n", ks->key);
             FOR_NODE(node, ks->node)
-                printf("    version %u = %u\n", node->release, *(node->info));
+                printf("    release %u = %u\n", node->release, *(node->info));
         }
     }
 }
-
-#define TABLE_ERROR(...) "popo"
 
 bool import(Table *table, const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -167,17 +195,6 @@ bool import(Table *table, const char *filename) {
     }
     fclose(file);
     return true;
-}
-
-void fill_table(Table *table) {
-    // create an array of prespecified keys and releases
-    KeyType keys[] = { 1, 1, 1, 2, 2, 2, 2, 3, 1, 1 };
-    Item values[] = { 11, 22, 33, 44, 55, 11, 11, 22, 66, 66 };
-    IndexType numValues = sizeof(keys) / sizeof(keys[0]);
-
-    for (int i = 0; i < numValues; i++) {
-        insert(table, keys[i], values[i]);
-    }
 }
 
 Node *search_all(Table *table, KeyType key) {
