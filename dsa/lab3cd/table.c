@@ -157,6 +157,7 @@ bool free_key_space_contents(Table *table, KeySpace *ks) {
     // printf("  free node %p\n", prev_node);
     if (prev_node) free(prev_node->info);
     free(prev_node);
+    ks->node = NULL;
     return true;
 }
 
@@ -210,6 +211,17 @@ Node *search_all(Table *table, KeyType key) {
     if (node == NULL) return NULL;
     node = node->next;
     return node;
+}
+
+Table *search_all_copy(Table *table, KeyType key) {
+    Table *copy = create_table(table->msize);
+
+    KeySpace *ks = search(table, key);
+    FOR_NODE(node, ks->node) {
+        insert(copy, key, *(node->info));
+    }
+
+    return copy;
 }
 
 void free_table(Table *table) {

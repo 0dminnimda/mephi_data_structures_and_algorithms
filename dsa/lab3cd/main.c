@@ -15,7 +15,7 @@ int main() {
     bool run = true;
     while (run) {
         printf("\033[32m"); // set text color to green
-        printf("Enter command (input/delete/deleteall/find/findall/output/file/quit):\n");
+        printf("Enter command (input/delete/deleteall/find/findall/findallcopy/output/file/quit):\n");
         printf("\033[0m"); // reset text color to default
         printf("> ");
 
@@ -62,6 +62,13 @@ int main() {
                 printf("Key: %u, Release: %u, Info: %u\n", key, node->release, *(node->info));
                 node = search_all(NULL, key);
             }
+        } else if (IS_COMMAND(input, "findallcopy", "fac")) {
+            KeyType key;
+            printf("Enter key:\n");
+            SCAN(1, "%u", &key);
+            Table *table_copy = search_all_copy(table, key);
+            output(table_copy);
+            free_table(table_copy);
         } else if (IS_COMMAND(input, "output", "o")) {
             output(table);
         } else if (IS_COMMAND(input, "file", "f")) {
