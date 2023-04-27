@@ -98,22 +98,18 @@ void print_node(Node* node) {
     printf("%u: %s\n", node->key, node->value);
 }
 
-void inorder_traversal_indent(Node* node, unsigned int key, size_t indent) {
+void inorder_traversal(Node* node, unsigned int key, size_t indent) {
     if (node == NULL) {
         return;
     }
-    inorder_traversal_indent(node->right, key, indent + 1);
+    inorder_traversal(node->right, key, indent + 1);
     if (key == 0 || node->key > key) {
         for (size_t i = 0; i < indent; ++i) {
             printf("    ");
         }
         print_node(node);
     }
-    inorder_traversal_indent(node->left, key, indent + 1);
-}
-
-void inorder_traversal(Node* node, unsigned int key) {
-    inorder_traversal_indent(node, key, 0);
+    inorder_traversal(node->left, key, indent + 1);
 }
 
 void free_tree(Node* node) {
@@ -148,7 +144,7 @@ void remove_key(Tree* tree, unsigned int key) {
 }
 
 void inorder(Tree* tree, unsigned int key) {
-    inorder_traversal(tree->root, key);
+    inorder_traversal(tree->root, key, 0);
 }
 
 Node* find(Tree* tree, unsigned int key) {
