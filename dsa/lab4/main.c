@@ -33,6 +33,8 @@ int main() {
             char* info = read_line();
 
             add_key(tree, key, info);
+
+            free(info);
         } else if (IS_COMMAND(input, "delete", "d")) {
             printf("Enter key: ");
             unsigned int key;
@@ -74,6 +76,8 @@ int main() {
             char* filename = read_line();
 
             import(tree, filename);
+
+            free(filename);
         } else if (IS_COMMAND(input, "quit", "q")) {
             run = false;
         } else {

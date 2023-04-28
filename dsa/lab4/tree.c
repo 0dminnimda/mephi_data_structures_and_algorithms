@@ -197,7 +197,13 @@ Node* find_max_diff(Node* root, unsigned int key) {
 }
 
 void print_node(Node* node) {
-    printf("%u: %s\n", node->key, node->value);
+    printf("%u: '%s'\n", node->key, node->value);
+}
+
+void print_indent(size_t indent) {
+    for (size_t i = 0; i < indent; ++i) {
+        printf("    ");
+    }
 }
 
 #define TRAVERSAL_ALL ((unsigned int)(-1))
@@ -207,10 +213,10 @@ void inorder_traversal(Node* node, unsigned int key, size_t indent) {
         return;
     }
     inorder_traversal(node->right, key, indent + 1);
-    if (key == TRAVERSAL_ALL || node->key > key) {
-        for (size_t i = 0; i < indent; ++i) {
-            printf("    ");
-        }
+    if (key == TRAVERSAL_ALL) {
+        print_indent(indent);
+        print_node(node);
+    } else if (node->key > key) {
         print_node(node);
     }
     inorder_traversal(node->left, key, indent + 1);
