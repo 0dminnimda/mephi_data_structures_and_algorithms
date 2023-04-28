@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef NO_TABLE_PRINT_ERRORS
+    #define TREE_ERROR(msg) fprintf(stderr, msg)
+#else
+    #define TREE_ERROR(msg)
+#endif
+
 typedef struct Node {
     unsigned int key;
     char* value;
@@ -38,7 +44,7 @@ Node* add_node(Node* node, unsigned int key, char* value) {
     } else if (key > node->key) {
         node->right = add_node(node->right, key, value);
     } else {
-        return node; // duplicate key, do not add
+        TREE_ERROR("Error: duplicate key\n");
     }
     return node;
 }
