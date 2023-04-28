@@ -20,7 +20,7 @@ typedef struct Tree {
     int size;
 } Tree;
 
-Node* create_node(unsigned int key, char* value) {
+Node* create_node(unsigned int key, const char* value) {
     Node* node = malloc(sizeof(Node));
     node->key = key;
     node->value = malloc(strlen(value) + 1);
@@ -47,6 +47,39 @@ Node* add_node(Node* node, unsigned int key, char* value) {
         TREE_ERROR("Error: duplicate key\n");
     }
     return node;
+}
+
+void add_node_loop(Tree* tree, unsigned int key, const char* value) {
+    Node* new_node = create_node(key, value);
+    if (tree->root == NULL) {
+        tree->root = new_node;
+        return;
+    }
+
+    Node* current = tree->root;
+    Node* parent = NULL;
+
+    while (current != NULL) {
+        parent = current;
+        if (key < current->key) {
+            current = current->left;
+        } else if (key > current->key) {
+            current = current->right;
+        } else {
+            // Key already exists, update the value and destroy the new node
+            free(current->value);
+            current->value = malloc(strlen(value) + 1);
+            strcpy(current->value, value);
+            destroy_node(new_node);
+            return;
+        }
+    }
+
+    if (key < parent->key) {
+        parent->left = new_node;
+    } else {
+        parent->right = new_node;
+    }
 }
 
 Node* find_node(Node* node, unsigned int key) {
@@ -98,6 +131,130 @@ Node* remove_node(Node* node, unsigned int key) {
         }
     }
     return node;
+}
+
+Node* remove_node_less(Node* root, unsigned int key) {
+    Node* parent = NULL;
+    Node* current = root;
+
+    // Find the node to be removed and its parent
+    while (current != NULL && current->key != key) {
+        parent = current;
+        if (key < current->key) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
+
+    if (current == NULL) {
+        return root; // Node to be removed not found
+    }
+
+    // Case 1: Node with only one child or no child
+    if (current->left == NULL || current->right == NULL) {
+        Node* child = current->left ? current->left : current->right;
+
+        // If the node to be removed is the root
+        if (parent == NULL) {
+            root = child;
+        } else if (parent->left == current) {
+            parent->left = child;
+        } else {
+            parent->right = child;
+        }
+    } else {
+        // Case 2: Node with two children
+        Node* min_right_node = find_min_node(current->right);
+        unsigned int tmp_key = min_right_node->key;
+        char* tmp_value = malloc(strlen(min_right_node->value) + 1);
+        strcpy(tmp_value, min_right_node->value);
+
+        // Remove the inorder successor
+        root = remove_node_less(root, min_right_node->key);
+
+        // Replace the key and value of the node to be removed
+        current->key = tmp_key;
+        free(current->value);
+        current->value = tmp_value;
+    }
+
+    // Destroy the removed node
+    if (current != NULL) {
+        destroy_node(current);
+    }
+
+    return root;
+}
+
+Node* remove_node_loop(Node* root, unsigned int key) {
+    Node* parent = NULL;
+    Node* current = root;
+
+    // Find the node to be removed and its parent
+    while (current != NULL && current->key != key) {
+        parent = current;
+        if (key < current->key) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
+
+    if (current == NULL) {
+        return root; // Node to be removed not found
+    }
+
+    // Case 1: Node with only one child or no child
+    if (current->left == NULL || current->right == NULL) {
+        Node* child = current->left ? current->left : current->right;
+
+        // If the node to be removed is the root
+        if (parent == NULL) {
+            root = child;
+        } else if (parent->left == current) {
+            parent->left = child;
+        } else {
+            parent->right = child;
+        }
+    } else {
+        // Case 2: Node with two children
+        Node* min_right_node = current->right;
+        Node* min_right_node_parent = current;
+
+        // Find the inorder successor (minimum node in the right subtree)
+        while (min_right_node->left != NULL) {
+            min_right_node_parent = min_right_node;
+            min_right_node = min_right_node->left;
+        }
+
+        // Replace the key and value of the node to be removed
+        unsigned int tmp_key = min_right_node->key;
+        char* tmp_value = malloc(strlen(min_right_node->value) + 1);
+        strcpy(tmp_value, min_right_node->value);
+
+        current->key = tmp_key;
+        free(current->value);
+        current->value = tmp_value;
+
+        // Remove the inorder successor
+        if (min_right_node_parent->left == min_right_node) {
+            min_right_node_parent->left = min_right_node->right;
+        } else {
+            min_right_node_parent->right = min_right_node->right;
+        }
+
+        // Destroy the inorder successor
+        destroy_node(min_right_node);
+        return root;
+    }
+
+    // Destroy the removed node
+    if (current != NULL) {
+        destroy_node(current);
+    }
+
+    return root;
 }
 
 void print_node(Node* node) {
