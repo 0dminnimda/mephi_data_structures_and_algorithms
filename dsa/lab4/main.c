@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "common/input.h"
+#include "common/time.h"
 #include "tree.c"
 
 #define IS_COMMAND(input, name, short_name) \
@@ -21,6 +22,7 @@
 int main() {
     Tree* tree = create_tree();
     char* input = NULL;
+    double time = 0;
 
     bool run = true;
     while (run) {
@@ -28,7 +30,7 @@ int main() {
         printf(
             "Enter command "
             "(add/delete/find/max_diff/traverse/output/dump_dot/image/import_file/"
-            "quit):\n");
+            "clock_zero/clock_time/reset/quit):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
 
@@ -45,7 +47,7 @@ int main() {
             printf("Enter info: ");
             char* info = read_line();
 
-            add_key(tree, key, info);
+            TIMEIT(time, add_key(tree, key, info));
 
             free(info);
         } else if (IS_COMMAND(input, "delete", "d")) {
@@ -53,13 +55,14 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            remove_key(tree, key);
+            TIMEIT(time, remove_key(tree, key));
         } else if (IS_COMMAND(input, "find", "f")) {
             printf("Enter key: ");
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            Node* node = find_key(tree, key);
+            Node* node;
+            TIMEIT(time, node = find_key(tree, key));
             if (node) {
                 print_node(node);
             } else {
@@ -70,7 +73,8 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            Node* node = max_diff(tree, key);
+            Node* node;
+            TIMEIT(time, node = max_diff(tree, key));
             if (node) {
                 print_node(node);
             } else {
@@ -81,30 +85,37 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            inorder(tree, key);
+            TIMEIT(time, inorder(tree, key));
         } else if (IS_COMMAND(input, "output", "o")) {
-            inorder(tree, TRAVERSAL_ALL);
+            TIMEIT(time, inorder(tree, TRAVERSAL_ALL));
         } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             printf("Enter filename: ");
             char* filename = read_line();
 
-            dump_dot(tree, filename);
+            TIMEIT(time, dump_dot(tree, filename));
 
             free(filename);
         } else if (IS_COMMAND(input, "image", "i")) {
             printf("Enter filename: ");
             char* filename = read_line();
 
-            to_image(tree, filename);
+            TIMEIT(time, to_image(tree, filename));
 
             free(filename);
         } else if (IS_COMMAND(input, "import_file", "if")) {
             printf("Enter filename: ");
             char* filename = read_line();
 
-            import(tree, filename);
+            TIMEIT(time, import(tree, filename));
 
             free(filename);
+        } else if (IS_COMMAND(input, "clock_zero", "cz")) {
+            time = 0;
+        } else if (IS_COMMAND(input, "clock_time", "ct")) {
+            printf("Time: %.10lf seconds\n", time);
+        } else if (IS_COMMAND(input, "reset", "r")) {
+            destroy_tree(tree);
+            tree = create_tree();
         } else if (IS_COMMAND(input, "quit", "q")) {
             run = false;
         } else {
