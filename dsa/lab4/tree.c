@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common/string_builder.h"
+
 #ifndef NO_TABLE_PRINT_ERRORS
     #define TREE_ERROR(msg) fprintf(stderr, msg)
 #else
@@ -285,4 +287,55 @@ bool import(Tree* tree, const char *filename) {
     }
     fclose(file);
     return true;
+}
+
+void dump_dot_traversal(Node* parent, Node* node, FILE *file) {
+    if (node == NULL) {
+        return;
+    }
+
+    fprintf(file, "n%u [label=\"%u\\n%s\", shape = ellipse, style = filled];\n", node->key, node->key, node->value);
+    if (parent)
+        fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
+
+    dump_dot_traversal(node, node->left, file);
+    dump_dot_traversal(node, node->right, file);
+}
+
+bool dump_dot(Tree* tree, const char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        TREE_ERROR("Error: File not found\n");
+        return false;
+    }
+
+    fprintf(file, "digraph G {\n");
+    dump_dot_traversal(NULL, tree->root, file);
+    fprintf(file, "}\n");
+
+    fclose(file);
+    return true;
+}
+
+bool to_image(Tree* tree, const char *filename) {
+    StringBuilder *sb = sb_create(0);
+
+    sb_append(sb, filename);
+    sb_append(sb, ".dot");
+    if (!dump_dot(tree, sb_to_string(sb))) {
+        sb_free(sb);
+        return false;
+    }
+    sb_clear(sb);
+
+    sb_append(sb, "dot -Tpng -Gdpi=300 ");
+    sb_append(sb, filename);
+    sb_append(sb, ".dot -o ");
+    sb_append(sb, filename);
+    printf("Running '%s'\n", sb_to_string(sb));
+    int result = system(sb_to_string(sb));
+    sb_free(sb);
+
+    if (result != 0) TREE_ERROR("ERROR: Could not create an image\n");
+    return result == 0;
 }

@@ -15,7 +15,7 @@ int main() {
     bool run = true;
     while (run) {
         printf("\033[32m"); // set text color to green
-        printf("Enter command (add/delete/find/max_diff/traverse/output/file/quit):\n");
+        printf("Enter command (add/delete/find/max_diff/traverse/output/dump_dot/image/import_file/quit):\n");
         printf("\033[0m"); // reset text color to default
         printf("> ");
 
@@ -71,7 +71,21 @@ int main() {
             inorder(tree, key);
         } else if (IS_COMMAND(input, "output", "o")) {
             inorder(tree, TRAVERSAL_ALL);
-        } else if (IS_COMMAND(input, "file", "f")) {
+        } else if (IS_COMMAND(input, "dump_dot", "dd")) {
+            printf("Enter filename: ");
+            char* filename = read_line();
+
+            dump_dot(tree, filename);
+
+            free(filename);
+        } else if (IS_COMMAND(input, "image", "i")) {
+            printf("Enter filename: ");
+            char* filename = read_line();
+
+            to_image(tree, filename);
+
+            free(filename);
+        } else if (IS_COMMAND(input, "import_file", "if")) {
             printf("Enter filename: ");
             char* filename = read_line();
 
