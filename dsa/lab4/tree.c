@@ -39,9 +39,7 @@ void destroy_node(Node* node) {
 }
 
 Node* add_node(Node* node, unsigned int key, const char* value) {
-    if (node == NULL) {
-        return create_node(key, value);
-    }
+    if (node == NULL) { return create_node(key, value); }
     if (key < node->key) {
         node->left = add_node(node->left, key, value);
     } else if (key > node->key) {
@@ -53,29 +51,19 @@ Node* add_node(Node* node, unsigned int key, const char* value) {
 }
 
 Node* find_node(Node* node, unsigned int key) {
-    if (node == NULL || node->key == key) {
-        return node;
-    }
-    if (key < node->key) {
-        return find_node(node->left, key);
-    }
+    if (node == NULL || node->key == key) { return node; }
+    if (key < node->key) { return find_node(node->left, key); }
     return find_node(node->right, key);
 }
 
 Node* find_min_node(Node* node) {
-    if (node == NULL) {
-        return NULL;
-    }
-    if (node->left == NULL) {
-        return node;
-    }
+    if (node == NULL) { return NULL; }
+    if (node->left == NULL) { return node; }
     return find_min_node(node->left);
 }
 
 Node* remove_node(Node* node, unsigned int key) {
-    if (node == NULL) {
-        return NULL;
-    }
+    if (node == NULL) { return NULL; }
     if (key < node->key) {
         node->left = remove_node(node->left, key);
     } else if (key > node->key) {
@@ -118,7 +106,7 @@ Node* remove_node_loop(Node* root, unsigned int key) {
     }
 
     if (current == NULL) {
-        return root; // Node to be removed not found
+        return root;  // Node to be removed not found
     }
 
     // Case 1: Node with only one child or no child
@@ -166,17 +154,14 @@ Node* remove_node_loop(Node* root, unsigned int key) {
     }
 
     // Destroy the removed node
-    if (current != NULL) {
-        destroy_node(current);
-    }
+    if (current != NULL) { destroy_node(current); }
 
     return root;
 }
 
-Node* find_max_diff_helper(Node* root, unsigned int key, Node* max_diff_node, int max_diff) {
-    if (root == NULL) {
-        return max_diff_node;
-    }
+Node* find_max_diff_helper(Node* root, unsigned int key, Node* max_diff_node,
+                           int max_diff) {
+    if (root == NULL) { return max_diff_node; }
 
     int diff = abs((int)(root->key - key));
     if (diff > max_diff) {
@@ -184,7 +169,8 @@ Node* find_max_diff_helper(Node* root, unsigned int key, Node* max_diff_node, in
         max_diff_node = root;
     }
 
-    Node* left_max_diff_node = find_max_diff_helper(root->left, key, max_diff_node, max_diff);
+    Node* left_max_diff_node =
+        find_max_diff_helper(root->left, key, max_diff_node, max_diff);
     int left_diff = abs((int)(left_max_diff_node->key - key));
     if (left_diff > max_diff) {
         max_diff = left_diff;
@@ -198,22 +184,16 @@ Node* find_max_diff(Node* root, unsigned int key) {
     return find_max_diff_helper(root, key, NULL, -1);
 }
 
-void print_node(Node* node) {
-    printf("%u: '%s'\n", node->key, node->value);
-}
+void print_node(Node* node) { printf("%u: '%s'\n", node->key, node->value); }
 
 void print_indent(size_t indent) {
-    for (size_t i = 0; i < indent; ++i) {
-        printf("    ");
-    }
+    for (size_t i = 0; i < indent; ++i) { printf("    "); }
 }
 
 #define TRAVERSAL_ALL ((unsigned int)(-1))
 
 void inorder_traversal(Node* node, unsigned int key, size_t indent) {
-    if (node == NULL) {
-        return;
-    }
+    if (node == NULL) { return; }
     inorder_traversal(node->right, key, indent + 1);
     if (key == TRAVERSAL_ALL) {
         print_indent(indent);
@@ -225,9 +205,7 @@ void inorder_traversal(Node* node, unsigned int key, size_t indent) {
 }
 
 void free_tree(Node* node) {
-    if (node == NULL) {
-        return;
-    }
+    if (node == NULL) { return; }
     free_tree(node->left);
     free_tree(node->right);
     destroy_node(node);
@@ -256,20 +234,14 @@ void remove_key(Tree* tree, unsigned int key) {
     tree->size--;
 }
 
-void inorder(Tree* tree, unsigned int key) {
-    inorder_traversal(tree->root, key, 0);
-}
+void inorder(Tree* tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
 
-Node* find_key(Tree* tree, unsigned int key) {
-    return find_node(tree->root, key);
-}
+Node* find_key(Tree* tree, unsigned int key) { return find_node(tree->root, key); }
 
-Node* max_diff(Tree* tree, unsigned int key) {
-    return find_max_diff(tree->root, key);
-}
+Node* max_diff(Tree* tree, unsigned int key) { return find_max_diff(tree->root, key); }
 
-bool import(Tree* tree, const char *filename) {
-    FILE *file = fopen(filename, "r");
+bool import(Tree* tree, const char* filename) {
+    FILE* file = fopen(filename, "r");
     if (file == NULL) {
         TREE_ERROR("Error: File not found\n");
         return false;
@@ -289,21 +261,19 @@ bool import(Tree* tree, const char *filename) {
     return true;
 }
 
-void dump_dot_traversal(Node* parent, Node* node, FILE *file) {
-    if (node == NULL) {
-        return;
-    }
+void dump_dot_traversal(Node* parent, Node* node, FILE* file) {
+    if (node == NULL) { return; }
 
-    fprintf(file, "n%u [label=\"%u\\n%s\", shape = ellipse, style = filled];\n", node->key, node->key, node->value);
-    if (parent)
-        fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
+    fprintf(file, "n%u [label=\"%u\\n%s\", shape = ellipse, style = filled];\n",
+            node->key, node->key, node->value);
+    if (parent) fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
 
     dump_dot_traversal(node, node->left, file);
     dump_dot_traversal(node, node->right, file);
 }
 
-bool dump_dot(Tree* tree, const char *filename) {
-    FILE *file = fopen(filename, "w");
+bool dump_dot(Tree* tree, const char* filename) {
+    FILE* file = fopen(filename, "w");
     if (file == NULL) {
         TREE_ERROR("Error: File not found\n");
         return false;
@@ -317,8 +287,8 @@ bool dump_dot(Tree* tree, const char *filename) {
     return true;
 }
 
-bool to_image(Tree* tree, const char *filename) {
-    StringBuilder *sb = sb_create(0);
+bool to_image(Tree* tree, const char* filename) {
+    StringBuilder* sb = sb_create(0);
 
     sb_append(sb, filename);
     sb_append(sb, ".dot");
