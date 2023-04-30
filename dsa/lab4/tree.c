@@ -250,8 +250,7 @@ bool import(Tree* tree, const char* filename) {
     // Insert the the table
     unsigned int key;
     char info[100];
-    info[99] = '\0';
-    while (fscanf(file, "%u\n%99s", &key, info) == 2) {
+    while (fscanf(file, "%u\n%99[^\n]", &key, info) == 2) {
         if (!add_key(tree, key, info)) {
             fclose(file);
             return false;
