@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "common/input.h"
 #include "common/time.h"
@@ -8,7 +9,7 @@
     (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
 
 #define CLEAR() \
-    while ((getchar()) != '\n') {}
+    while (strchr("\r\n", getchar()) == NULL) {}
 
 #define SCAN(n, ...)                      \
     if (scanf(__VA_ARGS__) != n) {        \
