@@ -66,7 +66,7 @@ int main() {
             if (node) {
                 print_node(node);
             } else {
-                printf("Key not found.\n");
+                printf("Key %u not found.\n", key);
             }
         } else if (IS_COMMAND(input, "max_diff", "m")) {
             printf("Enter key: ");
