@@ -22,7 +22,7 @@
 int main() {
     Tree* tree = create_tree();
     char* input = NULL;
-    double time = 0;
+    long double time = 0;
 
     bool run = true;
     while (run) {
@@ -112,7 +112,7 @@ int main() {
         } else if (IS_COMMAND(input, "clock_zero", "cz")) {
             time = 0;
         } else if (IS_COMMAND(input, "clock_time", "ct")) {
-            printf("Time: %.10lf seconds\n", time);
+            printf("Time: %.13Lf seconds\n", time);
         } else if (IS_COMMAND(input, "reset", "r")) {
             destroy_tree(tree);
             tree = create_tree();
