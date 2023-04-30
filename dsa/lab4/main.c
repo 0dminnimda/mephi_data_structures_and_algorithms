@@ -21,7 +21,8 @@
 
 int main() {
     Tree* tree = create_tree();
-    char* input = NULL;
+    char input[100];
+    input[0] = '\0';
     long double time = 0;
 
     bool run = true;
@@ -34,10 +35,10 @@ int main() {
         printf("\033[0m");  // reset text color to default
         printf("> ");
 
-        free(input);
-        input = read_line();
+        int result = scanf("%99[^\r\n]", input);
+        CLEAR();
 
-        if (input == NULL) {
+        if (result != 1 && result != 0) {
             run = false;
         } else if (IS_COMMAND(input, "add", "a")) {
             printf("Enter key: ");
@@ -126,7 +127,6 @@ int main() {
         }
     }
 
-    free(input);
     destroy_tree(tree);
     return 0;
 }
