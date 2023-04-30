@@ -8,17 +8,19 @@
 #define IS_COMMAND(input, name, short_name) \
     (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
 
-#define CLEAR() \
-    while (strchr("\r\n", getchar()) == NULL) {}
-
 #define SCAN(n, ...)                      \
     if (scanf(__VA_ARGS__) != n) {        \
-        CLEAR();                          \
+        clear();                          \
         printf("Error: invalid input\n"); \
         continue;                         \
     } else {                              \
-        CLEAR();                          \
+        clear();                          \
     }
+
+void clear() {
+    int c;
+    while ((c = getchar()) != EOF && strchr("\r\n", c) == NULL) {}
+}
 
 int main() {
     Tree* tree = create_tree();
@@ -37,7 +39,7 @@ int main() {
         printf("> ");
 
         int result = scanf("%99[^\r\n]", input);
-        CLEAR();
+        clear();
 
         if (result != 1 && result != 0) {
             run = false;
