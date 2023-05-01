@@ -46,16 +46,18 @@ class Test:
         Test.__init__(self, graph_file, renew)
         return self
 
+    def extend(self, *item) -> Test:
+        self.operations.extend(str(sub) for sub in item)
+        return self
+
     def add_reset(self) -> Test:
-        self.operations.extend(["reset", "import_file", self.graph_file])
+        self.extend("reset", "import_file", self.graph_file)
         return self
 
     def add(self, *item) -> Test:
         if self.renew:
             self.add_reset()
-        self.operations.extend(
-            ["clock_zero", *(str(sub) for sub in item), "clock_time"]
-        )
+        self.extend("clock_zero", *item, "clock_time")
         return self
 
     def to_str(self) -> str:
