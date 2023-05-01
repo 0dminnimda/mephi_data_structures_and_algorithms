@@ -178,24 +178,26 @@ Node *find_max_diff(Node *node, unsigned int key) {
     return min_node;
 }
 
-void print_node(Node *node) { printf("%u: '%s'\n", node->key, node->value); }
+void print_node(FILE *stream, Node *node) {
+    fprintf(stream, "%u: '%s'\n", node->key, node->value);
+}
 
-void print_indent(size_t indent) {
-    for (size_t i = 0; i < indent; ++i) { printf("    "); }
+void print_indent(FILE *stream, size_t indent) {
+    for (size_t i = 0; i < indent; ++i) { fprintf(stream, "    "); }
 }
 
 #define TRAVERSAL_ALL ((unsigned int)(-1))
 
-void inorder_traversal(Node *node, unsigned int key, size_t indent) {
+void inorder_traversal(FILE *stream, Node *node, unsigned int key, size_t indent) {
     if (node == NULL) { return; }
-    inorder_traversal(node->right, key, indent + 1);
+    inorder_traversal(stream, node->right, key, indent + 1);
     if (key == TRAVERSAL_ALL) {
-        print_indent(indent);
-        print_node(node);
+        print_indent(stream, indent);
+        print_node(stream, node);
     } else if (node->key > key) {
-        print_node(node);
+        print_node(stream, node);
     }
-    inorder_traversal(node->left, key, indent + 1);
+    inorder_traversal(stream, node->left, key, indent + 1);
 }
 
 void free_tree(Node *node) {
@@ -228,7 +230,9 @@ void remove_key(Tree *tree, unsigned int key) {
     tree->size--;
 }
 
-void inorder(Tree *tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
+void inorder(FILE *stream, Tree *tree, unsigned int key) {
+    inorder_traversal(stream, tree->root, key, 0);
+}
 
 Node *find_key(Tree *tree, unsigned int key) { return find_node(tree->root, key); }
 

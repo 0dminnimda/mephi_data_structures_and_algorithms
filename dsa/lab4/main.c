@@ -6,6 +6,12 @@
 #include "common/time.h"
 #include "tree.c"
 
+#ifdef _WIN32
+    #define DEVNULL "NUL"
+#else
+    #define DEVNULL "/dev/null"
+#endif
+
 #define IS_COMMAND(input, name, short_name) \
     (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
 
@@ -77,7 +83,7 @@ int main() {
             Node *node;
             TIMEIT(time, node = find_key(tree, key));
             if (node) {
-                print_node(node);
+                print_node(stdout, node);
             } else {
                 printf("Key %u not found.\n", key);
             }
@@ -89,7 +95,7 @@ int main() {
             Node *node;
             TIMEIT(time, node = max_diff(tree, key));
             if (node) {
-                print_node(node);
+                print_node(stdout, node);
             } else {
                 printf("No node found.\n");
             }
@@ -98,9 +104,17 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            TIMEIT(time, inorder(tree, key));
+            TIMEIT(time, inorder(stdout, tree, key));
         } else if (IS_COMMAND(input, "output", "o")) {
-            TIMEIT(time, inorder(tree, TRAVERSAL_ALL));
+            TIMEIT(time, inorder(stdout, tree, TRAVERSAL_ALL));
+        } else if (IS_COMMAND(input, "blank_output", "bo")) {
+            FILE *file = fopen(DEVNULL, "w");
+            if (file == NULL) {
+                printf("Could not open devnull\n");
+            } else {
+                TIMEIT(time, inorder(file, tree, TRAVERSAL_ALL));
+                fclose(file);
+            }
         } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             printf("Enter filename: ");
             char *filename = read_line();
