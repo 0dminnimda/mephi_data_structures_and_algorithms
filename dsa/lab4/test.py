@@ -62,29 +62,6 @@ class Test:
         return "\n".join(self.operations + ["quit"])
 
 
-# def tests_from_files(
-#     files: list[Path], tree_keys: list[int], iterations: int
-# ) -> Iterable[Test]:
-
-#     test = Test(graph_file="", renew=False)
-#     for file in files:
-#         test.graph_file = file.as_posix()
-#         test.add_reset()
-#         for i in range(iterations):
-#             test.add("find", random.choice(tree_keys))
-#     yield test
-
-
-# def make_tests(
-#     root: Path, size: int, trees: int = 2**4, iterations: int = 2**9
-# ) -> Iterable[Test]:
-
-#     file = root / f"graph_{size}"
-#     tree = create_tree(file, size)
-#     files = [file.with_stem(f"{file.stem}{i}") for i in range(trees)]
-#     return tests_from_files(files, list(tree.keys()), iterations)
-
-
 Tests = defaultdict[str, Test]
 
 
