@@ -1,6 +1,8 @@
 BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 90
+DerivePointerAlignment: false
+PointerAlignment: Right
 AlwaysBreakTemplateDeclarations: true
 NamespaceIndentation: All
 IndentPPDirectives: BeforeHash
