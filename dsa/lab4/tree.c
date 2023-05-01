@@ -198,6 +198,14 @@ void inorder_traversal(Node *node, unsigned int key, size_t indent) {
     inorder_traversal(node->left, key, indent + 1);
 }
 
+unsigned int visit_node(Node *node) {
+    if (node == NULL) { return 0; }
+    unsigned int result = node->key;
+    result += visit_node(node->right);
+    result += visit_node(node->left);
+    return result;
+}
+
 void free_tree(Node *node) {
     if (node == NULL) { return; }
     free_tree(node->left);
@@ -229,6 +237,8 @@ void remove_key(Tree *tree, unsigned int key) {
 }
 
 void inorder(Tree *tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
+
+void visit_tree(Tree *tree) { visit_node(tree->root); }
 
 Node *find_key(Tree *tree, unsigned int key) { return find_node(tree->root, key); }
 

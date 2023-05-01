@@ -42,7 +42,7 @@ int main() {
         printf("\033[32m");  // set text color to green
         printf(
             "Enter command "
-            "(add/delete/find/max_diff/traverse/output/dump_dot/image/import_file/"
+            "(add/delete/find/max_diff/traverse/output/visit/dump_dot/image/import_file/"
             "clock_zero/clock_time/reset/quit):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
@@ -101,6 +101,8 @@ int main() {
             TIMEIT(time, inorder(tree, key));
         } else if (IS_COMMAND(input, "output", "o")) {
             TIMEIT(time, inorder(tree, TRAVERSAL_ALL));
+        } else if (IS_COMMAND(input, "visit", "v")) {
+            TIMEIT(time, visit_tree(tree));
         } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             printf("Enter filename: ");
             char *filename = read_line();
