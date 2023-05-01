@@ -100,7 +100,7 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
 
     # it's pointless trying to mesure the traverse with the random args
     test = tests["output"].setup(file.as_posix(), False)
-    for i in range(int(iterations**0.75)):
+    for i in range(iterations.bit_length()):
         test.add_timed("output")
 
     # I don't think that timing any of
@@ -153,7 +153,7 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    tests = make_tests(root, 2**15, 2**8, 2**4)
+    tests = make_tests(root, 2**20, 2**9, 20)
     outputs = run_tests(program, tests)
     print(analyze(outputs))
 
