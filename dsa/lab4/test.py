@@ -70,11 +70,15 @@ Tests = defaultdict[str, Test]
 
 
 def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -> None:
-    test = tests["add"].setup(file.as_posix(), True)
+    test = tests["add"].setup(file.as_posix(), False)
     for i in range(iterations // 2):
-        test.add_timed("add", random.choice(keys) + 1, random_string())
+        key = random.choice(keys) + 1
+        test.add_timed("add", key, random_string())
+        test.extend("delete", key)
     for i in range(iterations // 2):
-        test.add_timed("add", random.choice(keys), random_string())
+        key = random.choice(keys)
+        test.add_timed("add", key, random_string())
+        test.extend("delete", key)
 
     test = tests["delete"].setup(file.as_posix(), True)
     for i in range(iterations // 2):
