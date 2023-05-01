@@ -13,18 +13,18 @@
 
 typedef struct Node {
     unsigned int key;
-    char* value;
-    struct Node* left;
-    struct Node* right;
+    char *value;
+    struct Node *left;
+    struct Node *right;
 } Node;
 
 typedef struct Tree {
-    Node* root;
+    Node *root;
     int size;
 } Tree;
 
-Node* create_node(unsigned int key, const char* value) {
-    Node* node = malloc(sizeof(Node));
+Node *create_node(unsigned int key, const char *value) {
+    Node *node = malloc(sizeof(Node));
     node->key = key;
     node->value = malloc(strlen(value) + 1);
     strcpy(node->value, value);
@@ -33,12 +33,12 @@ Node* create_node(unsigned int key, const char* value) {
     return node;
 }
 
-void destroy_node(Node* node) {
+void destroy_node(Node *node) {
     free(node->value);
     free(node);
 }
 
-Node* add_node(Node* node, unsigned int key, const char* value) {
+Node *add_node(Node *node, unsigned int key, const char *value) {
     if (node == NULL) { return create_node(key, value); }
     if (key < node->key) {
         node->left = add_node(node->left, key, value);
@@ -50,25 +50,25 @@ Node* add_node(Node* node, unsigned int key, const char* value) {
     return node;
 }
 
-Node* find_node(Node* node, unsigned int key) {
+Node *find_node(Node *node, unsigned int key) {
     if (node == NULL || node->key == key) { return node; }
     if (key < node->key) { return find_node(node->left, key); }
     return find_node(node->right, key);
 }
 
-Node* find_min_node(Node* node) {
+Node *find_min_node(Node *node) {
     if (node == NULL) { return NULL; }
     if (node->left == NULL) { return node; }
     return find_min_node(node->left);
 }
 
-Node* find_max_node(Node* node) {
+Node *find_max_node(Node *node) {
     if (node == NULL) { return NULL; }
     if (node->right == NULL) { return node; }
     return find_max_node(node->right);
 }
 
-Node* remove_node(Node* node, unsigned int key) {
+Node *remove_node(Node *node, unsigned int key) {
     if (node == NULL) { return NULL; }
     if (key < node->key) {
         node->left = remove_node(node->left, key);
@@ -76,17 +76,17 @@ Node* remove_node(Node* node, unsigned int key) {
         node->right = remove_node(node->right, key);
     } else {
         if (node->left == NULL) {
-            Node* right_child = node->right;
+            Node *right_child = node->right;
             destroy_node(node);
             return right_child;
         } else if (node->right == NULL) {
-            Node* left_child = node->left;
+            Node *left_child = node->left;
             destroy_node(node);
             return left_child;
         } else {
-            Node* min_right_node = find_min_node(node->right);
+            Node *min_right_node = find_min_node(node->right);
             unsigned int tmp_key = min_right_node->key;
-            char* tmp_value = malloc(strlen(min_right_node->value) + 1);
+            char *tmp_value = malloc(strlen(min_right_node->value) + 1);
             strcpy(tmp_value, min_right_node->value);
             node->right = remove_node(node->right, min_right_node->key);
             node->key = tmp_key;
@@ -97,9 +97,9 @@ Node* remove_node(Node* node, unsigned int key) {
     return node;
 }
 
-Node* remove_node_loop(Node* root, unsigned int key) {
-    Node* parent = NULL;
-    Node* current = root;
+Node *remove_node_loop(Node *root, unsigned int key) {
+    Node *parent = NULL;
+    Node *current = root;
 
     // Find the node to be removed and its parent
     while (current != NULL && current->key != key) {
@@ -117,7 +117,7 @@ Node* remove_node_loop(Node* root, unsigned int key) {
 
     // Case 1: Node with only one child or no child
     if (current->left == NULL || current->right == NULL) {
-        Node* child = current->left ? current->left : current->right;
+        Node *child = current->left ? current->left : current->right;
 
         // If the node to be removed is the root
         if (parent == NULL) {
@@ -129,8 +129,8 @@ Node* remove_node_loop(Node* root, unsigned int key) {
         }
     } else {
         // Case 2: Node with two children
-        Node* min_right_node = current->right;
-        Node* min_right_node_parent = current;
+        Node *min_right_node = current->right;
+        Node *min_right_node_parent = current;
 
         // Find the inorder successor (minimum node in the right subtree)
         while (min_right_node->left != NULL) {
@@ -140,7 +140,7 @@ Node* remove_node_loop(Node* root, unsigned int key) {
 
         // Replace the key and value of the node to be removed
         unsigned int tmp_key = min_right_node->key;
-        char* tmp_value = malloc(strlen(min_right_node->value) + 1);
+        char *tmp_value = malloc(strlen(min_right_node->value) + 1);
         strcpy(tmp_value, min_right_node->value);
 
         current->key = tmp_key;
@@ -165,9 +165,9 @@ Node* remove_node_loop(Node* root, unsigned int key) {
     return root;
 }
 
-Node* find_max_diff(Node* node, unsigned int key) {
-    Node* min_node = find_min_node(node);
-    Node* max_node = find_max_node(node);
+Node *find_max_diff(Node *node, unsigned int key) {
+    Node *min_node = find_min_node(node);
+    Node *max_node = find_max_node(node);
 
     if (key <= min_node->key) return max_node;
     if (key >= max_node->key) return min_node;
@@ -178,7 +178,7 @@ Node* find_max_diff(Node* node, unsigned int key) {
     return min_node;
 }
 
-void print_node(Node* node) { printf("%u: '%s'\n", node->key, node->value); }
+void print_node(Node *node) { printf("%u: '%s'\n", node->key, node->value); }
 
 void print_indent(size_t indent) {
     for (size_t i = 0; i < indent; ++i) { printf("    "); }
@@ -186,7 +186,7 @@ void print_indent(size_t indent) {
 
 #define TRAVERSAL_ALL ((unsigned int)(-1))
 
-void inorder_traversal(Node* node, unsigned int key, size_t indent) {
+void inorder_traversal(Node *node, unsigned int key, size_t indent) {
     if (node == NULL) { return; }
     inorder_traversal(node->right, key, indent + 1);
     if (key == TRAVERSAL_ALL) {
@@ -198,44 +198,44 @@ void inorder_traversal(Node* node, unsigned int key, size_t indent) {
     inorder_traversal(node->left, key, indent + 1);
 }
 
-void free_tree(Node* node) {
+void free_tree(Node *node) {
     if (node == NULL) { return; }
     free_tree(node->left);
     free_tree(node->right);
     destroy_node(node);
 }
 
-Tree* create_tree() {
-    Tree* tree = malloc(sizeof(Tree));
+Tree *create_tree() {
+    Tree *tree = malloc(sizeof(Tree));
     tree->root = NULL;
     tree->size = 0;
     return tree;
 }
 
-void destroy_tree(Tree* tree) {
+void destroy_tree(Tree *tree) {
     free_tree(tree->root);
     free(tree);
 }
 
-bool add_key(Tree* tree, unsigned int key, char* value) {
+bool add_key(Tree *tree, unsigned int key, char *value) {
     tree->root = add_node(tree->root, key, value);
     tree->size++;
     return true;
 }
 
-void remove_key(Tree* tree, unsigned int key) {
+void remove_key(Tree *tree, unsigned int key) {
     tree->root = remove_node(tree->root, key);
     tree->size--;
 }
 
-void inorder(Tree* tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
+void inorder(Tree *tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
 
-Node* find_key(Tree* tree, unsigned int key) { return find_node(tree->root, key); }
+Node *find_key(Tree *tree, unsigned int key) { return find_node(tree->root, key); }
 
-Node* max_diff(Tree* tree, unsigned int key) { return find_max_diff(tree->root, key); }
+Node *max_diff(Tree *tree, unsigned int key) { return find_max_diff(tree->root, key); }
 
-bool import(Tree* tree, const char* filename) {
-    FILE* file = fopen(filename, "r");
+bool import(Tree *tree, const char *filename) {
+    FILE *file = fopen(filename, "r");
     if (file == NULL) {
         TREE_ERROR("Error: File not found\n");
         return false;
@@ -254,7 +254,7 @@ bool import(Tree* tree, const char* filename) {
     return true;
 }
 
-void dump_dot_traversal(Node* parent, Node* node, FILE* file) {
+void dump_dot_traversal(Node *parent, Node *node, FILE *file) {
     if (node == NULL) {
         if (!parent) return;
         if (!parent->left && !parent->right) return;  // one child have to exist
@@ -270,8 +270,8 @@ void dump_dot_traversal(Node* parent, Node* node, FILE* file) {
     }
 }
 
-bool dump_dot(Tree* tree, const char* filename) {
-    FILE* file = fopen(filename, "w");
+bool dump_dot(Tree *tree, const char *filename) {
+    FILE *file = fopen(filename, "w");
     if (file == NULL) {
         TREE_ERROR("Error: File not found\n");
         return false;
@@ -286,8 +286,8 @@ bool dump_dot(Tree* tree, const char* filename) {
     return true;
 }
 
-bool to_image(Tree* tree, const char* filename) {
-    StringBuilder* sb = sb_create(0);
+bool to_image(Tree *tree, const char *filename) {
+    StringBuilder *sb = sb_create(0);
 
     sb_append(sb, filename);
     sb_append(sb, ".dot");

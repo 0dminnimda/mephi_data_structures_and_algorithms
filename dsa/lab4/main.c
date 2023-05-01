@@ -23,13 +23,13 @@ void clear() {
     while ((c = getchar()) != EOF && strchr("\r\n", c) == NULL) {}
 }
 
-void strip(char* str) {
+void strip(char *str) {
     while (*str && !isspace(*str)) str++;
     *str = '\0';
 }
 
 int main() {
-    Tree* tree = create_tree();
+    Tree *tree = create_tree();
     char input[100];
     input[0] = '\0';
     long double time = 0;
@@ -55,7 +55,7 @@ int main() {
             SCAN(1, "%u", &key);
 
             printf("Enter info: ");
-            char* info = read_line();
+            char *info = read_line();
 
             TIMEIT(time, add_key(tree, key, info));
 
@@ -71,7 +71,7 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            Node* node;
+            Node *node;
             TIMEIT(time, node = find_key(tree, key));
             if (node) {
                 print_node(node);
@@ -83,7 +83,7 @@ int main() {
             unsigned int key;
             SCAN(1, "%u", &key);
 
-            Node* node;
+            Node *node;
             TIMEIT(time, node = max_diff(tree, key));
             if (node) {
                 print_node(node);
@@ -100,7 +100,7 @@ int main() {
             TIMEIT(time, inorder(tree, TRAVERSAL_ALL));
         } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             printf("Enter filename: ");
-            char* filename = read_line();
+            char *filename = read_line();
             strip(filename);
 
             TIMEIT(time, dump_dot(tree, filename));
@@ -108,7 +108,7 @@ int main() {
             free(filename);
         } else if (IS_COMMAND(input, "image", "i")) {
             printf("Enter filename: ");
-            char* filename = read_line();
+            char *filename = read_line();
             strip(filename);
 
             TIMEIT(time, to_image(tree, filename));
@@ -116,7 +116,7 @@ int main() {
             free(filename);
         } else if (IS_COMMAND(input, "import_file", "if")) {
             printf("Enter filename: ");
-            char* filename = read_line();
+            char *filename = read_line();
             strip(filename);
 
             TIMEIT(time, import(tree, filename));
