@@ -70,33 +70,26 @@ Tests = defaultdict[str, Test]
 
 
 def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -> None:
+    key_shifts = [0]*(iterations // 2) + [1]*(iterations // 2 + 1)
+    random.shuffle(key_shifts)
+
     test = tests["add"].setup(file.as_posix(), False)
-    for i in range(iterations // 2):
-        key = random.choice(keys) + 1
-        test.add_timed("add", key, random_string())
-        test.extend("delete", key)
-    for i in range(iterations // 2):
-        key = random.choice(keys)
+    for i in range(iterations):
+        key = random.choice(keys) + key_shifts[i]
         test.add_timed("add", key, random_string())
         test.extend("delete", key)
 
     test = tests["delete"].setup(file.as_posix(), True)
-    for i in range(iterations // 2):
-        test.add_timed("delete", random.choice(keys) + 1)
-    for i in range(iterations // 2):
-        test.add_timed("delete", random.choice(keys))
+    for i in range(iterations):
+        test.add_timed("delete", random.choice(keys) + key_shifts[i])
 
     test = tests["find"].setup(file.as_posix(), False)
-    for i in range(iterations // 2):
-        test.add_timed("find", random.choice(keys) + 1)
-    for i in range(iterations // 2):
-        test.add_timed("find", random.choice(keys))
+    for i in range(iterations):
+        test.add_timed("find", random.choice(keys) + key_shifts[i])
 
     test = tests["max_diff"].setup(file.as_posix(), False)
-    for i in range(iterations // 2):
-        test.add_timed("max_diff", random.choice(keys) + 1)
-    for i in range(iterations // 2):
-        test.add_timed("max_diff", random.choice(keys))
+    for i in range(iterations):
+        test.add_timed("max_diff", random.choice(keys) + key_shifts[i])
 
     # it's pointless trying to mesure the traverse with the random args
     test = tests["output"].setup(file.as_posix(), False)
