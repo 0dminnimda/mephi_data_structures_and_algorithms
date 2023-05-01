@@ -27,12 +27,12 @@ def random_string(
     )
 
 
-def create_tree(path: Path, size: int) -> dict[int, str]:
-    items = list(range(0, size * 10, 10))
-    random.shuffle(items)
-    tree = {items[i]: random_string() for i in range(size)}
-    path.write_text("\n".join(f"{k}\n{v}" for k, v in tree.items()))
-    return tree
+def create_tree(path: Path, size: int, renew: bool) -> list[int]:
+    keys = list(range(0, size * 10, 10))
+    random.shuffle(keys)
+    if renew:
+        path.write_text("\n".join(f"{k}\n{random_string()}" for k in keys))
+    return keys
 
 
 @dataclass
@@ -109,7 +109,7 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
 
 
 def make_tests(
-    root: Path, size: int, iterations: int = 2**9, trees: int = 2**4
+    root: Path, size: int, iterations: int = 2**9, trees: int = 2**4, renew: bool = True
 ) -> Tests:
 
     print(f"Preparing tests for size {size}")
@@ -121,8 +121,8 @@ def make_tests(
     tests = Tests(Test)
     for i in range(trees):
         file = size_root / f"no_{i}"
-        tree = create_tree(file, size)
-        populate_tests(tests, file, list(tree.keys()), iterations)
+        tree = create_tree(file, size, renew)
+        populate_tests(tests, file, tree, iterations)
     return tests
 
 
@@ -153,7 +153,7 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    tests = make_tests(root, 2**20, 2**9, 20)
+    tests = make_tests(root, 2**15, 2**9, 20, False)
     outputs = run_tests(program, tests)
     print(analyze(outputs))
 
