@@ -265,21 +265,15 @@ void dump_dot_traversal(Node* parent, Node* node, FILE* file) {
         if (!parent) return;
         if (!parent->left && !parent->right) return;  // one child have to exist
 
-        "[label=\"\", shape=doublecircle, style=filled];"
-        "[label=\"NULL\", shape=diamond, style=filled];"
-        "[label=\"NULL\", shape=rectangle, style=filled, fillcolor=red];";
-        fprintf(file, "n%u_null [label=\"\", shape=doublecircle, style=filled, fillcolor=red];\n",
-                parent->key);
+        fprintf(file, "n%u_null [shape=doublecircle, fillcolor=red];\n", parent->key);
         fprintf(file, "n%u -> n%u_null;\n", parent->key, parent->key);
-        return;
+    } else {
+        fprintf(file, "n%u [label=\"%u\\n%s\"];\n", node->key, node->key, node->value);
+        if (parent) fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
+
+        dump_dot_traversal(node, node->left, file);
+        dump_dot_traversal(node, node->right, file);
     }
-
-    fprintf(file, "n%u [label=\"%u\\n%s\", shape=ellipse, style=filled];\n", node->key,
-            node->key, node->value);
-    if (parent) fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
-
-    dump_dot_traversal(node, node->left, file);
-    dump_dot_traversal(node, node->right, file);
 }
 
 bool dump_dot(Tree* tree, const char* filename) {
@@ -290,6 +284,7 @@ bool dump_dot(Tree* tree, const char* filename) {
     }
 
     fprintf(file, "digraph G {\n");
+    fprintf(file, "node [label=\"\", shape=ellipse, style=filled];\n\n");
     dump_dot_traversal(NULL, tree->root, file);
     fprintf(file, "}\n");
 
