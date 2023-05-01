@@ -23,9 +23,12 @@ void clear() {
     while ((c = getchar()) != EOF && strchr("\r\n", c) == NULL) {}
 }
 
-void strip(char *str) {
+char *strip(char *str) {
+    while (*str && isspace(*str)) str++;
+    char *result = str;
     while (*str && !isspace(*str)) str++;
     *str = '\0';
+    return result;
 }
 
 int main() {
@@ -101,25 +104,22 @@ int main() {
         } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             printf("Enter filename: ");
             char *filename = read_line();
-            strip(filename);
 
-            TIMEIT(time, dump_dot(tree, filename));
+            TIMEIT(time, dump_dot(tree, strip(filename)));
 
             free(filename);
         } else if (IS_COMMAND(input, "image", "i")) {
             printf("Enter filename: ");
             char *filename = read_line();
-            strip(filename);
 
-            TIMEIT(time, to_image(tree, filename));
+            TIMEIT(time, to_image(tree, strip(filename)));
 
             free(filename);
         } else if (IS_COMMAND(input, "import_file", "if")) {
             printf("Enter filename: ");
             char *filename = read_line();
-            strip(filename);
 
-            TIMEIT(time, import(tree, filename));
+            TIMEIT(time, import(tree, strip(filename)));
 
             free(filename);
         } else if (IS_COMMAND(input, "clock_zero", "cz")) {
