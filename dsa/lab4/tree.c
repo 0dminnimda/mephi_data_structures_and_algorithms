@@ -261,10 +261,21 @@ bool import(Tree* tree, const char* filename) {
 }
 
 void dump_dot_traversal(Node* parent, Node* node, FILE* file) {
-    if (node == NULL) { return; }
+    if (node == NULL) {
+        if (!parent) return;
+        if (!parent->left && !parent->right) return;  // one child have to exist
 
-    fprintf(file, "n%u [label=\"%u\\n%s\", shape = ellipse, style = filled];\n",
-            node->key, node->key, node->value);
+        "[label=\"\", shape=doublecircle, style=filled];"
+        "[label=\"NULL\", shape=diamond, style=filled];"
+        "[label=\"NULL\", shape=rectangle, style=filled, fillcolor=red];";
+        fprintf(file, "n%u_null [label=\"\", shape=doublecircle, style=filled, fillcolor=red];\n",
+                parent->key);
+        fprintf(file, "n%u -> n%u_null;\n", parent->key, parent->key);
+        return;
+    }
+
+    fprintf(file, "n%u [label=\"%u\\n%s\", shape=ellipse, style=filled];\n", node->key,
+            node->key, node->value);
     if (parent) fprintf(file, "n%u -> n%u;\n", parent->key, node->key);
 
     dump_dot_traversal(node, node->left, file);
