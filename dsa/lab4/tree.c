@@ -62,6 +62,12 @@ Node* find_min_node(Node* node) {
     return find_min_node(node->left);
 }
 
+Node* find_max_node(Node* node) {
+    if (node == NULL) { return NULL; }
+    if (node->right == NULL) { return node; }
+    return find_max_node(node->right);
+}
+
 Node* remove_node(Node* node, unsigned int key) {
     if (node == NULL) { return NULL; }
     if (key < node->key) {
@@ -159,29 +165,21 @@ Node* remove_node_loop(Node* root, unsigned int key) {
     return root;
 }
 
-Node* find_max_diff_helper(Node* root, unsigned int key, Node* max_diff_node,
-                           int max_diff) {
-    if (root == NULL) { return max_diff_node; }
+Node* find_max_diff(Node* node, unsigned int key) {
+    Node* min_node = find_min_node(node);
+    Node* max_node = find_max_node(node);
 
-    int diff = abs((int)(root->key - key));
-    if (diff > max_diff) {
-        max_diff = diff;
-        max_diff_node = root;
-    }
+    if (key <= min_node->key) return max_node;
+    if (key >= max_node->key) return min_node;
 
-    Node* left_max_diff_node =
-        find_max_diff_helper(root->left, key, max_diff_node, max_diff);
-    int left_diff = abs((int)(left_max_diff_node->key - key));
-    if (left_diff > max_diff) {
-        max_diff = left_diff;
-        max_diff_node = left_max_diff_node;
-    }
+    unsigned int diff_min = key - min_node->key;
+    unsigned int diff_max = max_node->key - key;
+    if (diff_min < diff_max) return max_node;
+    return min_node;
 
-    return find_max_diff_helper(root->right, key, max_diff_node, max_diff);
-}
-
-Node* find_max_diff(Node* root, unsigned int key) {
-    return find_max_diff_helper(root, key, NULL, -1);
+    // unsigned int lo_mid = (min_node->key + max_node->key) / 2;
+    // if (key <= lo_mid) return max_node;
+    // return min_node;
 }
 
 void print_node(Node* node) { printf("%u: '%s'\n", node->key, node->value); }
