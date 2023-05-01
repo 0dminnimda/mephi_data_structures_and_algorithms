@@ -66,10 +66,30 @@ Tests = defaultdict[str, Test]
 
 
 def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -> None:
+    test = tests["add"].setup(file.as_posix(), True)
+    for i in range(iterations):
+        test.add("add", random.choice(keys) + 1, random_string())
+
+    test = tests["delete"].setup(file.as_posix(), True)
+    for i in range(iterations):
+        test.add("delete", random.choice(keys))
 
     test = tests["find"].setup(file.as_posix(), False)
     for i in range(iterations):
         test.add("find", random.choice(keys))
+
+    test = tests["max_diff"].setup(file.as_posix(), False)
+    for i in range(iterations):
+        test.add("max_diff", random.choice(keys))
+
+    # it's pointless trying to mesure the traverse with the random args
+    test = tests["output"].setup(file.as_posix(), False)
+    for i in range(int(iterations**0.5)):
+        test.add("output")
+
+    # I don't thing that timing any of
+    # dump_dot/image/import_file/clock_zero/clock_time/reset/quit
+    # makes sence either
 
 
 def make_tests(
