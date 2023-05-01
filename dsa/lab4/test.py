@@ -100,9 +100,6 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
 
     # it's pointless trying to mesure the traverse with the random args
     # output takes to much time and is thus is impossible to accurately measure
-    # test = tests["output"].setup(file.as_posix(), False)
-    # for i in range(iterations.bit_length()):
-    #     test.add_timed("output")
     test = tests["output"].setup(file.as_posix(), False)
     for i in range(iterations.bit_length()**2):
         test.add_timed("visit")
