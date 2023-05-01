@@ -9,6 +9,7 @@ import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+from pprint import pformat
 
 
 def run(command: str, input: str) -> str:
@@ -145,40 +146,33 @@ def analyze(outputs: dict[str, str]) -> dict[str, float]:
     return result
 
 
+SEC_TO_MS = 10**3
+
+
 def plotting_results(sizes: list[int], results: dict[str, list[float]]) -> None:
+    import numpy as np
     from matplotlib import pyplot as plt
 
     print("Plotting results")
 
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    fig, (ax1, ax2) = plt.subplots(1, 2)
     for name, values in results.items():
-        ax1.plot(sizes, values, label=name)
-        ax2.plot(sizes, values, label=name)
-        ax3.plot(sizes, values, label=name)
-        ax4.plot(sizes, values, label=name)
+        arr = np.array(values) * SEC_TO_MS
+        ax1.plot(sizes, arr, label=name)
+        ax2.plot(sizes, arr, label=name)
 
-    ax1.set_xlabel("Tree size")
-    ax2.set_xlabel("Tree size (log)")
+    ax1.set_xlabel("Tree Size")
+    ax2.set_xlabel("Tree Size (log)")
     ax2.set_xscale("log")
-    ax3.set_xlabel("Tree size")
-    ax4.set_xlabel("Tree size (log)")
-    ax4.set_xscale("log")
 
-    ax1.set_ylabel("Average Time (ms)")
-    ax2.set_ylabel("Average Time (ms)")
-    ax3.set_ylabel("Average Time (ms, log)")
-    ax3.set_yscale("log")
-    ax4.set_ylabel("Average Time (ms, log)")
-    ax4.set_yscale("log")
+    ax1.set_ylabel("Average Operation Time, ms")
+    ax2.set_ylabel("Average Operation Time (log), ms")
+    ax2.set_yscale("log")
 
     ax1.legend()
     ax2.legend()
-    ax3.legend()
-    ax4.legend()
     ax1.grid(True)
     ax2.grid(True)
-    ax3.grid(True)
-    ax4.grid(True)
 
     fig.tight_layout()
     plt.show()
@@ -194,16 +188,17 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    sizes = [2**p for p in range(0, 15)]
+    sizes = [2**p for p in range(0, 19)]
 
     results = defaultdict(list)
     for size in sizes:
-        tests = make_tests(root, size, 2**9, 32)
+        tests = make_tests(root, size, 2**9, 24)
         outputs = run_tests(program, tests)
         for name, value in analyze(outputs).items():
             results[name].append(value)
         print()
-    print(results)
+    Path(".last_results").write_text(pformat(dict(results)) + "\n")
+
     plotting_results(sizes, results)
 
 
