@@ -94,7 +94,7 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
 
     # it's pointless trying to mesure the traverse with the random args
     test = tests["output"].setup(file.as_posix(), False)
-    for i in range(int(iterations**0.5)):
+    for i in range(int(iterations**0.75)):
         test.add_timed("output")
 
     # I don't thing that timing any of
@@ -146,7 +146,7 @@ def main() -> None:
         root.mkdir()
 
     print("Preparing tests")
-    tests = make_tests(root, 2**5, 2**5, 2**3)
+    tests = make_tests(root, 2**15, 2**8, 2**4)
     outputs = run_tests(program, tests)
     print(analyze(outputs))
 
