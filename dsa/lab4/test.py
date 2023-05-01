@@ -79,9 +79,16 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
         test.add_timed("add", key, random_string())
         test.extend("delete", key)
 
-    test = tests["delete"].setup(file.as_posix(), True)
-    for i in range(iterations):
-        test.add_timed("delete", random.choice(keys) + key_shifts[i])
+    # test = tests["delete static"].setup(file.as_posix(), True)
+    # for i in range(iterations):
+    #     test.add_timed("delete", random.choice(keys) + key_shifts[i])
+
+    # experiments showed that this is approximately the same as "delete static"
+    test = tests["delete dynamic"].setup(file.as_posix(), False)
+    for i in range(int(iterations**1.5)):
+        key = random.choice(keys) + key_shifts[i % iterations]
+        test.add_timed("delete", key)
+        test.extend("add", key, random_string())
 
     test = tests["find"].setup(file.as_posix(), False)
     for i in range(iterations):
