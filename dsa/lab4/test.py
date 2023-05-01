@@ -69,19 +69,27 @@ Tests = defaultdict[str, Test]
 
 def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -> None:
     test = tests["add"].setup(file.as_posix(), True)
-    for i in range(iterations):
+    for i in range(iterations // 2):
         test.add_timed("add", random.choice(keys) + 1, random_string())
+    for i in range(iterations // 2):
+        test.add_timed("add", random.choice(keys), random_string())
 
     test = tests["delete"].setup(file.as_posix(), True)
-    for i in range(iterations):
+    for i in range(iterations // 2):
+        test.add_timed("delete", random.choice(keys) + 1)
+    for i in range(iterations // 2):
         test.add_timed("delete", random.choice(keys))
 
     test = tests["find"].setup(file.as_posix(), False)
-    for i in range(iterations):
+    for i in range(iterations // 2):
+        test.add_timed("find", random.choice(keys) + 1)
+    for i in range(iterations // 2):
         test.add_timed("find", random.choice(keys))
 
     test = tests["max_diff"].setup(file.as_posix(), False)
-    for i in range(iterations):
+    for i in range(iterations // 2):
+        test.add_timed("max_diff", random.choice(keys) + 1)
+    for i in range(iterations // 2):
         test.add_timed("max_diff", random.choice(keys))
 
     # it's pointless trying to mesure the traverse with the random args
