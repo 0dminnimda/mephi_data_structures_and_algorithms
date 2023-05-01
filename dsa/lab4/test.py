@@ -112,6 +112,8 @@ def make_tests(
     root: Path, size: int, iterations: int = 2**9, trees: int = 2**4
 ) -> Tests:
 
+    print(f"Preparing tests for size {size}")
+
     size_root = root / f"graph_{size}"
     if not size_root.exists():
         size_root.mkdir()
@@ -151,7 +153,6 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    print("Preparing tests")
     tests = make_tests(root, 2**15, 2**8, 2**4)
     outputs = run_tests(program, tests)
     print(analyze(outputs))
