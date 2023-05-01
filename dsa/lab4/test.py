@@ -145,6 +145,46 @@ def analyze(outputs: dict[str, str]) -> dict[str, float]:
     return result
 
 
+def plotting_results(sizes: list[int], results: dict[str, list[float]]) -> None:
+    from matplotlib import pyplot as plt
+
+    print("Plotting results")
+
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    for name, values in results.items():
+        ax1.plot(sizes, values, label=name)
+        ax2.plot(sizes, values, label=name)
+        ax3.plot(sizes, values, label=name)
+        ax4.plot(sizes, values, label=name)
+
+    ax1.set_xlabel("Tree size")
+    ax2.set_xlabel("Tree size (log)")
+    ax2.set_xscale("log")
+    ax3.set_xlabel("Tree size")
+    ax4.set_xlabel("Tree size (log)")
+    ax4.set_xscale("log")
+
+    ax1.set_ylabel("Average Time (ms)")
+    ax2.set_ylabel("Average Time (ms)")
+    ax3.set_ylabel("Average Time (ms, log)")
+    ax3.set_yscale("log")
+    ax4.set_ylabel("Average Time (ms, log)")
+    ax4.set_yscale("log")
+
+    ax1.legend()
+    ax2.legend()
+    ax3.legend()
+    ax4.legend()
+    ax1.grid(True)
+    ax2.grid(True)
+    ax3.grid(True)
+    ax4.grid(True)
+
+    fig.tight_layout()
+    plt.show()
+    fig.savefig("figure.png")
+
+
 def main() -> None:
     program = "main.out"
     if platform.system() != "Windows":
@@ -154,9 +194,17 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    tests = make_tests(root, 2**20, 2**9, 20, False)
-    outputs = run_tests(program, tests)
-    print(analyze(outputs))
+    sizes = [2**p for p in range(0, 15)]
+
+    results = defaultdict(list)
+    for size in sizes:
+        tests = make_tests(root, size, 2**9, 32)
+        outputs = run_tests(program, tests)
+        for name, value in analyze(outputs).items():
+            results[name].append(value)
+        print()
+    print(results)
+    plotting_results(sizes, results)
 
 
 if __name__ == "__main__":
