@@ -176,10 +176,6 @@ Node* find_max_diff(Node* node, unsigned int key) {
     unsigned int diff_max = max_node->key - key;
     if (diff_min < diff_max) return max_node;
     return min_node;
-
-    // unsigned int lo_mid = (min_node->key + max_node->key) / 2;
-    // if (key <= lo_mid) return max_node;
-    // return min_node;
 }
 
 void print_node(Node* node) { printf("%u: '%s'\n", node->key, node->value); }
