@@ -12,7 +12,9 @@ from pathlib import Path
 
 
 def run(command: str, input: str) -> str:
-    return subprocess.check_output(shlex.split(command), input=input, encoding="utf-8")
+    return subprocess.check_output(
+        shlex.split(command), input=input, encoding="utf-8", stderr=subprocess.STDOUT
+    )
 
 
 def random_string(
