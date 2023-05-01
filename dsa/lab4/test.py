@@ -97,7 +97,7 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
     for i in range(int(iterations**0.75)):
         test.add_timed("output")
 
-    # I don't thing that timing any of
+    # I don't think that timing any of
     # dump_dot/image/import_file/clock_zero/clock_time/reset/quit
     # makes sence either
 
