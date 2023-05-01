@@ -99,12 +99,9 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
         test.add_timed("max_diff", random.choice(keys) + key_shifts[i])
 
     # it's pointless trying to mesure the traverse with the random args
-    # test = tests["output"].setup(file.as_posix(), False)
-    # for i in range(iterations.bit_length()):
-    #     test.add_timed("output")
     test = tests["output"].setup(file.as_posix(), False)
     for i in range(iterations.bit_length()):
-        test.add_timed("blank_output")
+        test.add_timed("output")
 
     # I don't think that timing any of
     # dump_dot/image/import_file/clock_zero/clock_time/reset/quit
