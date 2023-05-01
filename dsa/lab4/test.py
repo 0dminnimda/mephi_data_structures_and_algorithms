@@ -109,7 +109,11 @@ def make_tests(
 
 
 def run_tests(program: str, tests: Tests) -> dict[str, str]:
-    return {name: run(program, test.to_str()) for name, test in tests.items()}
+    return {
+        name: run(program, test.to_str())
+        for name, test in tests.items()
+        if not print(f"Running {name}")
+    }
 
 
 def analyze(outputs: dict[str, str]) -> dict[str, float]:
@@ -131,7 +135,8 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    tests = make_tests(root, 2**10, 2**8, 2**4)
+    print("Preparing tests")
+    tests = make_tests(root, 2**5, 2**5, 2**3)
     outputs = run_tests(program, tests)
     print(analyze(outputs))
 
