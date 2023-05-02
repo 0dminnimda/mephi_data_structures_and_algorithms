@@ -71,7 +71,7 @@ Tests = defaultdict[str, Test]
 
 
 def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -> None:
-    key_shifts = [0]*(iterations // 2) + [1]*(iterations // 2 + 1)
+    key_shifts = [0] * (iterations // 2) + [1] * (iterations // 2 + 1)
     random.shuffle(key_shifts)
 
     test = tests["add"].setup(file.as_posix(), False)
@@ -102,7 +102,7 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
     # it's pointless trying to mesure the traverse with the random args
     # output takes to much time and is thus is impossible to accurately measure
     test = tests["output"].setup(file.as_posix(), False)
-    for i in range(iterations.bit_length()**2):
+    for i in range(iterations.bit_length() ** 2):
         test.add_timed("visit")
 
     # I don't think that timing any of
@@ -111,7 +111,11 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
 
 
 def make_tests(
-    root: Path, size: int, iterations: int = 2**9, trees: int = 2**4, renew: bool = True
+    root: Path,
+    size: int,
+    iterations: int = 2**9,
+    trees: int = 2**4,
+    renew: bool = True,
 ) -> Tests:
 
     print(f"Preparing tests for size {size}")
@@ -188,7 +192,7 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    sizes = [2**p for p in range(0, 19)]
+    sizes = [2**p for p in range(0, 10, 2)]
 
     results = defaultdict(list)
     for size in sizes:
