@@ -11,11 +11,16 @@
     #define TREE_ERROR(msg)
 #endif
 
+#ifndef EXTRA_BINARY_TREE_FIELDS
+    #define EXTRA_BINARY_TREE_FIELDS
+#endif
+
 typedef struct Node {
     unsigned int key;
     char *value;
     struct Node *left;
     struct Node *right;
+    EXTRA_BINARY_TREE_FIELDS
 } Node;
 
 typedef struct Tree {
@@ -24,9 +29,9 @@ typedef struct Tree {
 } Tree;
 
 Node *create_node(unsigned int key, const char *value) {
-    Node *node = malloc(sizeof(Node));
+    Node *node = calloc(1, sizeof(Node));
     node->key = key;
-    node->value = malloc(strlen(value) + 1);
+    node->value = calloc(strlen(value) + 1, sizeof(char));
     strcpy(node->value, value);
     node->left = NULL;
     node->right = NULL;
