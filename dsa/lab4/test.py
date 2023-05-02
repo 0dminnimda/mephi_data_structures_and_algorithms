@@ -187,6 +187,10 @@ def main() -> None:
     program = "main.out"
     if platform.system() != "Windows":
         program = "./" + program
+    # program = (
+    #     "valgrind --leak-check=full --errors-for-leak-kinds=all --error-exitcode=69 "
+    #     + program
+    # )
 
     root = Path("tests")
     if not root.exists():
