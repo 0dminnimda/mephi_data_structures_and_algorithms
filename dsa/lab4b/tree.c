@@ -1,24 +1,17 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+struct Node *create_node(unsigned int key, const char *value);
+struct Node *balance_for_add(struct Node *node, unsigned int key);
+struct Node *balance_for_remove(struct Node *node);
 
-#include "common/string_builder.h"
+#define BALANCE_FOR_REMOVE(node, key) balance_for_remove(node)
+#define BALANCE_FOR_ADD(node, key, value) balance_for_add(node, key)
 
 #define EXTRA_BINARY_TREE_FIELDS int height;
 #define create_node old_create_node
-#define add_node old_add_node
-#define remove_node old_remove_node
 #include "../lab4/tree.c"
 #undef create_node
-#undef add_node
-#undef remove_node
 
-#ifndef NO_TABLE_PRINT_ERRORS
-    #define TREE_ERROR(msg) fprintf(stderr, msg)
-#else
-    #define TREE_ERROR(msg)
-#endif
+#undef max
+int max(int a, int b) { return (a > b) ? a : b; }
 
 int node_height(Node *node) {
     if (node == NULL) return 0;
@@ -66,11 +59,8 @@ Node *create_node(unsigned int key, const char *value) {
     return node;
 }
 
-Node *add_node(Node *node, unsigned int key, const char *value) {
-    node = old_add_node(node, key, value);
-
+Node *balance_for_add(Node *node, unsigned int key) {
     update_height(node);
-
     int balance = balance_factor(node);
 
     if (balance > 1 && key < node->left->key) {
@@ -91,15 +81,11 @@ Node *add_node(Node *node, unsigned int key, const char *value) {
         node->right = rotate_right(node->right);
         return rotate_left(node);
     }
-
     return node;
 }
 
-Node *remove_node(Node *node, unsigned int key) {
-    node = old_remove_node(node, key);
-
+Node *balance_for_remove(Node *node) {
     update_height(node);
-
     int balance = balance_factor(node);
 
     if (balance > 1 && balance_factor(node->left) >= 0) {
@@ -120,6 +106,5 @@ Node *remove_node(Node *node, unsigned int key) {
         node->right = rotate_right(node->right);
         return rotate_left(node);
     }
-
     return node;
 }

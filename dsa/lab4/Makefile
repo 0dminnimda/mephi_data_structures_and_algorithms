@@ -1,19 +1,24 @@
-.PHONY: mem
-mem:
-	clang common/common.c main.c -o main.out -std=c11 -O0 -g -Wno-deprecated-declarations
+override CFLAGS += -std=c11 -Wno-deprecated-declarations
+ifdef BALANCED
+	override CFLAGS += -D BALANCED
+endif
 
-.PHONY: mem_fast
-mem_fast:
-	clang common/common.c main.c -o main.out -std=c11 -O3 -Wno-deprecated-declarations
+.PHONY: task
+task:
+	clang common/common.c main.c -o main.out -O0 -g $(CFLAGS)
 
-.PHONY: mem_san
-mem_san:
-	clang common/common.c main.c -o main.out -std=c11 -O0 -g -Wno-deprecated-declarations -fsanitize=address,undefined
+.PHONY: task_fast
+task_fast:
+	clang common/common.c main.c -o main.out -O3 $(CFLAGS)
 
-.PHONY: run_mem
-run_mem:
+.PHONY: task_san
+task_san:
+	clang common/common.c main.c -o main.out -O0 -g $(CFLAGS) -fsanitize=address,undefined
+
+.PHONY: run_task
+run_task:
 	valgrind --leak-check=full ./main.out
 
-.PHONY: exec_mem
-exec_mem:
+.PHONY: exec_task
+exec_task:
 	bash exec.sh ./main.out

@@ -43,6 +43,10 @@ void destroy_node(Node *node) {
     free(node);
 }
 
+#ifndef BALANCE_FOR_ADD
+    #define BALANCE_FOR_ADD(node, key, value) node
+#endif
+
 Node *add_node(Node *node, unsigned int key, const char *value) {
     if (node == NULL) { return create_node(key, value); }
     if (key < node->key) {
@@ -51,8 +55,9 @@ Node *add_node(Node *node, unsigned int key, const char *value) {
         node->right = add_node(node->right, key, value);
     } else {
         TREE_ERROR("Error: duplicate key\n");
+        return node;
     }
-    return node;
+    return BALANCE_FOR_ADD(node, key, value);
 }
 
 Node *find_node(Node *node, unsigned int key) {
@@ -72,6 +77,10 @@ Node *find_max_node(Node *node) {
     if (node->right == NULL) { return node; }
     return find_max_node(node->right);
 }
+
+#ifndef BALANCE_FOR_REMOVE
+    #define BALANCE_FOR_REMOVE(node, key) node
+#endif
 
 Node *remove_node(Node *node, unsigned int key) {
     if (node == NULL) { return NULL; }
@@ -102,7 +111,7 @@ Node *remove_node(Node *node, unsigned int key) {
             node->right = remove_node(node->right, min_right_node->key);
         }
     }
-    return node;
+    return BALANCE_FOR_REMOVE(node, key);
 }
 
 Node *remove_node_loop(Node *root, unsigned int key) {

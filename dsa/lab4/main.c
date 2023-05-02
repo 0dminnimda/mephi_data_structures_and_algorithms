@@ -4,7 +4,12 @@
 
 #include "common/input.h"
 #include "common/time.h"
+
+#ifndef BALANCED
 #include "tree.c"
+#else
+#include "../lab4b/tree.c"
+#endif
 
 #define IS_COMMAND(input, name, short_name) \
     (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
