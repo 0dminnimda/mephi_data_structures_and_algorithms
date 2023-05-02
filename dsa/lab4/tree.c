@@ -90,13 +90,16 @@ Node *remove_node(Node *node, unsigned int key) {
             return left_child;
         } else {
             Node *min_right_node = find_min_node(node->right);
-            unsigned int tmp_key = min_right_node->key;
-            char *tmp_value = malloc(strlen(min_right_node->value) + 1);
-            strcpy(tmp_value, min_right_node->value);
+
+            // copy the min node into the current node
+            node->key = min_right_node->key;
+            // swap the string so the removal of min will destroy the current string
+            // and to eliminate the need to allocate memory for min node string
+            char *tmp = min_right_node->value;
+            min_right_node->value = node->value;
+            node->value = tmp;
+
             node->right = remove_node(node->right, min_right_node->key);
-            node->key = tmp_key;
-            free(node->value);
-            node->value = tmp_value;
         }
     }
     return node;
