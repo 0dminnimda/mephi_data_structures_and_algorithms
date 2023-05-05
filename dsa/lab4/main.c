@@ -47,8 +47,8 @@ int main() {
         printf("\033[32m");  // set text color to green
         printf(
             "Enter command "
-            "(add/delete/find/max_diff/traverse/output/visit/dump_dot/image/import_file/"
-            "clock_zero/clock_time/reset/quit):\n");
+            "(add/delete/find/max_diff/min/traverse/output/visit/dump_dot/"
+            "image/import_file/clock_zero/clock_time/reset/quit):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
 
@@ -86,13 +86,21 @@ int main() {
             } else {
                 printf("Key %u not found.\n", key);
             }
-        } else if (IS_COMMAND(input, "max_diff", "m")) {
+        } else if (IS_COMMAND(input, "max_diff", "md")) {
             printf("Enter key: ");
             unsigned int key;
             SCAN(1, "%u", &key);
 
             Node *node;
             TIMEIT(time, node = max_diff(tree, key));
+            if (node) {
+                print_node(node);
+            } else {
+                printf("No node found.\n");
+            }
+        } else if (IS_COMMAND(input, "min", "m")) {
+            Node *node;
+            TIMEIT(time, node = find_min_node(tree->root));
             if (node) {
                 print_node(node);
             } else {
