@@ -68,7 +68,10 @@ int main() {
     printf("Enter filename: ");
     fgets(filename, MAX_LINE_LENGTH, stdin);
 
-    if (!load_file(tree, strip(filename))) return 0;
+    if (!load_file(tree, strip(filename))) {
+        destroy_tree(tree);
+        return 0;
+    }
 
     char raw_input[MAX_LINE_LENGTH];
     while (1) {
