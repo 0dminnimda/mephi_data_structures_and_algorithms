@@ -7,8 +7,12 @@ struct Node *balance_for_remove(struct Node *node);
 
 #define EXTRA_BINARY_TREE_FIELDS int height;
 #define create_node old_create_node
+#define inorder_traversal old_inorder_traversal
+#define inorder old_inorder
 #include "../lab4/tree.c"
 #undef create_node
+#undef inorder_traversal
+#undef inorder
 
 #undef max
 int max(int a, int b) { return (a > b) ? a : b; }
@@ -108,3 +112,17 @@ Node *balance_for_remove(Node *node) {
     }
     return node;
 }
+
+void inorder_traversal(Node *node, unsigned int key, size_t indent) {
+    if (node == NULL) { return; }
+    inorder_traversal(node->right, key, indent + 1);
+    if (key == TRAVERSAL_ALL) {
+        print_indent(indent);
+        print_node(node);
+    } else if (node->key <= key) {
+        print_node(node);
+    }
+    inorder_traversal(node->left, key, indent + 1);
+}
+
+void inorder(Tree *tree, unsigned int key) { inorder_traversal(tree->root, key, 0); }
