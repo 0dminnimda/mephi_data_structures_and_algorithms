@@ -211,6 +211,7 @@ def main() -> None:
             results[name].append(value)
         print()
     Path(".last_results").write_text(pformat(dict(results)) + "\n")
+    # results = eval(Path("../lab4b/.last_results").read_text())
 
     plotting_results(sizes, results)
 

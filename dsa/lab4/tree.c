@@ -15,6 +15,10 @@
     #define EXTRA_BINARY_TREE_FIELDS
 #endif
 
+#ifndef INIT_EXTRA_BINARY_TREE_FIELDS
+    #define INIT_EXTRA_BINARY_TREE_FIELDS(node)
+#endif
+
 typedef struct Node {
     unsigned int key;
     char *value;
@@ -35,6 +39,7 @@ Node *create_node(unsigned int key, const char *value) {
     strcpy(node->value, value);
     node->left = NULL;
     node->right = NULL;
+    INIT_EXTRA_BINARY_TREE_FIELDS(node);
     return node;
 }
 

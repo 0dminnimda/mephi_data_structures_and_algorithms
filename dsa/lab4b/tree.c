@@ -6,11 +6,11 @@ struct Node *balance_for_remove(struct Node *node);
 #define BALANCE_FOR_ADD(node, key, value) balance_for_add(node, key)
 
 #define EXTRA_BINARY_TREE_FIELDS int height;
-#define create_node old_create_node
+#define INIT_EXTRA_BINARY_TREE_FIELDS(node) node->height = 1;
+
 #define inorder_traversal old_inorder_traversal
 #define inorder old_inorder
 #include "../lab4/tree.c"
-#undef create_node
 #undef inorder_traversal
 #undef inorder
 
@@ -55,12 +55,6 @@ Node *rotate_left(Node *x) {
     update_height(y);
 
     return y;
-}
-
-Node *create_node(unsigned int key, const char *value) {
-    Node *node = old_create_node(key, value);
-    node->height = 1;
-    return node;
 }
 
 Node *balance_for_add(Node *node, unsigned int key) {
