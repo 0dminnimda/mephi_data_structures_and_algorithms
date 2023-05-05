@@ -99,6 +99,10 @@ def populate_tests(tests: Tests, file: Path, keys: list[int], iterations: int) -
     for i in range(iterations):
         test.add_timed("max_diff", random.choice(keys) + key_shifts[i])
 
+    test = tests["min"].setup(file.as_posix(), False)
+    for i in range(iterations):
+        test.add_timed("min", random.choice(keys) + key_shifts[i])
+
     # it's pointless trying to mesure the traverse with the random args
     # output takes to much time and is thus is impossible to accurately measure
     test = tests["output"].setup(file.as_posix(), False)
@@ -197,7 +201,7 @@ def main() -> None:
     if not root.exists():
         root.mkdir()
 
-    sizes = [2**p for p in range(0, 10, 2)]
+    sizes = [2**p for p in range(0, 21)]
 
     results = defaultdict(list)
     for size in sizes:
