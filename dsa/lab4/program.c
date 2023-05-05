@@ -3,9 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
-#include <error.h>
+#include <errno.h>
+#include <stdbool.h>
 
-#include "tree.c"
+#include "../lab4b/tree.c"
 
 #define MAX_LINE_LENGTH 1024
 
@@ -27,20 +28,20 @@ char *strip(char *str) {
     return result;
 }
 
-void add_to_tree(Tree* tree, char* filename, int line_num, int num_in_line) {
+void add_to_tree(Tree* tree, unsigned int key, char* filename, int lineno, int num_in_line) {
     char value[MAX_LINE_LENGTH];
-    snprintf(value, MAX_LINE_LENGTH, "%s:%d:%d", filename, line_num, num_in_line);
-    add_key(tree, num_in_line, value);
+    snprintf(value, MAX_LINE_LENGTH, "%s:%d:%d", filename, lineno, num_in_line);
+    add_key(tree, key, value);
 }
 
-void load_file(Tree* tree, char* filename) {
+bool load_file(Tree* tree, char* filename) {
     FILE* file = fopen(filename, "r");
     if (!file) {
         printf("Error: could not open file %s\n", filename);
-        return;
+        return false;
     }
     char line[MAX_LINE_LENGTH];
-    int line_num = 1;
+    int lineno = 1;
     while (fgets(line, MAX_LINE_LENGTH, file)) {
         char* num_str = strtok(line, ",");
         int num_in_line = 1;
@@ -48,16 +49,17 @@ void load_file(Tree* tree, char* filename) {
             errno = 0;
             unsigned long int num = strtoul(num_str, NULL, 10);
             if (num > UINT_MAX || errno == ERANGE) {
-                // error
+                printf("Invalid number at %s:%d:%d\n", filename, lineno, num_in_line);
             } else {
-                add_to_tree(tree, filename, line_num, num_in_line);
+                add_to_tree(tree, (unsigned int)num, filename, lineno, num_in_line);
                 num_str = strtok(NULL, ",");
                 num_in_line++;
             }
         }
-        line_num++;
+        lineno++;
     }
     fclose(file);
+    return true;
 }
 
 int main() {
@@ -66,7 +68,7 @@ int main() {
     printf("Enter filename: ");
     fgets(filename, MAX_LINE_LENGTH, stdin);
 
-    load_file(tree, strip(filename));
+    if (!load_file(tree, strip(filename))) return 0;
 
     char raw_input[MAX_LINE_LENGTH];
     while (1) {
@@ -76,7 +78,14 @@ int main() {
         if (strlen(input) == 1) {  // only newline character entered
             break;
         }
-        Node* node = find_key(tree, atoi(input));
+        errno = 0;
+        unsigned long int num = strtoul(input, NULL, 10);
+        if (num > UINT_MAX || errno == ERANGE) {
+            printf("Invalid number\n");
+            continue;
+        }
+
+        Node* node = find_key(tree, (unsigned int)num);
         if (node) {
             printf("%s\n", node->value);
         } else {

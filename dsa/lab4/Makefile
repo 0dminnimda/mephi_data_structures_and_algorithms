@@ -22,3 +22,11 @@ run_task:
 .PHONY: exec_task
 exec_task:
 	bash exec.sh ./main.out
+
+.PHONY: extra
+extra:
+	clang common/common.c program.c -o program.out -O0 -g $(CFLAGS) -fsanitize=address,undefined
+
+.PHONY: exec_extra
+exec_extra:
+	bash exec.sh ./program.out
