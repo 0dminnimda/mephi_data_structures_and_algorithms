@@ -37,7 +37,7 @@ void add_to_tree(Tree* tree, unsigned int key, char* filename, int lineno, int n
 bool load_file(Tree* tree, char* filename) {
     FILE* file = fopen(filename, "r");
     if (!file) {
-        printf("Error: could not open file %s\n", filename);
+        printf("Error: could not open file '%s'\n", filename);
         return false;
     }
     char line[MAX_LINE_LENGTH];
