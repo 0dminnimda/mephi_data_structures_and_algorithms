@@ -78,9 +78,9 @@ int main() {
         printf("Enter number to search for: ");
         fgets(raw_input, MAX_LINE_LENGTH, stdin);
         char *input = strip(raw_input);
-        if (strlen(input) == 1) {  // only newline character entered
-            break;
-        }
+
+        if (strcmp(input, "q") == 0) break;
+
         errno = 0;
         unsigned long int num = strtoul(input, NULL, 10);
         if (num > UINT_MAX || errno == ERANGE) {
