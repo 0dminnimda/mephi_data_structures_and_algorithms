@@ -45,4 +45,4 @@ def generate(path: Path, size: int):
             file.write("\n")
 
 
-generate(Path("numbers.csv"), 100_000)
+generate(Path("numbers.csv"), 10_000)
