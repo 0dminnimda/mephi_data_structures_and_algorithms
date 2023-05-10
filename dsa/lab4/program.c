@@ -10,16 +10,6 @@
 
 #define MAX_LINE_LENGTH 1024
 
-unsigned int convert(const char *st) {
-  const char *x;
-  for (x = st; *x; x++) {
-    if (!isdigit(*x)) {
-      return 0L; // Return 0 if the string contains non-digit characters
-    }
-  }
-  return (strtoul(st, NULL, 10));
-}
-
 char *strip(char *str) {
     while (*str && isspace(*str)) str++;
     char *result = str;
@@ -43,7 +33,7 @@ bool load_file(Tree* tree, char* filename) {
     char line[MAX_LINE_LENGTH];
     int lineno = 1;
     while (fgets(line, MAX_LINE_LENGTH, file)) {
-        char* num_str = strtok(line, ",");
+        char* num_str = strtok(strip(line), ",");
         int num_in_line = 1;
         while (num_str) {
             errno = 0;
