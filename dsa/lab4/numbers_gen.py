@@ -17,11 +17,10 @@ def make_lengths(keys: list[int]) -> list[int]:
     cur_length = 0
     lengths = []
     for _ in keys:
+        cur_length += 1
         if random.choice((0, 0, 0, 1)):
             lengths.append(cur_length)
             cur_length = 0
-        else:
-            cur_length += 1
     lengths.append(cur_length)
     return lengths
 
