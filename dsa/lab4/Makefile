@@ -28,7 +28,7 @@ extra:
 	clang common/common.c program.c -o program.out -O0 -g $(CFLAGS) -fsanitize=address,undefined
 
 .PHONY: run_extra
-exec_extra:
+run_extra:
 	valgrind --leak-check=full ./program.out
 
 .PHONY: exec_extra
