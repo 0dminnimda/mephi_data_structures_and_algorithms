@@ -33,6 +33,6 @@ Result set_vertex_name(Graph *graph, Vertex *src, const char *new_name);
 Result set_edge_attitude(Graph *graph, Vertex *src, Vertex *dst, int new_attitude);
 void fprint_matrix(FILE *stream, Graph *graph);
 void fprint_adj_list(FILE *stream, Graph *graph);
-Vertex **find_potential_friends(Graph *graph, Vertex *src);
+Graph *find_potential_friends(Graph *graph, Vertex *src);
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst);
-Graph *partition_connected_components(Graph *graph);
+Graph *partition_positive_relationships(Graph *graph);

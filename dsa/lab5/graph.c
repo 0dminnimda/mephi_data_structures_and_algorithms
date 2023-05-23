@@ -202,146 +202,245 @@ void fprint_adj_list(FILE *stream, Graph *graph) {
     }
 }
 
-Vertex **find_potential_friends(Graph *graph, Vertex *src) {
-    Vertex **potential_friends = (Vertex **)calloc(graph->size, sizeof(Vertex *));
-    size_t num_friends = 0;
+void dfs_potential_friends(Vertex *vertex, Vertex *result_vertex, bool *visited,
+                           Graph *result_graph) {
+    visited[vertex->id] = true;
+    Edge *edge = vertex->connections;
 
-    Vertex *current_vertex = graph->vertices;
-    while (current_vertex != NULL) {
-        if (current_vertex != src) {
-            Edge *current_edge = current_vertex->connections;
-            while (current_edge != NULL) {
-                if (current_edge->dest == src) {
-                    potential_friends[num_friends++] = current_vertex;
-                    break;
-                }
-                current_edge = current_edge->next;
-            }
+    while (edge) {
+        if (edge->attitude > 0 && !visited[edge->dest->id]) {
+            Vertex *current_vertex = add_vertex(result_graph, edge->dest->name);
+            add_edge(result_graph, result_vertex, current_vertex, edge->attitude);
+            dfs_potential_friends(edge->dest, current_vertex, visited, result_graph);
         }
-        current_vertex = current_vertex->next;
+        edge = edge->next;
     }
+}
 
-    potential_friends[num_friends] = NULL;
-    return potential_friends;
+Graph *find_potential_friends(Graph *graph, Vertex *src) {
+    Graph *result_graph = calloc(1, sizeof(Graph));
+    Vertex *result_scr = add_vertex(result_graph, src->name);
+
+    bool *visited = calloc(graph->size, sizeof(bool));
+    dfs_potential_friends(src, result_scr, visited, result_graph);
+    free(visited);
+
+    return result_graph;
 }
 
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
-    // Initialize the distance array
-    int *distance = (int *)calloc(graph->size, sizeof(int));
-    Vertex **predecessor = (Vertex **)calloc(graph->size, sizeof(Vertex *));
-    Vertex *current_vertex = graph->vertices;
-    while (current_vertex != NULL) {
-        distance[current_vertex - graph->vertices] = INT_MAX;
-        predecessor[current_vertex - graph->vertices] = NULL;
-        current_vertex = current_vertex->next;
+    int *distances = calloc(graph->size, sizeof(int));
+    int *predecessors = calloc(graph->size, sizeof(int));
+    for (size_t i = 0; i < graph->size; i++) {
+        distances[i] = INT_MAX;
+        predecessors[i] = -1;
     }
-    distance[src - graph->vertices] = 0;
+    distances[src->id] = 0;
 
-    // Relax edges repeatedly
     for (size_t i = 0; i < graph->size - 1; i++) {
-        current_vertex = graph->vertices;
-        while (current_vertex != NULL) {
-            Edge *current_edge = current_vertex->connections;
-            while (current_edge != NULL) {
-                int new_distance =
-                    distance[current_vertex - graph->vertices] + current_edge->attitude;
-                if (new_distance < distance[current_edge->dest - graph->vertices]) {
-                    distance[current_edge->dest - graph->vertices] = new_distance;
-                    predecessor[current_edge->dest - graph->vertices] = current_vertex;
+        Vertex *vertex = graph->vertices;
+        while (vertex) {
+            Edge *edge = vertex->connections;
+            while (edge) {
+                if (distances[vertex->id] != INT_MAX && distances[edge->dest->id] > distances[vertex->id] + edge->attitude) {
+                    distances[edge->dest->id] = distances[vertex->id] + edge->attitude;
+                    predecessors[edge->dest->id] = vertex->id;
                 }
-                current_edge = current_edge->next;
+                edge = edge->next;
             }
-            current_vertex = current_vertex->next;
+            vertex = vertex->next;
         }
     }
 
-    // Check for negative cycles
-    current_vertex = graph->vertices;
-    while (current_vertex != NULL) {
-        Edge *current_edge = current_vertex->connections;
-        while (current_edge != NULL) {
-            int new_distance =
-                distance[current_vertex - graph->vertices] + current_edge->attitude;
-            if (new_distance < distance[current_edge->dest - graph->vertices]) {
-                free(distance);
-                free(predecessor);
-                return NULL;  // Negative cycle detected
-            }
-            current_edge = current_edge->next;
+    Graph *result_graph = calloc(1, sizeof(Graph));
+    if (distances[dst->id] != INT_MAX) {
+        int current_vertex_id = dst->id;
+        while (current_vertex_id != src->id) {
+            Vertex *current_vertex = find_vertex(graph, graph->vertices[current_vertex_id].name);
+            Vertex *predecessor_vertex = find_vertex(graph, graph->vertices[predecessors[current_vertex_id]].name);
+            add_vertex(result_graph, current_vertex->name);
+            add_vertex(result_graph, predecessor_vertex->name);
+            add_edge(result_graph, find_vertex(result_graph, predecessor_vertex->name), find_vertex(result_graph, current_vertex->name), distances[current_vertex_id] - distances[predecessors[current_vertex_id]]);
+            current_vertex_id = predecessors[current_vertex_id];
         }
-        current_vertex = current_vertex->next;
     }
 
-    // Build the shortest path graph
-    Graph *shortest_path_graph = (Graph *)calloc(1, sizeof(Graph));
-    shortest_path_graph->vertices = NULL;
-    shortest_path_graph->size = 0;
-
-    current_vertex = dst;
-    while (current_vertex != NULL) {
-        add_vertex(shortest_path_graph, current_vertex->name);
-        current_vertex = predecessor[current_vertex - graph->vertices];
-    }
-
-    current_vertex = dst;
-    while (current_vertex != NULL) {
-        Edge *current_edge = current_vertex->connections;
-        while (current_edge != NULL) {
-            if (predecessor[current_vertex - graph->vertices] == current_edge->dest) {
-                add_edge(shortest_path_graph,
-                         find_vertex(shortest_path_graph, current_vertex->name),
-                         find_vertex(shortest_path_graph, current_edge->dest->name),
-                         current_edge->attitude);
-                break;
-            }
-            current_edge = current_edge->next;
-        }
-        current_vertex = predecessor[current_vertex - graph->vertices];
-    }
-
-    free(distance);
-    free(predecessor);
-    return shortest_path_graph;
+    free(distances);
+    free(predecessors);
+    return result_graph;
 }
 
-Graph *partition_connected_components(Graph *graph) {
-    Graph *components = (Graph *)calloc(1, sizeof(Graph));
-    components->vertices = NULL;
-    components->size = 0;
+void dfs_partition(Vertex *vertex, bool *visited, Graph *result_graph, int component_id) {
+    visited[vertex->id] = true;
+    add_vertex(result_graph, vertex->name);
+    Edge *edge = vertex->connections;
 
-    Vertex *current_vertex = graph->vertices;
-    while (current_vertex != NULL) {
-        if (find_vertex(components, current_vertex->name) == NULL) {
-            // Perform a BFS to find all vertices in the same component
-            Graph *component = (Graph *)calloc(1, sizeof(Graph));
-            component->vertices = NULL;
-            component->size = 0;
-
-            Queue *queue = create_queue();
-            enqueue(queue, current_vertex);
-
-            while (!is_queue_empty(queue)) {
-                Vertex *current_vertex = dequeue(queue);
-                if (find_vertex(component, current_vertex->name) == NULL) {
-                    add_vertex(component, current_vertex->name);
-                    Edge *current_edge = current_vertex->connections;
-                    while (current_edge != NULL) {
-                        enqueue(queue, current_edge->dest);
-                        current_edge = current_edge->next;
-                    }
-                }
-            }
-
-            free_queue(queue);
-            add_vertex(components, component->vertices->name);
-            free_graph(component);
+    while (edge) {
+        if (edge->attitude > 0 && !visited[edge->dest->id]) {
+            add_edge(result_graph, find_vertex(result_graph, vertex->name), find_vertex(result_graph, edge->dest->name), edge->attitude);
+            dfs_partition(edge->dest, visited, result_graph, component_id);
         }
-        current_vertex = current_vertex->next;
+        edge = edge->next;
     }
-
-    return components;
 }
 
+Graph *partition_positive_relationships(Graph *graph) {
+    Graph *result_graph = calloc(1, sizeof(Graph));
+    bool *visited = calloc(graph->size, sizeof(bool));
+
+    Vertex *vertex = graph->vertices;
+    while (vertex) {
+        if (!visited[vertex->id]) {
+            dfs_partition(vertex, visited, result_graph, vertex->id);
+        }
+        vertex = vertex->next;
+    }
+
+    free(visited);
+    return result_graph;
+}
+
+
+// Vertex **find_potential_friends(Graph *graph, Vertex *src) {
+//     Vertex **potential_friends = (Vertex **)calloc(graph->size, sizeof(Vertex *));
+//     size_t num_friends = 0;
+
+//     Vertex *current_vertex = graph->vertices;
+//     while (current_vertex != NULL) {
+//         if (current_vertex != src) {
+//             Edge *current_edge = current_vertex->connections;
+//             while (current_edge != NULL) {
+//                 if (current_edge->dest == src) {
+//                     potential_friends[num_friends++] = current_vertex;
+//                     break;
+//                 }
+//                 current_edge = current_edge->next;
+//             }
+//         }
+//         current_vertex = current_vertex->next;
+//     }
+
+//     potential_friends[num_friends] = NULL;
+//     return potential_friends;
+// }
+
+// Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
+//     // Initialize the distance array
+//     int *distance = (int *)calloc(graph->size, sizeof(int));
+//     Vertex **predecessor = (Vertex **)calloc(graph->size, sizeof(Vertex *));
+//     Vertex *current_vertex = graph->vertices;
+//     while (current_vertex != NULL) {
+//         distance[current_vertex - graph->vertices] = INT_MAX;
+//         predecessor[current_vertex - graph->vertices] = NULL;
+//         current_vertex = current_vertex->next;
+//     }
+//     distance[src - graph->vertices] = 0;
+
+//     // Relax edges repeatedly
+//     for (size_t i = 0; i < graph->size - 1; i++) {
+//         current_vertex = graph->vertices;
+//         while (current_vertex != NULL) {
+//             Edge *current_edge = current_vertex->connections;
+//             while (current_edge != NULL) {
+//                 int new_distance =
+//                     distance[current_vertex - graph->vertices] +
+//                     current_edge->attitude;
+//                 if (new_distance < distance[current_edge->dest - graph->vertices]) {
+//                     distance[current_edge->dest - graph->vertices] = new_distance;
+//                     predecessor[current_edge->dest - graph->vertices] = current_vertex;
+//                 }
+//                 current_edge = current_edge->next;
+//             }
+//             current_vertex = current_vertex->next;
+//         }
+//     }
+
+//     // Check for negative cycles
+//     current_vertex = graph->vertices;
+//     while (current_vertex != NULL) {
+//         Edge *current_edge = current_vertex->connections;
+//         while (current_edge != NULL) {
+//             int new_distance =
+//                 distance[current_vertex - graph->vertices] + current_edge->attitude;
+//             if (new_distance < distance[current_edge->dest - graph->vertices]) {
+//                 free(distance);
+//                 free(predecessor);
+//                 return NULL;  // Negative cycle detected
+//             }
+//             current_edge = current_edge->next;
+//         }
+//         current_vertex = current_vertex->next;
+//     }
+
+//     // Build the shortest path graph
+//     Graph *shortest_path_graph = (Graph *)calloc(1, sizeof(Graph));
+//     shortest_path_graph->vertices = NULL;
+//     shortest_path_graph->size = 0;
+
+//     current_vertex = dst;
+//     while (current_vertex != NULL) {
+//         add_vertex(shortest_path_graph, current_vertex->name);
+//         current_vertex = predecessor[current_vertex - graph->vertices];
+//     }
+
+//     current_vertex = dst;
+//     while (current_vertex != NULL) {
+//         Edge *current_edge = current_vertex->connections;
+//         while (current_edge != NULL) {
+//             if (predecessor[current_vertex - graph->vertices] == current_edge->dest) {
+//                 add_edge(shortest_path_graph,
+//                          find_vertex(shortest_path_graph, current_vertex->name),
+//                          find_vertex(shortest_path_graph, current_edge->dest->name),
+//                          current_edge->attitude);
+//                 break;
+//             }
+//             current_edge = current_edge->next;
+//         }
+//         current_vertex = predecessor[current_vertex - graph->vertices];
+//     }
+
+//     free(distance);
+//     free(predecessor);
+//     return shortest_path_graph;
+// }
+
+// Graph *partition_connected_components(Graph *graph) {
+//     Graph *components = (Graph *)calloc(1, sizeof(Graph));
+//     components->vertices = NULL;
+//     components->size = 0;
+
+//     Vertex *current_vertex = graph->vertices;
+//     while (current_vertex != NULL) {
+//         if (find_vertex(components, current_vertex->name) == NULL) {
+//             // Perform a BFS to find all vertices in the same component
+//             Graph *component = (Graph *)calloc(1, sizeof(Graph));
+//             component->vertices = NULL;
+//             component->size = 0;
+
+//             Queue *queue = create_queue();
+//             enqueue(queue, current_vertex);
+
+//             while (!is_queue_empty(queue)) {
+//                 Vertex *current_vertex = dequeue(queue);
+//                 if (find_vertex(component, current_vertex->name) == NULL) {
+//                     add_vertex(component, current_vertex->name);
+//                     Edge *current_edge = current_vertex->connections;
+//                     while (current_edge != NULL) {
+//                         enqueue(queue, current_edge->dest);
+//                         current_edge = current_edge->next;
+//                     }
+//                 }
+//             }
+
+//             free_queue(queue);
+//             add_vertex(components, component->vertices->name);
+//             free_graph(component);
+//         }
+//         current_vertex = current_vertex->next;
+//     }
+
+//     return components;
+// }
 
 // Vertex **find_potential_friends(Graph *graph, Vertex *src) {
 //     Vertex **potential_friends = (Vertex **)calloc(1, sizeof(Vertex *) * graph->size);

@@ -187,11 +187,11 @@ int main() {
             if (v == NULL) {
                 printf("Error: vertex not found\n");
             } else {
-                Vertex **friends = find_potential_friends(graph, v);
-                if (friends == NULL) { printf("Error: could not find friends\n"); }
-
-                for (int i = 0; friends[i] != NULL; i++) {
-                    printf("%s\n", friends[i]->name);
+                Graph *friends = find_potential_friends(graph, v);
+                if (friends == NULL) {
+                    printf("Error: could not find friends\n");
+                } else {
+                    fprint_adj_list(stdout, graph);
                 }
 
                 free(friends);
