@@ -321,52 +321,7 @@ Graph *partition_connected_components(Graph *graph) {
 
     return components;
 }
-// Function to print the graph as an adjacency matrix
-void fprint_matrix(FILE *stream, Graph *graph) {
-    Vertex *vertex = graph->vertices;
-    fprintf(stream, "   ");
-    while (vertex) {
-        fprintf(stream, "%s ", vertex->name);
-        vertex = vertex->next;
-    }
-    fprintf(stream, "\n");
-    vertex = graph->vertices;
-    while (vertex) {
-        fprintf(stream, "%s ", vertex->name);
-        Vertex *other_vertex = graph->vertices;
-        while (other_vertex) {
-            Edge *edge = vertex->connections;
-            int found = 0;
-            while (edge) {
-                if (edge->dest == other_vertex) {
-                    fprintf(stream, "%d ", edge->attitude);
-                    found = 1;
-                    break;
-                }
-                edge = edge->next;
-            }
-            if (!found) { fprintf(stream, "0 "); }
-            other_vertex = other_vertex->next;
-        }
-        fprintf(stream, "\n");
-        vertex = vertex->next;
-    }
-}
 
-// Function to print the graph as an adjacency list
-void fprint_adj_list(FILE *stream, Graph *graph) {
-    Vertex *vertex = graph->vertices;
-    while (vertex) {
-        fprintf(stream, "%s: ", vertex->name);
-        Edge *edge = vertex->connections;
-        while (edge) {
-            fprintf(stream, "%s(%d) ", edge->dest->name, edge->attitude);
-            edge = edge->next;
-        }
-        fprintf(stream, "\n");
-        vertex = vertex->next;
-    }
-}
 
 // void fprint_matrix(FILE *stream, Graph *graph) {
 //     // Print the matrix header
