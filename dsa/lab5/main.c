@@ -38,7 +38,7 @@ char *strip(char *str) {
 }
 
 int main() {
-    Graph *graph = calloc(sizeof(Graph));
+    Graph *graph = calloc(1, sizeof(Graph));
     char input[100];
     input[0] = '\0';
 
@@ -200,7 +200,7 @@ int main() {
             //     free(filename);
         } else if (IS_COMMAND(input, "reset", "r")) {
             free_graph(graph);
-            graph = calloc(sizeof(Graph));
+            graph = calloc(1, sizeof(Graph));
         } else if (IS_COMMAND(input, "quit", "q")) {
             run = false;
         } else {
@@ -211,6 +211,6 @@ int main() {
         }
     }
 
-    destroy_graph(graph);
+    free_graph(graph);
     return 0;
 }
