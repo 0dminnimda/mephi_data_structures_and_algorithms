@@ -135,11 +135,25 @@ Result set_edge_attitude(Graph *graph, Vertex *src, Vertex *dst, int new_attitud
 }
 
 void fprint_matrix(FILE *stream, Graph *graph) {
-    // Print the header
-    fprintf(stream, "   ");
+    if (graph->size == 0) { return; }
+
+    // Determine the maximum length of the vertex names
+    int max_name_len = 0;
     Vertex *current_vertex = graph->vertices;
     while (current_vertex != NULL) {
-        fprintf(stream, "%s ", current_vertex->name);
+        int name_len = strlen(current_vertex->name);
+        if (name_len > max_name_len) {
+            max_name_len = name_len;
+        }
+        current_vertex = current_vertex->next;
+    }
+    max_name_len = max(max_name_len, 3);  // strlen("-10")
+
+    // Print the header
+    fprintf(stream, "%*s ", max_name_len, "");
+    current_vertex = graph->vertices;
+    while (current_vertex != NULL) {
+        fprintf(stream, "%*s ", max_name_len, current_vertex->name);
         current_vertex = current_vertex->next;
     }
     fprintf(stream, "\n");
@@ -147,20 +161,20 @@ void fprint_matrix(FILE *stream, Graph *graph) {
     // Print the matrix body
     current_vertex = graph->vertices;
     while (current_vertex != NULL) {
-        fprintf(stream, "%s ", current_vertex->name);
+        fprintf(stream, "%*s ", max_name_len, current_vertex->name);
         Vertex *dest_vertex = graph->vertices;
         while (dest_vertex != NULL) {
             Edge *current_edge = current_vertex->connections;
             bool found = false;
             while (current_edge != NULL) {
                 if (current_edge->dest == dest_vertex) {
-                    fprintf(stream, "%d ", current_edge->attitude);
+                    fprintf(stream, "%*d ", max_name_len, current_edge->attitude);
                     found = true;
                     break;
                 }
                 current_edge = current_edge->next;
             }
-            if (!found) { fprintf(stream, "0 "); }
+            if (!found) { fprintf(stream, "%*s ", max_name_len, ""); }
             dest_vertex = dest_vertex->next;
         }
         fprintf(stream, "\n");
