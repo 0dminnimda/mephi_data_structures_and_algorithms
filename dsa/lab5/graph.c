@@ -6,14 +6,47 @@
 #include <string.h>
 
 void free_graph(Graph *graph) {
+    // Vertex *current_vertex = graph->vertices;
+    // while (current_vertex != NULL) {
+    //     Vertex *next_vertex = current_vertex->next;
+    //     remove_vertex(graph, current_vertex);
+    //     current_vertex = next_vertex;
+    // }
+    // free(graph);
+
     Vertex *current_vertex = graph->vertices;
     while (current_vertex != NULL) {
+        Edge *current_edge = current_vertex->connections;
+        while (current_edge != NULL) {
+            Edge *next_edge = current_edge->next;
+            free(current_edge);
+            current_edge = next_edge;
+        }
         Vertex *next_vertex = current_vertex->next;
-        remove_vertex(graph, current_vertex);
+        free(current_vertex->name);
+        free(current_vertex);
         current_vertex = next_vertex;
     }
     free(graph);
 }
+
+// void copy_graph(Graph *graph) {
+//     Graph *result = calloc(sizeof(Graph));
+//     Vertex *current_vertex = graph->vertices;
+//     while (current_vertex != NULL) {
+//         Edge *current_edge = current_vertex->connections;
+//         while (current_edge != NULL) {
+//             Edge *next_edge = current_edge->next;
+//             free(current_edge);
+//             current_edge = next_edge;
+//         }
+//         Vertex *next_vertex = current_vertex->next;
+//         free(current_vertex->name);
+//         free(current_vertex);
+//         current_vertex = next_vertex;
+//     }
+//     free(graph);
+// }
 
 Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
@@ -142,6 +175,9 @@ Result set_edge_attitude(Graph *graph, Vertex *src, Vertex *dst, int new_attitud
     return FAILURE;
 }
 
+#define max(a, b) (a > b ? a : b)
+#define min(a, b) (a < b ? a : b)
+
 void fprint_matrix(FILE *stream, Graph *graph) {
     if (graph->size == 0) { return; }
 
@@ -230,10 +266,10 @@ Graph *find_potential_friends(Graph *graph, Vertex *src) {
 
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
     int *distances = calloc(graph->size, sizeof(int));
-    int *predecessors = calloc(graph->size, sizeof(int));
+    Vertex **predecessors = calloc(graph->size, sizeof(Vertex *));
     for (size_t i = 0; i < graph->size; i++) {
         distances[i] = INT_MAX;
-        predecessors[i] = -1;
+        predecessors[i] = NULL;
     }
     distances[src->id] = 0;
 
@@ -244,7 +280,7 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
             while (edge) {
                 if (distances[vertex->id] != INT_MAX && distances[edge->dest->id] > distances[vertex->id] + edge->attitude) {
                     distances[edge->dest->id] = distances[vertex->id] + edge->attitude;
-                    predecessors[edge->dest->id] = vertex->id;
+                    predecessors[edge->dest->id] = vertex;
                 }
                 edge = edge->next;
             }
@@ -252,53 +288,203 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
         }
     }
 
-    Graph *result_graph = calloc(1, sizeof(Graph));
+    Vertex *current_vertex = graph->vertices;
+    while (current_vertex != NULL) {
+        Edge *current_edge = current_vertex->connections;
+        while (current_edge != NULL) {
+            if (distances[current_vertex->id] != INT_MAX && distances[current_edge->dest->id] > distances[current_vertex->id] + current_edge->attitude) {
+                free(distances);
+                free(predecessors);
+                printf("Error: negative cycle detected\n");
+                return NULL;
+            }
+            current_edge = current_edge->next;
+        }
+        current_vertex = current_vertex->next;
+    }
+
+    Graph *result_graph = NULL;
     if (distances[dst->id] != INT_MAX) {
-        int current_vertex_id = dst->id;
-        while (current_vertex_id != src->id) {
-            Vertex *current_vertex = find_vertex(graph, graph->vertices[current_vertex_id].name);
-            Vertex *predecessor_vertex = find_vertex(graph, graph->vertices[predecessors[current_vertex_id]].name);
-            add_vertex(result_graph, current_vertex->name);
-            add_vertex(result_graph, predecessor_vertex->name);
-            add_edge(result_graph, find_vertex(result_graph, predecessor_vertex->name), find_vertex(result_graph, current_vertex->name), distances[current_vertex_id] - distances[predecessors[current_vertex_id]]);
-            current_vertex_id = predecessors[current_vertex_id];
+        result_graph = calloc(1, sizeof(Graph));
+        Vertex *current_vertex = dst;
+        while (current_vertex != src) {
+            Vertex *predecessor_vertex = predecessors[current_vertex->id];
+            Vertex *added_dst = add_vertex(result_graph, current_vertex->name);
+            Vertex *added_src = add_vertex(result_graph, predecessor_vertex->name);
+            add_edge(result_graph, added_src, added_dst, distances[current_vertex->id] - distances[predecessor_vertex->id]);
+            current_vertex = predecessors[current_vertex->id];
         }
     }
 
     free(distances);
     free(predecessors);
     return result_graph;
+
+    // current_vertex = dst;
+    // while (current_vertex != NULL) {
+    //     Edge *current_edge = current_vertex->connections;
+    //     while (current_edge != NULL) {
+    //         if (predecessor[current_vertex - graph->vertices] == current_edge->dest) {
+    //             add_edge(shortest_path_graph,
+    //                      find_vertex(shortest_path_graph, current_vertex->name),
+    //                      find_vertex(shortest_path_graph, current_edge->dest->name),
+    //                      current_edge->attitude);
+    //             break;
+    //         }
+    //         current_edge = current_edge->next;
+    //     }
+    //     current_vertex = predecessor[current_vertex - graph->vertices];
+    // }
 }
 
-void dfs_partition(Vertex *vertex, bool *visited, Graph *result_graph, int component_id) {
-    visited[vertex->id] = true;
-    add_vertex(result_graph, vertex->name);
-    Edge *edge = vertex->connections;
+void strongconnect(Vertex *v, int *index, int *indices, int *lowlinks, bool *onStack, Vertex **array, int *arrayTop) {
+    // Set the depth index for v to the smallest unused index
+    indices[v->id] = *index;
+    lowlinks[v->id] = *index;
+    (*index)++;
+    array[(*arrayTop)++] = v;
+    onStack[v->id] = true;
 
-    while (edge) {
-        if (edge->attitude > 0 && !visited[edge->dest->id]) {
-            add_edge(result_graph, find_vertex(result_graph, vertex->name), find_vertex(result_graph, edge->dest->name), edge->attitude);
-            dfs_partition(edge->dest, visited, result_graph, component_id);
+    // Consider successors of v
+    Edge *e;
+    for (e = v->connections; e != NULL; e = e->next) {
+        Vertex *w = e->dest;
+        if (indices[w->id] == -1) {
+            // Successor w has not yet been visited; recurse on it
+            strongconnect(w, index, indices, lowlinks, onStack, array, arrayTop);
+            lowlinks[v->id] = min(lowlinks[v->id], lowlinks[w->id]);
+        } else if (onStack[w->id]) {
+            // Successor w is in the current SCC
+            lowlinks[v->id] = min(lowlinks[v->id], indices[w->id]);
         }
-        edge = edge->next;
+    }
+
+    // If v is a root node, generate an SCC
+    if (lowlinks[v->id] == indices[v->id]) {
+        Vertex *w;
+        do {
+            (*arrayTop)--;
+            w = array[*arrayTop];
+            onStack[w->id] = false;
+            // Add w to current SCC
+            printf("%s ", w->name);
+        } while (w != v);
+        printf("\n");
     }
 }
 
-Graph *partition_positive_relationships(Graph *graph) {
-    Graph *result_graph = calloc(1, sizeof(Graph));
-    bool *visited = calloc(graph->size, sizeof(bool));
+void find_strongly_connected_components(Graph *graph) {
+    int index = 0;
+    int indices[graph->size];
+    int lowlinks[graph->size];
+    bool onStack[graph->size];
+    Vertex *array[graph->size];
+    int arrayTop = 0;
+    Vertex *v;
 
-    Vertex *vertex = graph->vertices;
-    while (vertex) {
-        if (!visited[vertex->id]) {
-            dfs_partition(vertex, visited, result_graph, vertex->id);
-        }
-        vertex = vertex->next;
+    // Initialize all vertices as unvisited
+    for (v = graph->vertices; v != NULL; v = v->next) {
+        indices[v->id] = -1;
+        lowlinks[v->id] = -1;
+        onStack[v->id] = false;
     }
 
-    free(visited);
-    return result_graph;
+    // Perform a DFS on all unvisited vertices
+    for (v = graph->vertices; v != NULL; v = v->next) {
+        if (indices[v->id] == -1) {
+            strongconnect(v, &index, indices, lowlinks, onStack, array, &arrayTop);
+        }
+    }
 }
+
+// void strongconnect(Vertex *v, int *index, int *lowlink, bool *onStack, Stack *stack) {
+//     // Set the depth index for v to the smallest unused index
+//     v->index = *index;
+//     v->lowlink = *index;
+//     (*index)++;
+//     stack_push(stack, v);
+//     onStack[v->id] = true;
+
+//     // Consider successors of v
+//     Edge *e;
+//     for (e = v->connections; e != NULL; e = e->next) {
+//         Vertex *w = e->dest;
+//         if (w->index == -1) {
+//             // Successor w has not yet been visited; recurse on it
+//             strongconnect(w, index, lowlink, onStack, stack);
+//             v->lowlink = MIN(v->lowlink, w->lowlink);
+//         } else if (onStack[w->id]) {
+//             // Successor w is in stack S and hence in the current SCC
+//             v->lowlink = MIN(v->lowlink, w->index);
+//         }
+//     }
+
+//     // If v is a root node, pop the stack and generate an SCC
+//     if (v->lowlink == v->index) {
+//         Vertex *w;
+//         do {
+//             w = stack_pop(stack);
+//             onStack[w->id] = false;
+//             // Add w to current SCC
+//             printf("%s ", w->name);
+//         } while (w != v);
+//         printf("\n");
+//     }
+// }
+
+// void find_strongly_connected_components(Graph *graph) {
+//     int index = 0;
+//     bool onStack[graph->size];
+//     Stack *stack = stack_create();
+//     Vertex *v;
+
+//     // Initialize all vertices as unvisited
+//     for (v = graph->vertices; v != NULL; v = v->next) {
+//         v->index = -1;
+//         v->lowlink = -1;
+//         onStack[v->id] = false;
+//     }
+
+//     // Perform a DFS on all unvisited vertices
+//     for (v = graph->vertices; v != NULL; v = v->next) {
+//         if (v->index == -1) {
+//             strongconnect(v, &index, v->lowlink, onStack, stack);
+//         }
+//     }
+
+//     stack_destroy(stack);
+// }
+
+
+// void dfs_partition(Vertex *vertex, bool *visited, Graph *result_graph, int component_id) {
+//     visited[vertex->id] = true;
+//     Vertex *result_vertex = add_vertex(result_graph, vertex->name);
+//     Edge *edge = vertex->connections;
+
+//     while (edge) {
+//         if (edge->attitude > 0 && !visited[edge->dest->id]) {
+//             add_edge(result_graph, result_vertex, find_vertex(result_graph, edge->dest->name), edge->attitude);
+//             dfs_partition(edge->dest, visited, result_graph, component_id);
+//         }
+//         edge = edge->next;
+//     }
+// }
+
+// Graph *partition_positive_relationships(Graph *graph) {
+//     Graph *result_graph = calloc(1, sizeof(Graph));
+//     bool *visited = calloc(graph->size, sizeof(bool));
+
+//     Vertex *vertex = graph->vertices;
+//     while (vertex) {
+//         if (!visited[vertex->id]) {
+//             dfs_partition(vertex, visited, result_graph, vertex->id);
+//         }
+//         vertex = vertex->next;
+//     }
+
+//     free(visited);
+//     return result_graph;
+// }
 
 
 // Vertex **find_potential_friends(Graph *graph, Vertex *src) {

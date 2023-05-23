@@ -48,7 +48,8 @@ int main() {
         printf(
             "Enter command "
             "(add/remove/connect/disconnect/change_name/change_attitude/"
-            "output_mat/output_list/dump_dot/image/import_file/reset/quit):\n");
+            "output_mat/output_list/dump_dot/image/import_file/reset/quit/"
+            "friends/shortest_path/strong_components):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
 
@@ -191,13 +192,56 @@ int main() {
                 if (friends == NULL) {
                     printf("Error: could not find friends\n");
                 } else {
-                    fprint_adj_list(stdout, graph);
+                    fprint_adj_list(stdout, friends);
+                    free(friends);
                 }
-
-                free(friends);
             }
 
             free(name);
+        } else if (IS_COMMAND(input, "shortest_path", "sp")) {
+            printf("Enter source name: ");
+            char *name1 = read_line();
+
+            printf("Enter destination name: ");
+            char *name2 = read_line();
+
+            Vertex *v1 = find_vertex(graph, name1);
+            if (v1 == NULL) {
+                printf("Error: source vertex not found\n");
+            } else {
+                Vertex *v2 = find_vertex(graph, name2);
+                if (v2 == NULL) {
+                    printf("Error: destination vertex not found\n");
+                } else {
+                    Graph *path = shortest_path_bellman_ford(graph, v1, v2);
+                    if (path == NULL) {
+                        printf("Error: could not find shortest path\n");
+                    } else {
+                        fprint_adj_list(stdout, path);
+                    }
+                    free(path);
+                }
+            }
+
+            free(name1);
+            free(name2);
+        } else if (IS_COMMAND(input, "strong_components", "sc")) {
+            find_strongly_connected_components(graph);
+            // Vertex *components[graph->size];
+            // size_t num_components = 0;
+            // find_components(graph, components, &num_components);
+        
+            // printf("Number of components: %zu\n", num_components);
+            // for (size_t i = 0; i < num_components; i++) {
+            //     printf("Component %zu: ", i+1);
+            //     for (size_t j = 0; j < graph->size; j++) {
+            //         if (components[i][j].name != NULL) {
+            //             printf("%s ", components[i][j].name);
+            //         }
+            //     }
+            //     printf("\n");
+            //     free(components[i]);
+            // }
 
             // } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             //     printf("Enter filename: ");

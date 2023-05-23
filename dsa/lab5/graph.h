@@ -35,4 +35,4 @@ void fprint_matrix(FILE *stream, Graph *graph);
 void fprint_adj_list(FILE *stream, Graph *graph);
 Graph *find_potential_friends(Graph *graph, Vertex *src);
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst);
-Graph *partition_positive_relationships(Graph *graph);
+// Graph *partition_positive_relationships(Graph *graph);
