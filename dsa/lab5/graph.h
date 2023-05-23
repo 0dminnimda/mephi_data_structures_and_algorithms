@@ -9,6 +9,7 @@ typedef struct Edge {
 } Edge;
 
 typedef struct Vertex {
+    int id;
     char *name;
     Edge *connections;
     struct Vertex *next;

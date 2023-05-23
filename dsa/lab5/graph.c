@@ -19,6 +19,7 @@ Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
 
     Vertex *new_vertex = (Vertex *)calloc(1, sizeof(Vertex));
+    new_vertex->id = graph->size;
     new_vertex->name = strdup(name);
     new_vertex->connections = NULL;
     new_vertex->next = graph->vertices;
@@ -71,6 +72,13 @@ Result remove_vertex(Graph *graph, Vertex *src) {
     }
 
     if (src->next != NULL) { src->next->prev = src->prev; }
+
+    // Update the id of the remaining tail nodes
+    vertex = src->next;
+    while (vertex != NULL) {
+        vertex->id--;
+        vertex = vertex->next;
+    }
 
     // Free the outgoing edges and the vertex itself
     Edge *current_edge = src->connections;
@@ -142,9 +150,7 @@ void fprint_matrix(FILE *stream, Graph *graph) {
     Vertex *current_vertex = graph->vertices;
     while (current_vertex != NULL) {
         int name_len = strlen(current_vertex->name);
-        if (name_len > max_name_len) {
-            max_name_len = name_len;
-        }
+        if (name_len > max_name_len) { max_name_len = name_len; }
         current_vertex = current_vertex->next;
     }
     max_name_len = max(max_name_len, 3);  // strlen("-10")
