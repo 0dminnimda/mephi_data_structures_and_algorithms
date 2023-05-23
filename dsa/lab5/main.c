@@ -193,7 +193,7 @@ int main() {
                     printf("Error: could not find friends\n");
                 } else {
                     fprint_adj_list(stdout, friends);
-                    free(friends);
+                    free_graph(friends);
                 }
             }
 
@@ -218,8 +218,8 @@ int main() {
                         printf("Error: could not find shortest path\n");
                     } else {
                         fprint_adj_list(stdout, path);
+                        free_graph(path);
                     }
-                    free(path);
                 }
             }
 

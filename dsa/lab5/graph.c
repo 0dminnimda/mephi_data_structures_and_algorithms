@@ -306,6 +306,7 @@ void strongconnect(Vertex *v, int *index, int *indices, int *lowlinks, bool *onS
     // Consider successors of v
     Edge *e;
     for (e = v->connections; e != NULL; e = e->next) {
+        if (e->attitude <= 0) continue;
         Vertex *w = e->dest;
         if (indices[w->id] == -1) {
             // Successor w has not yet been visited; recurse on it
