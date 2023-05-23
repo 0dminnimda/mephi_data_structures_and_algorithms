@@ -22,6 +22,75 @@ void free_graph(Graph *graph) {
     free(graph);
 }
 
+Graph *copy_graph(Graph *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+
+    Graph *dest = malloc(sizeof(Graph));
+    dest->size = src->size;
+    dest->vertices = NULL;
+    Vertex *src_vertex = src->vertices;
+    Vertex *prev_dest_vertex = NULL;
+
+    while (src_vertex != NULL) {
+        Vertex *dest_vertex = malloc(sizeof(Vertex));
+        dest_vertex->id = src_vertex->id;
+        dest_vertex->name = strdup(src_vertex->name);
+        dest_vertex->connections = NULL;
+        dest_vertex->next = NULL;
+        dest_vertex->prev = prev_dest_vertex;
+
+        if (prev_dest_vertex != NULL) {
+            prev_dest_vertex->next = dest_vertex;
+        } else {
+            dest->vertices = dest_vertex;
+        }
+
+        Edge *src_edge = src_vertex->connections;
+        Edge *prev_dest_edge = NULL;
+
+        while (src_edge != NULL) {
+            Edge *dest_edge = malloc(sizeof(Edge));
+            dest_edge->attitude = src_edge->attitude;
+            dest_edge->dest = NULL; // This will be filled later
+            dest_edge->next = NULL;
+
+            if (prev_dest_edge != NULL) {
+                prev_dest_edge->next = dest_edge;
+            } else {
+                dest_vertex->connections = dest_edge;
+            }
+
+            prev_dest_edge = dest_edge;
+            src_edge = src_edge->next;
+        }
+
+        prev_dest_vertex = dest_vertex;
+        src_vertex = src_vertex->next;
+    }
+
+    // Now, set the dest pointers for the edges
+    Vertex *dest_vertex = dest->vertices;
+    src_vertex = src->vertices;
+
+    while (dest_vertex != NULL) {
+        Edge *dest_edge = dest_vertex->connections;
+        Edge *src_edge = src_vertex->connections;
+
+        while (dest_edge != NULL) {
+            dest_edge->dest = find_vertex(dest, src_edge->dest->name);
+            dest_edge = dest_edge->next;
+            src_edge = src_edge->next;
+        }
+
+        dest_vertex = dest_vertex->next;
+        src_vertex = src_vertex->next;
+    }
+
+    return dest;
+}
+
 Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
 

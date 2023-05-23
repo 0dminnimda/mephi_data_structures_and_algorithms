@@ -79,6 +79,10 @@ int main() {
             }
 
             free(name);
+        } else if (IS_COMMAND(input, "copy", "c")) {
+            Graph *cp = copy_graph(graph);
+            fprint_matrix(stdout, cp);
+            free_graph(cp);
         } else if (IS_COMMAND(input, "connect", "c")) {
             printf("Enter source name: ");
             char *name1 = read_line();
