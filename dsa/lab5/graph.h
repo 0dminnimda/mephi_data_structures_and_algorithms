@@ -21,6 +21,7 @@ typedef struct Graph {
 
 typedef enum Result { SUCCESS = true, FAILURE = false } Result;
 
+void free_graph(Graph *graph);
 Vertex *add_vertex(Graph *graph, const char *name);
 Vertex *find_vertex(Graph *graph, const char *name);
 Result add_edge(Graph *graph, Vertex *src, Vertex *dst, int attitude);
@@ -33,4 +34,3 @@ void fprint_adj_list(FILE *stream, Graph *graph);
 Vertex **find_potential_friends(Graph *graph, Vertex *src);
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst);
 Graph *partition_connected_components(Graph *graph);
-void free_graph(Vertex *graph);

@@ -5,6 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+void free_graph(Graph *graph) {
+    Vertex *current_vertex = graph->vertices;
+    while (current_vertex != NULL) {
+        Vertex *next_vertex = current_vertex->next;
+        remove_vertex(graph, current_vertex);
+        current_vertex = next_vertex;
+    }
+    free(graph);
+}
+
 Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
 
@@ -150,9 +160,7 @@ void fprint_matrix(FILE *stream, Graph *graph) {
                 }
                 current_edge = current_edge->next;
             }
-            if (!found) {
-                fprintf(stream, "0 ");
-            }
+            if (!found) { fprintf(stream, "0 "); }
             dest_vertex = dest_vertex->next;
         }
         fprintf(stream, "\n");
@@ -215,7 +223,8 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
         while (current_vertex != NULL) {
             Edge *current_edge = current_vertex->connections;
             while (current_edge != NULL) {
-                int new_distance = distance[current_vertex - graph->vertices] + current_edge->attitude;
+                int new_distance =
+                    distance[current_vertex - graph->vertices] + current_edge->attitude;
                 if (new_distance < distance[current_edge->dest - graph->vertices]) {
                     distance[current_edge->dest - graph->vertices] = new_distance;
                     predecessor[current_edge->dest - graph->vertices] = current_vertex;
@@ -231,11 +240,12 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
     while (current_vertex != NULL) {
         Edge *current_edge = current_vertex->connections;
         while (current_edge != NULL) {
-            int new_distance = distance[current_vertex - graph->vertices] + current_edge->attitude;
+            int new_distance =
+                distance[current_vertex - graph->vertices] + current_edge->attitude;
             if (new_distance < distance[current_edge->dest - graph->vertices]) {
                 free(distance);
                 free(predecessor);
-                return NULL; // Negative cycle detected
+                return NULL;  // Negative cycle detected
             }
             current_edge = current_edge->next;
         }
@@ -258,8 +268,10 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
         Edge *current_edge = current_vertex->connections;
         while (current_edge != NULL) {
             if (predecessor[current_vertex - graph->vertices] == current_edge->dest) {
-                add_edge(shortest_path_graph, find_vertex(shortest_path_graph, current_vertex->name),
-                         find_vertex(shortest_path_graph, current_edge->dest->name), current_edge->attitude);
+                add_edge(shortest_path_graph,
+                         find_vertex(shortest_path_graph, current_vertex->name),
+                         find_vertex(shortest_path_graph, current_edge->dest->name),
+                         current_edge->attitude);
                 break;
             }
             current_edge = current_edge->next;
@@ -310,8 +322,7 @@ Graph *partition_connected_components(Graph *graph) {
     return components;
 }
 // Function to print the graph as an adjacency matrix
-void fprint_matrix(FILE *stream, Graph *graph)
-{
+void fprint_matrix(FILE *stream, Graph *graph) {
     Vertex *vertex = graph->vertices;
     fprintf(stream, "   ");
     while (vertex) {
@@ -334,10 +345,8 @@ void fprint_matrix(FILE *stream, Graph *graph)
                 }
                 edge = edge->next;
             }
-            if (!found) {
-                fprintf(stream, "0 ");
-            }
-            other_vertex= other_vertex->next;
+            if (!found) { fprintf(stream, "0 "); }
+            other_vertex = other_vertex->next;
         }
         fprintf(stream, "\n");
         vertex = vertex->next;
@@ -345,8 +354,7 @@ void fprint_matrix(FILE *stream, Graph *graph)
 }
 
 // Function to print the graph as an adjacency list
-void fprint_adj_list(FILE *stream, Graph *graph)
-{
+void fprint_adj_list(FILE *stream, Graph *graph) {
     Vertex *vertex = graph->vertices;
     while (vertex) {
         fprintf(stream, "%s: ", vertex->name);
@@ -400,8 +408,8 @@ void fprint_adj_list(FILE *stream, Graph *graph)
 //         fprintf(stream, "%s: ", current_vertex->name);
 //         Edge *current_edge = current_vertex->connections;
 //         while (current_edge != NULL) {
-//             fprintf(stream, "%s(%d) ", current_edge->dest->name, current_edge->attitude);
-//             current_edge = current_edge->next;
+//             fprintf(stream, "%s(%d) ", current_edge->dest->name,
+//             current_edge->attitude); current_edge = current_edge->next;
 //         }
 //         fprintf(stream, "\n");
 //         current_vertex = current_vertex->next;
@@ -451,10 +459,12 @@ void fprint_adj_list(FILE *stream, Graph *graph)
 //             Edge *current_edge = current_vertex->connections;
 //             while (current_edge != NULL) {
 //                 int new_distance =
-//                     distances[current_vertex - graph->vertices] + current_edge->attitude;
+//                     distances[current_vertex - graph->vertices] +
+//                     current_edge->attitude;
 //                 if (new_distance < distances[current_edge->dest - graph->vertices]) {
 //                     distances[current_edge->dest - graph->vertices] = new_distance;
-//                     predecessors[current_edge->dest - graph->vertices] = current_vertex;
+//                     predecessors[current_edge->dest - graph->vertices] =
+//                     current_vertex;
 //                 }
 //                 current_edge = current_edge->next;
 //             }
@@ -557,7 +567,8 @@ void fprint_adj_list(FILE *stream, Graph *graph)
 //             while (component_vertex != NULL) {
 //                 Edge *current_edge = component_vertex->connections;
 //                 while (current_edge != NULL) {
-//                     add_edge(components, find_vertex(components, component_vertex->name),
+//                     add_edge(components, find_vertex(components,
+//                     component_vertex->name),
 //                              find_vertex(components, current_edge->dest->name),
 //                              current_edge->attitude);
 //                     current_edge = current_edge->next;
@@ -676,19 +687,3 @@ void fprint_adj_list(FILE *stream, Graph *graph)
 
 //     return shortest_path;
 // }
-
-void free_graph(Graph *graph) {
-    Vertex *current_vertex = graph->vertices;
-    while (current_vertex != NULL) {
-        Vertex *next_vertex = current_vertex->next;
-        remove_vertex(graph, current_vertex);
-        current_vertex = next_vertex;
-    }
-    free(graph);
-}
-
-int main() {
-    // Initialize the graph and perform operations based on user input
-    // ...
-    return 0;
-}
