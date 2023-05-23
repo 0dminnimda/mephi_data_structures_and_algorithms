@@ -81,9 +81,9 @@ Result remove_vertex(Graph *graph, Vertex *src) {
     if (src->next != NULL) { src->next->prev = src->prev; }
 
     // Update the id of the remaining tail nodes
-    vertex = src->next;
+    vertex = graph->vertices;
     while (vertex != NULL) {
-        vertex->id--;
+        if (vertex->id >= src->id) vertex->id--;
         vertex = vertex->next;
     }
 
