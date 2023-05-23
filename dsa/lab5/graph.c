@@ -18,7 +18,7 @@ void free_graph(Graph *graph) {
 Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
 
-    Vertex *new_vertex = (Vertex *)malloc(sizeof(Vertex));
+    Vertex *new_vertex = (Vertex *)calloc(1, sizeof(Vertex));
     new_vertex->name = strdup(name);
     new_vertex->connections = NULL;
     new_vertex->next = graph->vertices;
@@ -44,7 +44,7 @@ Vertex *find_vertex(Graph *graph, const char *name) {
 Result add_edge(Graph *graph, Vertex *src, Vertex *dst, int attitude) {
     if (src == NULL || dst == NULL) { return FAILURE; }
 
-    Edge *new_edge = (Edge *)malloc(sizeof(Edge));
+    Edge *new_edge = (Edge *)calloc(1, sizeof(Edge));
     new_edge->attitude = attitude;
     new_edge->dest = dst;
     new_edge->next = src->connections;
@@ -197,7 +197,7 @@ void fprint_adj_list(FILE *stream, Graph *graph) {
 }
 
 Vertex **find_potential_friends(Graph *graph, Vertex *src) {
-    Vertex **potential_friends = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
+    Vertex **potential_friends = (Vertex **)calloc(graph->size, sizeof(Vertex *));
     size_t num_friends = 0;
 
     Vertex *current_vertex = graph->vertices;
@@ -221,8 +221,8 @@ Vertex **find_potential_friends(Graph *graph, Vertex *src) {
 
 Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
     // Initialize the distance array
-    int *distance = (int *)malloc(sizeof(int) * graph->size);
-    Vertex **predecessor = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
+    int *distance = (int *)calloc(graph->size, sizeof(int));
+    Vertex **predecessor = (Vertex **)calloc(graph->size, sizeof(Vertex *));
     Vertex *current_vertex = graph->vertices;
     while (current_vertex != NULL) {
         distance[current_vertex - graph->vertices] = INT_MAX;
@@ -267,7 +267,7 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
     }
 
     // Build the shortest path graph
-    Graph *shortest_path_graph = (Graph *)malloc(sizeof(Graph));
+    Graph *shortest_path_graph = (Graph *)calloc(1, sizeof(Graph));
     shortest_path_graph->vertices = NULL;
     shortest_path_graph->size = 0;
 
@@ -299,7 +299,7 @@ Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
 }
 
 Graph *partition_connected_components(Graph *graph) {
-    Graph *components = (Graph *)malloc(sizeof(Graph));
+    Graph *components = (Graph *)calloc(1, sizeof(Graph));
     components->vertices = NULL;
     components->size = 0;
 
@@ -307,7 +307,7 @@ Graph *partition_connected_components(Graph *graph) {
     while (current_vertex != NULL) {
         if (find_vertex(components, current_vertex->name) == NULL) {
             // Perform a BFS to find all vertices in the same component
-            Graph *component = (Graph *)malloc(sizeof(Graph));
+            Graph *component = (Graph *)calloc(1, sizeof(Graph));
             component->vertices = NULL;
             component->size = 0;
 
@@ -338,7 +338,7 @@ Graph *partition_connected_components(Graph *graph) {
 
 
 // Vertex **find_potential_friends(Graph *graph, Vertex *src) {
-//     Vertex **potential_friends = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
+//     Vertex **potential_friends = (Vertex **)calloc(1, sizeof(Vertex *) * graph->size);
 //     size_t num_friends = 0;
 
 //     Vertex *current_vertex = graph->vertices;
@@ -361,8 +361,8 @@ Graph *partition_connected_components(Graph *graph) {
 // }
 
 // Graph *shortest_path_bellman_ford(Graph *graph, Vertex *src, Vertex *dst) {
-//     int *distances = (int *)malloc(sizeof(int) * graph->size);
-//     Vertex **predecessors = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
+//     int *distances = (int *)calloc(1, sizeof(int) * graph->size);
+//     Vertex **predecessors = (Vertex **)calloc(1, sizeof(Vertex *) * graph->size);
 
 //     // Initialize distances and predecessors
 //     Vertex *current_vertex = graph->vertices;
@@ -411,7 +411,7 @@ Graph *partition_connected_components(Graph *graph) {
 //     }
 
 //     // Build the shortest path graph
-//     Graph *shortest_path_graph = (Graph *)malloc(sizeof(Graph));
+//     Graph *shortest_path_graph = (Graph *)calloc(1, sizeof(Graph));
 //     shortest_path_graph->vertices = NULL;
 //     shortest_path_graph->size = 0;
 
@@ -442,7 +442,7 @@ Graph *partition_connected_components(Graph *graph) {
 // }
 
 // Graph *partition_connected_components(Graph *graph) {
-//     Graph *components = (Graph *)malloc(sizeof(Graph));
+//     Graph *components = (Graph *)calloc(1, sizeof(Graph));
 //     components->vertices = NULL;
 //     components->size = 0;
 
@@ -450,11 +450,11 @@ Graph *partition_connected_components(Graph *graph) {
 //     while (current_vertex != NULL) {
 //         if (find_vertex(components, current_vertex->name) == NULL) {
 //             // Perform a BFS to find all vertices in the same component
-//             Graph *component = (Graph *)malloc(sizeof(Graph));
+//             Graph *component = (Graph *)calloc(1, sizeof(Graph));
 //             component->vertices = NULL;
 //             component->size = 0;
 
-//             Vertex **queue = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
+//             Vertex **queue = (Vertex **)calloc(graph->size, sizeof(Vertex *));
 //             size_t front = 0, rear = 0;
 //             queue[rear++] = current_vertex;
 
@@ -530,7 +530,7 @@ Graph *partition_connected_components(Graph *graph) {
 // }
 
 // Vertex **find_potential_friends(Graph *graph, Vertex *src) {
-//     Vertex **friends = malloc(graph->size * sizeof(Vertex *));
+//     Vertex **friends = calloc(graph->size, sizeof(Vertex *));
 //     int visited[graph->size];
 //     memset(visited, 0, graph->size * sizeof(int));
 //     int count = 0;
@@ -588,7 +588,7 @@ Graph *partition_connected_components(Graph *graph) {
 //     }
 
 //     // Reconstruct the shortest path from src to dst
-//     Graph *shortest_path = malloc(sizeof(Graph));
+//     Graph *shortest_path = calloc(1, sizeof(Graph));
 //     shortest_path->size = 0;
 //     shortest_path->vertices = NULL;
 
