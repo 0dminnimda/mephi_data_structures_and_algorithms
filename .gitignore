@@ -13,6 +13,7 @@
 *.pdb
 *.ilk
 *.lib
+*.exp
 /secret
 
 /**/lab*/main
