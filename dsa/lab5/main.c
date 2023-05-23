@@ -47,8 +47,8 @@ int main() {
         printf("\033[32m");  // set text color to green
         printf(
             "Enter command "
-            "(add/delete/find/max_diff/min/traverse/output/visit/dump_dot/"
-            "image/import_file/clock_zero/clock_time/reset/quit):\n");
+            "(add/delete/find/connect/disconnect/change_name/change_attitude/"
+            "output_mat/output_list/dump_dot/image/import_file/reset/quit):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
 
