@@ -22,24 +22,6 @@ void free_graph(Graph *graph) {
     free(graph);
 }
 
-// void copy_graph(Graph *graph) {
-//     Graph *result = calloc(sizeof(Graph));
-//     Vertex *current_vertex = graph->vertices;
-//     while (current_vertex != NULL) {
-//         Edge *current_edge = current_vertex->connections;
-//         while (current_edge != NULL) {
-//             Edge *next_edge = current_edge->next;
-//             free(current_edge);
-//             current_edge = next_edge;
-//         }
-//         Vertex *next_vertex = current_vertex->next;
-//         free(current_vertex->name);
-//         free(current_vertex);
-//         current_vertex = next_vertex;
-//     }
-//     free(graph);
-// }
-
 Vertex *add_vertex(Graph *graph, const char *name) {
     if (find_vertex(graph, name) != NULL) { return NULL; }
 
