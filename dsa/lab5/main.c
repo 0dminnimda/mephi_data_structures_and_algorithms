@@ -47,7 +47,7 @@ int main() {
         printf("\033[32m");  // set text color to green
         printf(
             "Enter command "
-            "(add/delete/find/connect/disconnect/change_name/change_attitude/"
+            "(add/remove/connect/disconnect/change_name/change_attitude/"
             "output_mat/output_list/dump_dot/image/import_file/reset/quit):\n");
         printf("\033[0m");  // reset text color to default
         printf("> ");
@@ -65,7 +65,7 @@ int main() {
             if (v == NULL) { printf("Error: could not add vertex\n"); }
 
             free(name);
-        } else if (IS_COMMAND(input, "delete", "d")) {
+        } else if (IS_COMMAND(input, "remove", "r")) {
             printf("Enter name: ");
             char *name = read_line();
 
@@ -106,7 +106,7 @@ int main() {
 
             free(name1);
             free(name2);
-        } else if (IS_COMMAND(input, "disconnect", "dc")) {
+        } else if (IS_COMMAND(input, "disconnect", "d")) {
             printf("Enter source name: ");
             char *name1 = read_line();
 
@@ -179,8 +179,26 @@ int main() {
             fprint_matrix(stdout, graph);
         } else if (IS_COMMAND(input, "output_list", "ol")) {
             fprint_adj_list(stdout, graph);
-            // } else if (IS_COMMAND(input, "friends", "f")) {
-            //     fprint_adj_list(stdout, graph);
+        } else if (IS_COMMAND(input, "friends", "f")) {
+            printf("Enter name: ");
+            char *name = read_line();
+
+            Vertex *v = find_vertex(graph, name);
+            if (v == NULL) {
+                printf("Error: vertex not found\n");
+            } else {
+                Vertex **friends = find_potential_friends(graph, v);
+                if (friends == NULL) { printf("Error: could not find friends\n"); }
+
+                for (int i = 0; friends[i] != NULL; i++) {
+                    printf("%s\n", friends[i]->name);
+                }
+
+                free(friends);
+            }
+
+            free(name);
+
             // } else if (IS_COMMAND(input, "dump_dot", "dd")) {
             //     printf("Enter filename: ");
             //     char *filename = read_line();
