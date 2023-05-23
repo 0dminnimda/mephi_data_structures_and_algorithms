@@ -323,54 +323,6 @@ Graph *partition_connected_components(Graph *graph) {
 }
 
 
-// void fprint_matrix(FILE *stream, Graph *graph) {
-//     // Print the matrix header
-//     fprintf(stream, "");
-//     Vertex *current_vertex = graph->vertices;
-//     while (current_vertex != NULL) {
-//         fprintf(stream, "%s ", current_vertex->name);
-//         current_vertex = current_vertex->next;
-//     }
-//     fprintf(stream, "\n");
-
-//     // Print the matrix body
-//     current_vertex = graph->vertices;
-//     while (current_vertex != NULL) {
-//         fprintf(stream, "%s ", current_vertex->name);
-//         Vertex *dest_vertex = graph->vertices;
-//         while (dest_vertex != NULL) {
-//             Edge *current_edge = current_vertex->connections;
-//             bool found = false;
-//             while (current_edge != NULL) {
-//                 if (current_edge->dest == dest_vertex) {
-//                     fprintf(stream, "%d ", current_edge->attitude);
-//                     found = true;
-//                     break;
-//                 }
-//                 current_edge = current_edge->next;
-//             }
-//             if (!found) { fprintf(stream, "0 "); }
-//             dest_vertex = dest_vertex->next;
-//         }
-//         fprintf(stream, "\n");
-//         current_vertex = current_vertex->next;
-//     }
-// }
-
-// void fprint_adj_list(FILE *stream, Graph *graph) {
-//     Vertex *current_vertex = graph->vertices;
-//     while (current_vertex != NULL) {
-//         fprintf(stream, "%s: ", current_vertex->name);
-//         Edge *current_edge = current_vertex->connections;
-//         while (current_edge != NULL) {
-//             fprintf(stream, "%s(%d) ", current_edge->dest->name,
-//             current_edge->attitude); current_edge = current_edge->next;
-//         }
-//         fprintf(stream, "\n");
-//         current_vertex = current_vertex->next;
-//     }
-// }
-
 // Vertex **find_potential_friends(Graph *graph, Vertex *src) {
 //     Vertex **potential_friends = (Vertex **)malloc(sizeof(Vertex *) * graph->size);
 //     size_t num_friends = 0;
