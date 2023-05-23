@@ -87,7 +87,9 @@ int main() {
 
             printf("Enter attitude: ");
             int attitude;
-            if (!SCAN1("%d", &attitude)) {
+            if (!SCAN1("%d", &attitude) || attitude > 10 || attitude < -10) {
+                printf("Error: invalid attitude, must be a number between -10 and 10\n");
+            } else {
                 Vertex *v1 = find_vertex(graph, name1);
                 if (v1 == NULL) {
                     printf("Error: source vertex not found\n");
@@ -151,8 +153,10 @@ int main() {
             char *name2 = read_line();
 
             printf("Enter attitude: ");
-            int attitude;
-            if (!SCAN1("%d", &attitude)) {
+            int attitude = 0;
+            if (!SCAN1("%d", &attitude) || attitude > 10 || attitude < -10) {
+                printf("Error: invalid attitude, must be a number between -10 and 10\n");
+            } else {
                 Vertex *v1 = find_vertex(graph, name1);
                 if (v1 == NULL) {
                     printf("Error: source vertex not found\n");
