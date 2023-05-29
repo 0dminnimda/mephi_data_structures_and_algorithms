@@ -46,7 +46,7 @@ Table *create_table(IndexType msize) {
 
 IndexType hash(Table *table, KeyType key) { return key % table->msize; }
 
-bool insert(Table *table, KeyType key, Item info) {
+KeySpace *get_ks(Table *table, KeyType key) {
     IndexType index = hash(table, key);
     KeySpace *target_ks = NULL;
     KeySpace *first_ks = table->ks + index;
@@ -69,6 +69,12 @@ bool insert(Table *table, KeyType key, Item info) {
         target_ks->key = key;
     }
 
+    return target_ks;
+}
+
+bool insert(Table *table, KeyType key, Item info) {
+    KeySpace *target_ks = get_ks(table, key);
+
     Node *new_node = calloc(1, sizeof(Node));
     new_node->info = calloc(1, sizeof(Item));
     *(new_node->info) = info;
@@ -79,6 +85,31 @@ bool insert(Table *table, KeyType key, Item info) {
         new_node->release = 1;
     }
     target_ks->node = new_node;
+    return true;
+}
+
+bool insert_with_release(Table *table, KeyType key, Item info, RelType release) {
+    KeySpace *target_ks = get_ks(table, key);
+
+    Node *new_node = calloc(1, sizeof(Node));
+    new_node->info = calloc(1, sizeof(Item));
+    *(new_node->info) = info;
+    new_node->release = release;
+
+    Node *prev_node = NULL;
+    Node *curr_node = target_ks->node;
+    while (curr_node != NULL && curr_node->release > release) {
+        prev_node = curr_node;
+        curr_node = curr_node->next;
+    }
+
+    if (prev_node == NULL) {
+        target_ks->node = new_node;
+    } else {
+        new_node->next = prev_node->next;
+        prev_node->next = new_node;
+    }
+
     return true;
 }
 
@@ -229,4 +260,50 @@ void free_table(Table *table) {
     }
     free(table->ks);
     free(table);
+}
+
+bool dump_table(Table *table, const char *filename) {
+    FILE *file = fopen(filename, "wb");
+    if (file == NULL) {
+        TABLE_ERROR("Error: File not found\n");
+        return false;
+    }
+
+    fwrite(&(table->msize), sizeof(IndexType), 1, file);
+
+    for (IndexType i = 0; i < table->msize; i++) {
+        FOR_KEY_SPACE(ks, table->ks + i) {
+            FOR_NODE(node, ks->node) {
+                fwrite(&(ks->key), sizeof(KeyType), 1, file);
+                fwrite(&(node->release), sizeof(RelType), 1, file);
+                fwrite(node->info, sizeof(Item), 1, file);
+            }
+        }
+    }
+    fclose(file);
+    return true;
+}
+
+Table *load_table(const char *filename) {
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        TABLE_ERROR("Error: File not found\n");
+        return NULL;
+    }
+
+    IndexType msize;
+    fread(&msize, sizeof(IndexType), 1, file);
+    Table *table = create_table(msize);
+
+    KeyType key;
+    RelType release;
+    Item info;
+    while (1) {
+        if (!fread(&key, sizeof(KeyType), 1, file)) break;
+        if (!fread(&release, sizeof(RelType), 1, file)) break;
+        if (!fread(&info, sizeof(Item), 1, file)) break;
+        insert_with_release(table, key, info, release);
+    }
+    fclose(file);
+    return table;
 }

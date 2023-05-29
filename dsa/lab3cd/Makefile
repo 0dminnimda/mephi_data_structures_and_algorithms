@@ -21,7 +21,11 @@ test_mem:
 
 .PHONY: ext
 ext:
-	clang common/input.c file_holder.c table_ext.c main.c -o main.out -O0 -g -Wno-deprecated-declarations -D LAB3_EXT
+	clang common/input.c main.c -o main.out -O0 -g -Wno-deprecated-declarations -D USE_FILE=1
+
+.PHONY: ext_san
+ext_san:
+	clang common/input.c main.c -o main.out -O0 -g -Wno-deprecated-declarations -fsanitize=address,undefined -D USE_FILE=1
 
 .PHONY: run_ext
 run_ext:
