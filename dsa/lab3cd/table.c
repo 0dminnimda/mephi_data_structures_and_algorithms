@@ -1,8 +1,8 @@
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #ifndef NO_TABLE_PRINT_ERRORS
     #define TABLE_ERROR(msg) fprintf(stderr, msg)
@@ -35,8 +35,7 @@ typedef struct Table {
 #define FOR_KEY_SPACE(name, init) \
     for (KeySpace *name = init; name != NULL; name = name->next)
 
-#define FOR_NODE(name, init) \
-    for (Node *name = init; name != NULL; name = name->next)
+#define FOR_NODE(name, init) for (Node *name = init; name != NULL; name = name->next)
 
 Table *create_table(IndexType msize) {
     Table *table = calloc(1, sizeof(Table));
@@ -45,9 +44,7 @@ Table *create_table(IndexType msize) {
     return table;
 }
 
-IndexType hash(Table *table, KeyType key) {
-    return key % table->msize;
-}
+IndexType hash(Table *table, KeyType key) { return key % table->msize; }
 
 bool insert(Table *table, KeyType key, Item info) {
     IndexType index = hash(table, key);
@@ -90,9 +87,7 @@ bool insert(Table *table, KeyType key, Item info) {
 KeySpace *search(Table *table, KeyType key) {
     IndexType index = hash(table, key);
     FOR_KEY_SPACE(ks, (table->ks + index)) {
-        if (ks->key == key) {
-            return ks;
-        }
+        if (ks->key == key) { return ks; }
     }
     return NULL;
 }
@@ -105,9 +100,7 @@ Node *search_spesific(Table *table, KeyType key, RelType release) {
     }
 
     FOR_NODE(node, ks->node) {
-        if (node->release == release) {
-            return node;
-        }
+        if (node->release == release) { return node; }
     }
 
     TABLE_ERROR("Error: Release not found\n");
@@ -173,7 +166,7 @@ void output(Table *table) {
             if (!ks->node) continue;
             printf("  [%u]:\n", ks->key);
             FOR_NODE(node, ks->node)
-                printf("    release %u = %u\n", node->release, *(node->info));
+            printf("    release %u = %u\n", node->release, *(node->info));
         }
     }
 }
@@ -217,9 +210,7 @@ Table *search_all_copy(Table *table, KeyType key) {
     Table *copy = create_table(table->msize);
 
     KeySpace *ks = search(table, key);
-    FOR_NODE(node, ks->node) {
-        insert(copy, key, *(node->info));
-    }
+    FOR_NODE(node, ks->node) { insert(copy, key, *(node->info)); }
 
     return copy;
 }
