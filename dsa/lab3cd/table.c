@@ -215,6 +215,7 @@ Table *search_all_copy(Table *table, KeyType key) {
 }
 
 void free_table(Table *table) {
+    if (table == NULL) return;
     // printf("free table %p\n", table);
     for (IndexType i = 0; i < table->msize; i++) {
         // printf("free index %zu\n", i);
