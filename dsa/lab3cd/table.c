@@ -60,12 +60,10 @@ bool insert(Table *table, KeyType key, Item info) {
 
     if (!target_ks) {
         if (first_ks->node) {
-            // printf("yes first ks node\n");
             target_ks = calloc(1, sizeof(KeySpace));
             target_ks->next = first_ks->next;
             first_ks->next = target_ks;
         } else {
-            // printf("no first ks node\n");
             target_ks = first_ks;
         }
         target_ks->key = key;
@@ -165,8 +163,9 @@ void output(Table *table) {
         FOR_KEY_SPACE(ks, table->ks + i) {
             if (!ks->node) continue;
             printf("  [%u]:\n", ks->key);
-            FOR_NODE(node, ks->node)
-            printf("    release %u = %u\n", node->release, *(node->info));
+            FOR_NODE(node, ks->node) {
+                printf("    release %u = %u\n", node->release, *(node->info));
+            }
         }
     }
 }
