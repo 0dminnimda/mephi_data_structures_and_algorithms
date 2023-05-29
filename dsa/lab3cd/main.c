@@ -1,12 +1,23 @@
 #include <stdio.h>
-#include "table.c"
+
 #include "common/input.h"
+#include "table.c"
 
-#define IS_COMMAND(input, name, short_name) (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
+#define IS_COMMAND(input, name, short_name) \
+    (strcmp(input, name) == 0 || strcmp(input, short_name) == 0)
 
-#define CLEAR() while ((getchar()) != '\n');
+#define CLEAR()                 \
+    while ((getchar()) != '\n') \
+        ;
 
-#define SCAN(n, ...) if (scanf(__VA_ARGS__) != n) { CLEAR(); printf("Error: invalid input\n"); continue; } else { CLEAR(); }
+#define SCAN(n, ...)                      \
+    if (scanf(__VA_ARGS__) != n) {        \
+        CLEAR();                          \
+        printf("Error: invalid input\n"); \
+        continue;                         \
+    } else {                              \
+        CLEAR();                          \
+    }
 
 int main() {
     Table *table = create_table(10);
@@ -14,9 +25,11 @@ int main() {
 
     bool run = true;
     while (run) {
-        printf("\033[32m"); // set text color to green
-        printf("Enter command (input/delete/deleteall/find/findall/findallcopy/output/file/quit):\n");
-        printf("\033[0m"); // reset text color to default
+        printf("\033[32m");  // set text color to green
+        printf(
+            "Enter command "
+            "(input/delete/deleteall/find/findall/findallcopy/output/file/quit):\n");
+        printf("\033[0m");  // reset text color to default
         printf("> ");
 
         free(input);
@@ -48,18 +61,18 @@ int main() {
             SCAN(2, "%u %u", &key, &release);
             Node *node = search_spesific(table, key, release);
             if (node != NULL) {
-                printf("Key: %u, Release: %u, Info: %u\n", key, node->release, *(node->info));
+                printf("Key: %u, Release: %u, Info: %u\n", key, node->release,
+                       *(node->info));
             }
         } else if (IS_COMMAND(input, "findall", "fa")) {
             KeyType key;
             printf("Enter key:\n");
             SCAN(1, "%u", &key);
             Node *node = search_all(table, key);
-            if (node == NULL) {
-                printf("No keys found\n");
-            }
+            if (node == NULL) { printf("No keys found\n"); }
             while (node != NULL) {
-                printf("Key: %u, Release: %u, Info: %u\n", key, node->release, *(node->info));
+                printf("Key: %u, Release: %u, Info: %u\n", key, node->release,
+                       *(node->info));
                 node = search_all(NULL, key);
             }
         } else if (IS_COMMAND(input, "findallcopy", "fac")) {
@@ -79,10 +92,10 @@ int main() {
         } else if (IS_COMMAND(input, "quit", "q")) {
             run = false;
         } else {
-            printf("\033[0;31m"); // set color to red
+            printf("\033[0;31m");  // set color to red
             printf("Yo mama is so stpid!!! >:(\n");
             printf("Ter aino command '%s'\n", input);
-            printf("\033[0m"); // reset color to default
+            printf("\033[0m");  // reset color to default
         }
     }
 
