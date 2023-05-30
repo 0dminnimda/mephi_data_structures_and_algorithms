@@ -30,3 +30,7 @@ ext_san:
 .PHONY: run_ext
 run_ext:
 	valgrind --leak-check=full ./main.out
+
+.PHONY: exec_ext
+exec_ext:
+	bash exec.sh ./main.out
