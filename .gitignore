@@ -16,6 +16,6 @@
 *.exp
 /secret
 
-/**/lab*/main
-dsa/lab3/parent_search_result.dat
-dsa/lab3cd/table.dat
+*/main
+3/parent_search_result.dat
+3cd/table.dat
